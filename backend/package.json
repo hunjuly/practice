@@ -1,0 +1,137 @@
+{
+    "name": "backend",
+    "version": "1.0.0",
+    "description": "",
+    "author": "hunjuly@gmail.com",
+    "main": "index.js",
+    "scripts": {
+        "start": "node output/bin",
+        "watch": "npm-run-all -p watch:*",
+        "watch:bundle": "webpack --watch --mode development",
+        "watch:nodemon": "nodemon output/bin",
+        "build": "npm-run-all -s build:*",
+        "build:clean": "rm -rf output",
+        "build:prettier": "prettier -c --write src/**",
+        "build:eslint": "eslint src/**",
+        "build:compile": "tsc --noEmit true",
+        "build:bundle": "webpack --mode production"
+    },
+    "dependencies": {
+        "@babel/runtime": "^7.16.0",
+        "class-transformer": "^0.4.0",
+        "compression": "^1.7.4",
+        "cors": "^2.8.5",
+        "errorhandler": "^1.5.1",
+        "express": "^4.17.1",
+        "morgan": "^1.10.0",
+        "reflect-metadata": "^0.1.13"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.16.0",
+        "@babel/plugin-proposal-class-properties": "^7.16.0",
+        "@babel/plugin-proposal-decorators": "^7.16.0",
+        "@babel/plugin-transform-runtime": "^7.16.0",
+        "@babel/preset-env": "^7.16.0",
+        "@babel/preset-typescript": "^7.16.0",
+        "@types/compression": "^1.7.2",
+        "@types/cors": "^2.8.12",
+        "@types/errorhandler": "^1.5.0",
+        "@types/express": "^4.17.13",
+        "@types/morgan": "^1.9.3",
+        "@typescript-eslint/eslint-plugin": "^5.2.0",
+        "@typescript-eslint/parser": "^5.2.0",
+        "babel-jest": "^27.3.1",
+        "babel-loader": "^8.2.3",
+        "clean-webpack-plugin": "^4.0.0",
+        "eslint": "^7.32.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-import": "^2.25.2",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^5.1.1",
+        "nock": "^13.1.4",
+        "typescript": "^4.4.4",
+        "webpack": "^5.61.0",
+        "webpack-cli": "^4.9.1",
+        "webpack-node-externals": "^3.0.0"
+    },
+    "babel": {
+        "presets": [
+            "@babel/preset-typescript",
+            "@babel/preset-env"
+        ],
+        "plugins": [
+            [
+                "@babel/plugin-proposal-decorators",
+                {
+                    "legacy": true
+                }
+            ],
+            "@babel/plugin-proposal-class-properties",
+            [
+                "@babel/plugin-transform-runtime",
+                {
+                    "regenerator": true
+                }
+            ]
+        ]
+    },
+    "eslintConfig": {
+        "extends": [
+            "eslint:recommended",
+            "plugin:@typescript-eslint/recommended",
+            "plugin:@typescript-eslint/recommended-requiring-type-checking",
+            "prettier"
+        ],
+        "env": {
+            "es2020": true,
+            "node": true,
+            "jest": true,
+            "commonjs": true
+        },
+        "parser": "@typescript-eslint/parser",
+        "parserOptions": {
+            "project": "./tsconfig.json",
+            "ecmaVersion": 2020,
+            "sourceType": "module"
+        },
+        "plugins": [
+            "@typescript-eslint",
+            "import",
+            "node",
+            "promise"
+        ],
+        "ignorePatterns": [
+            "**/*.js"
+        ],
+        "rules": {
+            "@typescript-eslint/no-unused-vars": [
+                "error",
+                {
+                    "argsIgnorePattern": "^_"
+                }
+            ]
+        }
+    },
+    "jest": {
+        "setupFilesAfterEnv": [
+            "<rootDir>/src/global.ts"
+        ],
+        "testEnvironment": "node",
+        "verbose": true,
+        "roots": [
+            "<rootDir>/src"
+        ],
+        "testMatch": [
+            "<rootDir>/src/**/*.test.ts"
+        ],
+        "collectCoverageFrom": [
+            "<rootDir>/src/**/*.ts",
+            "!<rootDir>/src/**/*.test.ts"
+        ],
+        "coverageDirectory": "output/coverage",
+        "coverageReporters": [
+            "text",
+            "lcov"
+        ]
+    }
+}
