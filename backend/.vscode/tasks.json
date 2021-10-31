@@ -4,7 +4,12 @@
         {
             "label": "Run",
             "type": "shell",
-            "command": "npm run build:bundle && npm start"
+            "command": "npm run watch"
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "npm run build"
         }
     ]
 }

@@ -1,0 +1,11 @@
+{
+    "setupFilesAfterEnv": ["<rootDir>/src/common/global.ts"],
+    "testEnvironment": "node",
+    "verbose": false,
+    "roots": ["<rootDir>/src"],
+    "testMatch": ["<rootDir>/src/**/*.test.ts"],
+    "collectCoverage": true,
+    "collectCoverageFrom": ["<rootDir>/src/**/*.ts", "!<rootDir>/src/**/*.test.ts"],
+    "coverageDirectory": "output/coverage",
+    "coverageReporters": ["text", "lcov"]
+}

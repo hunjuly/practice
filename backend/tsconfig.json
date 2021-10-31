@@ -20,9 +20,10 @@
         // for reflaction
         "experimentalDecorators": true,
         "sourceMap": true,
-        "declaration": true,
-        "declarationMap": true,
-        "declarationDir": "output/types"
+        "baseUrl": "src",
+        "paths": {
+            "common/*": ["common/*"]
+        }
     },
     "include": ["src/**/*.ts"]
 }
