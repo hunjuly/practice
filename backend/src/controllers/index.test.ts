@@ -15,13 +15,7 @@ describe('controllers', () => {
         server.stop()
     })
 
-    test('정의한 api를 실행한다.', async () => {
-        const res = await HttpRequest.get(`${host}`)
-
-        expect(res.status.code).toEqual(200)
-    })
-
-    test('정의한 api를 실행한다2.', async () => {
+    test('정의한 api를 호출', async () => {
         const res = await HttpRequest.get(`${host}`)
 
         expect(res.status.code).toEqual(200)
