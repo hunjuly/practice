@@ -4,7 +4,7 @@
     "verbose": false,
     "roots": ["<rootDir>/src"],
     "testMatch": ["<rootDir>/src/**/*.test.ts"],
-    "collectCoverage": true,
+    "collectCoverage": false,
     "collectCoverageFrom": ["<rootDir>/src/**/*.ts", "!<rootDir>/src/**/*.test.ts"],
     "coverageDirectory": "output/coverage",
     "coverageReporters": ["text", "lcov"]

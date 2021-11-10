@@ -36,6 +36,9 @@ export class HttpRouter {
             case 'put':
                 this.handle.put(path, callback)
                 break
+            case 'delete':
+                this.handle.delete(path, callback)
+                break
             default:
                 error('not implemented, ' + __filename)
         }

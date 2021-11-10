@@ -9,6 +9,7 @@
         "watch": "npm-run-all -p watch:*",
         "watch:bundle": "webpack --watch --mode development",
         "watch:nodemon": "SERVICE_PORT=3000 nodemon --inspect output/bin",
+        "watch:jest": "jest --watch",
         "build": "npm-run-all -s build:*",
         "build:clean": "rm -rf output",
         "build:prettier": "prettier -c --write src/**",

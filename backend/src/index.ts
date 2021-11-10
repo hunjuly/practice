@@ -1,5 +1,5 @@
 import { File } from 'common'
-import { HttpServer, HttpRouter } from './https'
+import { HttpServer } from './http'
 import * as routes from './controllers'
 
 export function close(): void {
@@ -20,7 +20,7 @@ export function port(): number {
 
 const pkgInfo = File.readJson('package.json') as routes.PackageInfo
 
-const routers: HttpRouter[] = [routes.default_(pkgInfo)]
+const routers = [routes.default_(pkgInfo)]
 
 const server = HttpServer.create(routers)
 
