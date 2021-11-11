@@ -16,6 +16,5 @@ RUN DOCKER_PKG="docker-20.10.1.tgz";\
 
 # color prompt
 RUN echo 'PS1="\[\033[32m\]\w\[\033[00m\] "' >> ~/.bashrc
-RUN echo 'eval "`dircolors`"' >> ~/.bashrc
 RUN echo "alias ls='ls --color=auto'" >> ~/.bashrc
 RUN echo "alias l='ls --color=auto -lA'" >> ~/.bashrc
