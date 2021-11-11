@@ -3,7 +3,7 @@ FROM node:16
 RUN set -eux
 
 # color prompt
-RUN echo 'PS1="\[\033[32m\]\w/\[\033[00m\] "' >> ~/.bashrc
+RUN echo 'PS1="\[\033[32m\]\w\[\033[00m\] "' >> ~/.bashrc
 
 RUN apt update
 RUN apt upgrade -y
