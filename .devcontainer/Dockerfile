@@ -1,6 +1,10 @@
 FROM node:16
 
 RUN set -eux
+
+# color prompt
+RUN echo 'PS1="\[\033[32m\]\w/\[\033[00m\] "' >> ~/.bashrc
+
 RUN apt update
 RUN apt upgrade -y
 # node에 반드시 필요한 것은 아니나, 자주 사용되기에 추가함
