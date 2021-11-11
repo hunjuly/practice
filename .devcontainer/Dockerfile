@@ -4,6 +4,10 @@ RUN set -eux
 
 # color prompt
 RUN echo 'PS1="\[\033[32m\]\w\[\033[00m\] "' >> ~/.bashrc
+RUN echo "export LS_OPTIONS='--color=auto'" >> ~/.bashrc
+RUN echo 'eval "`dircolors`"' >> ~/.bashrc
+RUN echo "alias ls='ls \$LS_OPTIONS'" >> ~/.bashrc
+RUN echo "alias l='ls \$LS_OPTIONS -lA'" >> ~/.bashrc
 
 RUN apt update
 RUN apt upgrade -y
