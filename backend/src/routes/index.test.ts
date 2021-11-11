@@ -1,7 +1,7 @@
 import { HttpServer, HttpRequest } from '../http'
 import * as routes from '.'
 
-describe('controllers', () => {
+describe('routes', () => {
     const port = 5678
     const host = `http://localhost:${port}`
     const routers = [routes.default_({ name: '', version: '' })]
