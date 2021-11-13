@@ -15,8 +15,14 @@ describe('routes', () => {
         server.stop()
     })
 
-    test('정의한 api를 호출', async () => {
+    test('api를 호출', async () => {
         const res = await HttpRequest.get(`${host}`)
+
+        expect(res.status.code).toEqual(200)
+    })
+
+    test('좌석 선점', async () => {
+        const res = await HttpRequest.put(`${host}/seats`)
 
         expect(res.status.code).toEqual(200)
     })

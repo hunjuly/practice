@@ -110,6 +110,14 @@ export class HttpRequest {
         return this.sendBuffer(opts, body)
     }
 
+    public static put(href: string, body?: SafeObj): Promise<ResponseMessage> {
+        const opts = this.createOpts(href)
+        opts.method = 'PUT'
+        opts.headers = { 'Content-Type': 'application/json' }
+
+        return this.sendBuffer(opts, body)
+    }
+
     private static createOpts(href: string): RequestOptions {
         const parts = new URL(href)
 
