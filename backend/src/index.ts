@@ -1,5 +1,5 @@
 import { File } from 'common'
-import { HttpServer } from './HttpServer'
+import { HttpServer } from './http'
 import * as routes from './routes'
 
 export function close(): void {

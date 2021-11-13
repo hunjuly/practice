@@ -14,8 +14,8 @@
         "build:clean": "rm -rf output",
         "build:prettier": "prettier -c --write src/**",
         "build:eslint": "eslint src/**",
-        "build:jest": "jest --no-cache --coverage",
         "build:compile": "tsc --noEmit true",
+        "build:jest": "jest --no-cache --coverage",
         "build:bundle": "webpack --mode production"
     },
     "dependencies": {
@@ -47,10 +47,10 @@
         "babel-jest": "^27.3.1",
         "babel-loader": "^8.2.3",
         "babel-plugin-module-resolver": "^4.1.0",
-        "eslint-import-resolver-typescript": "^2.5.0",
         "clean-webpack-plugin": "^4.0.0",
         "eslint": "^7.32.0",
         "eslint-config-prettier": "^8.3.0",
+        "eslint-import-resolver-typescript": "^2.5.0",
         "eslint-plugin-import": "^2.25.2",
         "eslint-plugin-node": "^11.1.0",
         "eslint-plugin-promise": "^5.1.1",

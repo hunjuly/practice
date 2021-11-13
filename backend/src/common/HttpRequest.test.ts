@@ -1,7 +1,6 @@
 import nock from 'nock'
 import * as http from 'http'
-import { BufferReadStream, BufferWriteStream } from 'common'
-import { HttpRequest } from '.'
+import { HttpRequest, BufferReadStream, BufferWriteStream } from '.'
 
 describe('http request for client', () => {
     afterEach(() => {

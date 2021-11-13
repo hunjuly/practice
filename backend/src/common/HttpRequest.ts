@@ -2,7 +2,6 @@ import { request, IncomingMessage, RequestOptions } from 'http'
 import { URL } from 'url'
 import { Readable, Writable, pipeline } from 'stream'
 import { BufferReadStream, BufferWriteStream, NullStream } from 'common'
-import { StatusCode } from '.'
 
 // "  https:   //    user   :   pass   @ sub.example.com : 8080   /p/a/t/h  ?  query=string   #hash "
 // ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -23,7 +22,7 @@ import { StatusCode } from '.'
 // └────────────────────────────────────────────────────────────────────────────────────────────────┘
 
 export class ResponseStatus {
-    public readonly code: StatusCode
+    public readonly code: number
     public readonly message: string
     public readonly contentType: string
 

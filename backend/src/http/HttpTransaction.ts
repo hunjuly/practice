@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
-import { StatusCode, Base64 } from 'common'
+import { Base64 } from 'common'
+import { StatusCode } from '.'
 
 declare global {
     type HttpQuery = { [key: string]: string }
