@@ -22,8 +22,12 @@
         "sourceMap": true,
         "baseUrl": "src",
         "paths": {
-            "common/*": ["common/*"]
+            "common/*": [
+                "common/*"
+            ]
         }
     },
-    "include": ["src/**/*.ts"]
+    "include": [
+        "src/**/*.ts"
+    ]
 }

@@ -1,4 +1,4 @@
-import { StatusCode, HttpRouter, HttpTransaction } from '../http'
+import { HttpRouter, HttpTransaction, StatusCode } from 'common'
 
 export type PackageInfo = { name: string; version: string }
 

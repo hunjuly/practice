@@ -1,14 +1,8 @@
 import { Request, Response } from 'express'
-import { Base64 } from 'common'
+import { StatusCode, Base64 } from 'common'
 
 declare global {
     type HttpQuery = { [key: string]: string }
-}
-
-export enum StatusCode {
-    Ok = 200,
-    Error = 400,
-    NotFound = 404
 }
 
 type HttpHeader = {

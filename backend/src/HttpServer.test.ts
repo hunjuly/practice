@@ -1,4 +1,5 @@
-import { HttpRequest, StatusCode, HttpServer, HttpRouter, HttpTransaction } from '.'
+import { HttpRouter, HttpTransaction, HttpRequest, StatusCode } from 'common'
+import { HttpServer } from './HttpServer'
 
 describe('http request for client', () => {
     test('Application 초기화', async () => {

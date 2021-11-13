@@ -1,5 +1,6 @@
-import { HttpServer, HttpRequest } from '../http'
-import * as routes from '.'
+import { HttpRequest } from 'common'
+import { HttpServer } from './HttpServer'
+import * as routes from './routes'
 
 describe('routes', () => {
     const port = 5678

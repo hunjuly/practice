@@ -4,7 +4,7 @@ import express, { Express } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 import { Server, createServer } from 'http'
-import { HttpRouter } from './'
+import { HttpRouter } from 'common'
 
 export class HttpServer {
     public static create(
