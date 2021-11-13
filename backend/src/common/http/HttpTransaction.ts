@@ -11,12 +11,6 @@ type HttpHeader = {
     value: number | string | ReadonlyArray<string>
 }
 
-type HttpResponse = {
-    status: StatusCode
-    headers?: HttpHeader[]
-    body?: SafeObj | SafeObj[] | Buffer
-}
-
 export class HttpTransaction {
     public static create(req: Request, res: Response): HttpTransaction {
         return new HttpTransaction(req, res)
@@ -70,27 +64,37 @@ export class HttpTransaction {
         return this.req.path
     }
 
-    public replyBuffer(res: HttpResponse): void {
-        if (res.body instanceof Buffer) {
-            const contents = Base64.encode(res.body)
-
-            this.res.status(res.status).json({ contents: contents })
+    private setHeaders(headers?: HttpHeader[]) {
+        if (headers) {
+            for (const header of headers ?? []) {
+                this.res.setHeader(header.name, header.value)
+            }
         }
     }
 
-    public replyFile(file: string): void {
+    public replyFile(file: string, headers?: HttpHeader[]): void {
+        this.setHeaders(headers)
+
         this.res.status(StatusCode.Ok).download(file)
     }
 
-    public reply(res: HttpResponse): void {
-        for (const header of res.headers ?? []) {
-            this.res.setHeader(header.name, header.value)
-        }
+    public replyBuffer(status: StatusCode, body: Buffer, headers?: HttpHeader[]): void {
+        this.setHeaders(headers)
 
-        if (res.body === undefined) {
-            this.res.status(res.status).end()
-        } else {
-            this.res.status(res.status).json(res.body)
-        }
+        const contents = Base64.encode(body)
+
+        this.res.status(status).json({ contents: contents })
+    }
+
+    public replyJson(status: StatusCode, body: unknown, headers?: HttpHeader[]): void {
+        this.setHeaders(headers)
+
+        this.res.status(status).json(body)
+    }
+
+    public reply(status: StatusCode, headers?: HttpHeader[]): void {
+        this.setHeaders(headers)
+
+        this.res.status(status).end()
     }
 }

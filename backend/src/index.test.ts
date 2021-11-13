@@ -1,30 +1,22 @@
 import { HttpRequest } from 'common'
-import { HttpServer } from './http'
-import * as routes from './routes'
+import { PackageInfo } from 'routes'
+import { close, port, starting } from '.'
 
 describe('routes', () => {
-    const port = 5678
-    const host = `http://localhost:${port}`
-    const routers = [routes.default_({ name: '', version: '' })]
-    const server = HttpServer.create(routers)
+    const host = `http://localhost:${port()}`
 
-    beforeAll(() => {
-        server.start(port)
+    beforeAll(async () => {
+        await starting()
     })
 
-    afterAll(() => {
-        server.stop()
+    afterAll(async () => {
+        await close()
     })
 
-    test('api를 호출', async () => {
+    test('service info', async () => {
         const res = await HttpRequest.get(`${host}`)
+        const body = res.json() as PackageInfo
 
-        expect(res.status.code).toEqual(200)
-    })
-
-    test('좌석 선점', async () => {
-        const res = await HttpRequest.put(`${host}/seats`)
-
-        expect(res.status.code).toEqual(200)
+        expect(body.name).toEqual('backend')
     })
 })

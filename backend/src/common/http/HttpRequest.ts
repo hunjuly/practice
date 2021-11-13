@@ -21,24 +21,25 @@ import { BufferReadStream, BufferWriteStream, NullStream } from 'common'
 // │                                              href                                              │
 // └────────────────────────────────────────────────────────────────────────────────────────────────┘
 
-export class ResponseStatus {
+class ResponseStatus {
     public readonly code: number
-    public readonly message: string
-    public readonly contentType: string
+    public readonly contentType: string | undefined
 
     constructor(res: IncomingMessage) {
         this.code = res.statusCode ?? -1
-        this.message = res.statusMessage ?? 'res.statusMessage is undefined'
-        this.contentType = res.headers['content-type'] ?? 'undefined'
+        this.contentType = res.headers['content-type']
     }
 }
 
 export class ResponseMessage {
-    public readonly status: ResponseStatus
+    public readonly status: number
+    public readonly contentType: string | undefined
+
     private readonly body: Buffer
 
     constructor(status: ResponseStatus, body: Buffer) {
-        this.status = status
+        this.status = status.code
+        this.contentType = status.contentType
         this.body = body
     }
 

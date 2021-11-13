@@ -15,7 +15,7 @@
         "build:prettier": "prettier -c --write src/**",
         "build:eslint": "eslint src/**",
         "build:compile": "tsc --noEmit true",
-        "build:jest": "jest --no-cache --coverage",
+        "build:jest": "jest --no-cache --coverage --detectOpenHandles",
         "build:bundle": "webpack --mode production"
     },
     "dependencies": {

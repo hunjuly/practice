@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express'
-import { HttpTransaction } from './HttpTransaction'
+import { HttpTransaction } from '.'
 
 type Method = 'get' | 'post' | 'put' | 'delete'
 type RouterDelegate = (tx: HttpTransaction) => void

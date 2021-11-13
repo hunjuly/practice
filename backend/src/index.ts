@@ -1,9 +1,12 @@
-import { File } from 'common'
-import { HttpServer } from './http'
+import { HttpServer, File } from 'common'
 import * as routes from './routes'
 
-export function close(): void {
-    server.stop()
+export function close(): Promise<void> {
+    return server.stop()
+}
+
+export function starting(): Promise<void> {
+    return promise
 }
 
 export function port(): number {
@@ -24,4 +27,4 @@ const routers = [routes.default_(pkgInfo)]
 
 const server = HttpServer.create(routers)
 
-server.start(port())
+const promise = server.start(port())

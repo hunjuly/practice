@@ -1,13 +1,13 @@
 import nock from 'nock'
 import * as http from 'http'
-import { HttpRequest, BufferReadStream, BufferWriteStream } from '.'
+import { HttpRequest, BufferReadStream, BufferWriteStream } from '..'
 
 describe('http request for client', () => {
     afterEach(() => {
         nock.cleanAll()
     })
 
-    test('nock 모듈이 정상 동작한다.', (done) => {
+    test('nock 모듈 정상.', (done) => {
         nock('http://localhost').get('/path').reply(200)
 
         http.get('http://localhost/path', (_: http.IncomingMessage) => {
@@ -54,7 +54,7 @@ describe('http request for client', () => {
         const response = await HttpRequest.get('http://localhost:3000/path')
 
         expect(nock.isDone()).toBeTruthy()
-        expect(response.status.code).toEqual(200)
+        expect(response.status).toEqual(200)
     })
 
     test('post method', async () => {
