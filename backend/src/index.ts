@@ -1,5 +1,5 @@
 import { HttpServer, File } from 'common'
-import * as routes from './routes'
+import * as router from './router'
 
 export function close(): Promise<void> {
     return server.stop()
@@ -21,9 +21,9 @@ export function port(): number {
     return port
 }
 
-const pkgInfo = File.readJson('package.json') as routes.PackageInfo
+const pkgInfo = File.readJson('package.json') as router.PackageInfo
 
-const routers = [routes.default_(pkgInfo)]
+const routers = [router.create(pkgInfo)]
 
 const server = HttpServer.create(routers)
 

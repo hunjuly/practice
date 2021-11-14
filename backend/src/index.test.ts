@@ -1,5 +1,5 @@
 import { HttpRequest, StatusCode } from 'common'
-import { PackageInfo } from 'routes'
+import * as router from './router'
 import { close, port, starting } from '.'
 
 type Region = { x: number; y: number; width: number; height: number }
@@ -59,7 +59,7 @@ describe('index', () => {
     test('service info', async () => {
         const res = await HttpRequest.get(`${host}`)
 
-        const body = res.json() as PackageInfo
+        const body = res.json() as router.PackageInfo
 
         expect(body.name).toEqual('backend')
     })

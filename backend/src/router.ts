@@ -2,7 +2,7 @@ import { HttpRouter, HttpTransaction, StatusCode } from 'common'
 
 export type PackageInfo = { name: string; version: string }
 
-export function default_(pkgInfo: PackageInfo): HttpRouter {
+export function create(pkgInfo: PackageInfo): HttpRouter {
     const router = HttpRouter.create('/')
 
     router.add('get', '/', (tx: HttpTransaction): void => {

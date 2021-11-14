@@ -1,5 +1,5 @@
 import { HttpServer, HttpRequest, StatusCode } from 'common'
-import * as routes from './routes'
+import * as router from './router'
 
 describe('routes', () => {
     const port = 5678
@@ -8,7 +8,7 @@ describe('routes', () => {
     let server: HttpServer | undefined
 
     beforeAll(async () => {
-        const routers = [routes.default_({ name: '', version: '' })]
+        const routers = [router.create({ name: '', version: '' })]
         server = HttpServer.create(routers)
 
         await server.start(port)
