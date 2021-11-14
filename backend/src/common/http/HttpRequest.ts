@@ -51,10 +51,10 @@ export class ResponseMessage {
         return this.body.toString()
     }
 
-    public json(): SafeObj {
+    public json(): unknown {
         const str = this.text()
 
-        return JSON.parse(str) as SafeObj
+        return JSON.parse(str) as unknown
     }
 }
 
@@ -86,7 +86,7 @@ export class HttpRequest {
         })
     }
 
-    public static async sendBuffer(opts: RequestOptions, body?: SafeObj): Promise<ResponseMessage> {
+    public static async sendBuffer(opts: RequestOptions, body?: unknown): Promise<ResponseMessage> {
         const reader = body === undefined ? NullStream.create() : BufferReadStream.fromObject(body)
         const writer = BufferWriteStream.create()
 
@@ -102,7 +102,7 @@ export class HttpRequest {
         return this.sendBuffer(opts)
     }
 
-    public static post(href: string, body: SafeObj): Promise<ResponseMessage> {
+    public static post(href: string, body: unknown): Promise<ResponseMessage> {
         const opts = this.createOpts(href)
         opts.method = 'POST'
         opts.headers = { 'Content-Type': 'application/json' }
@@ -110,7 +110,7 @@ export class HttpRequest {
         return this.sendBuffer(opts, body)
     }
 
-    public static put(href: string, body: SafeObj): Promise<ResponseMessage> {
+    public static put(href: string, body: unknown): Promise<ResponseMessage> {
         const opts = this.createOpts(href)
         opts.method = 'PUT'
         opts.headers = { 'Content-Type': 'application/json' }

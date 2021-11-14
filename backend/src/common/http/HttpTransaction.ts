@@ -32,8 +32,8 @@ export class HttpTransaction {
         return JSON.stringify(this.body())
     }
 
-    public body(): SafeObj {
-        return this.req.body as SafeObj
+    public body(): unknown {
+        return this.req.body as unknown
     }
 
     public query(name: string): string | string[] | undefined {

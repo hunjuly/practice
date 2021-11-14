@@ -67,7 +67,7 @@ describe('index', () => {
     test('전체 좌석 상태 조회', async () => {
         const res = await HttpRequest.get(`${host}/seatmap`)
 
-        const blocks = res.json() as Block[]
+        // const blocks = res.json() as Block[]
         log.info(blocks)
         expect(res.status).toEqual(StatusCode.Ok)
     })

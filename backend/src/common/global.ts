@@ -4,7 +4,6 @@
 import * as NodeAssert from 'assert'
 
 declare global {
-    type SafeObj = Record<string, unknown>
     type Success = <T>(value: T) => void
     type Fail = (err?: Error) => void
 

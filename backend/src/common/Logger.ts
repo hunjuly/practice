@@ -2,21 +2,21 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 export interface Logger {
-    info(msg: string | SafeObj | unknown): void
-    warning(msg: string | SafeObj | unknown): void
-    error(msg: string | SafeObj | unknown): void
+    info(msg: string | unknown): void
+    warning(msg: string | unknown): void
+    error(msg: string | unknown): void
 }
 
 export class DefaultLogger implements Logger {
-    public info(msg: string | SafeObj | unknown): void {
+    public info(msg: string | unknown): void {
         console.log(msg)
     }
 
-    public warning(msg: string | SafeObj | unknown): void {
+    public warning(msg: string | unknown): void {
         console.log(msg)
     }
 
-    public error(msg: string | SafeObj | unknown): void {
+    public error(msg: string | unknown): void {
         console.log(msg)
     }
 }

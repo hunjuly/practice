@@ -17,7 +17,7 @@ export class NullStream extends Duplex {
 export class BufferReadStream extends Readable {
     private buffer: Buffer
 
-    public static fromObject(val: SafeObj): BufferReadStream {
+    public static fromObject(val: unknown): BufferReadStream {
         const str = JSON.stringify(val)
         const buffer = Buffer.from(str)
 

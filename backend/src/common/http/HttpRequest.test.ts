@@ -43,7 +43,7 @@ describe('http request for client', () => {
 
         const buffer = writer.getBuffer()
         const str = buffer.toString()
-        const json = JSON.parse(str) as SafeObj
+        const json = JSON.parse(str) as unknown
 
         expect(recv).toEqual(json)
     })

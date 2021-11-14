@@ -9,6 +9,10 @@
         {
             "label": "Build",
             "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "command": "npm run build"
         }
     ]
