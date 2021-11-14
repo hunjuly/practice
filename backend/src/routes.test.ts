@@ -25,7 +25,7 @@ describe('routes', () => {
     })
 
     test('좌석 선점', async () => {
-        const res = await HttpRequest.put(`${host}/seats`)
+        const res = await HttpRequest.put(`${host}/seats`, {})
 
         expect(res.status).toEqual(StatusCode.Ok)
     })
