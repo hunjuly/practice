@@ -5,6 +5,7 @@
     "author": "hunjuly@gmail.com",
     "main": "index.js",
     "scripts": {
+        "install": "docker pull mysql:8",
         "start": "node output/bin",
         "watch": "npm-run-all -p watch:*",
         "watch:jest": "jest --watch",
@@ -26,6 +27,7 @@
         "errorhandler": "^1.5.1",
         "express": "^4.17.1",
         "morgan": "^1.10.0",
+        "mysql2": "^2.3.3",
         "reflect-metadata": "^0.1.13"
     },
     "devDependencies": {

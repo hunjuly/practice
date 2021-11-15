@@ -7,7 +7,7 @@ declare global {
     type Success = <T>(value: T) => void
     type Fail = (err?: Error) => void
 
-    function error(msg: string, reject?: (reason?: any) => void): never
+    function error(msg: string | any, reject?: (reason?: any) => void): never
     function assert(value: boolean, msg?: string): void
     function notUsed(...args: unknown[]): void
     function empty(): void
@@ -15,9 +15,13 @@ declare global {
 
 const g = global as any
 
-g.error = (msg: string, reject?: (reason?: any) => void): never => {
+g.error = (msg: string | any, reject?: (reason?: any) => void): never => {
     if (reject === undefined) {
-        throw new Error(msg)
+        if (typeof msg === 'string') {
+            throw new Error(msg)
+        } else {
+            throw new Error(JSON.stringify(msg))
+        }
     }
 
     const neverCall = reject as (reason?: any) => never
