@@ -1,31 +1,31 @@
-import { HttpRouter, HttpTransaction, StatusCode } from 'common'
-import { SqlDb } from 'common'
+import { HttpRouter, HttpTransaction, StatusCode, SqlDb } from 'common'
+import { Region } from './domain'
+
+type Seat = { num: string; status: string; region: Region }
+type Row = { name: string; seats: Seat[] }
+type Block = { name: string; rows: Row[] }
+type Seatmap = { name: string; blocks: Block[] }
 
 export function create(_db: SqlDb): HttpRouter {
     const router = HttpRouter.create('/')
 
-    // 좌석도 생성/조회
+    // 좌석도 생성
+    router.add('post', '/seatmap', (tx: HttpTransaction) => {
+        tx.reply(StatusCode.Ok)
+    })
+
+    // 좌석도 조회
     router.add('get', '/seatmap', (tx: HttpTransaction) => {
         tx.reply(StatusCode.Ok)
     })
 
-    // 전체 좌석 상태 조회
-    router.add('get', '/seatmap', (tx: HttpTransaction) => {
+    // 전체좌석 상태 조회
+    router.add('get', '/status', (tx: HttpTransaction) => {
         tx.reply(StatusCode.Ok)
     })
 
-    // 좌석 선점/해제
-    router.add('get', '/seats', (tx: HttpTransaction) => {
-        tx.reply(StatusCode.Ok)
-    })
-
-    // 좌석 선점/해제
+    // 좌석 상태 업데이트 = 좌석 선점/해제, 좌석 구매/취소
     router.add('put', '/seats', (tx: HttpTransaction) => {
-        tx.reply(StatusCode.Ok)
-    })
-
-    // 티켓 구매/취소
-    router.add('put', '/tickets', (tx: HttpTransaction) => {
         tx.reply(StatusCode.Ok)
     })
 
