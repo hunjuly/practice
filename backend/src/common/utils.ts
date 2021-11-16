@@ -28,4 +28,10 @@ export class utils {
     public static async sleep(timeout: number): Promise<void> {
         await new Promise((resolve) => setTimeout(resolve, timeout))
     }
+
+    public static createChunk(size: number): string {
+        const chunk = Buffer.alloc(size, 'abcdefghijklmnopqrstuvwxyz1234567890')
+
+        return chunk.toString()
+    }
 }

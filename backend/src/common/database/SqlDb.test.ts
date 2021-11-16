@@ -1,3 +1,4 @@
+import { utils } from '..'
 import { SqlContainer } from '.'
 
 describe('Mysql', () => {
@@ -12,29 +13,31 @@ describe('Mysql', () => {
     })
 
     test('command', async () => {
-        const stmt =
-            'CREATE TABLE table1 (' +
-            'id INT AUTO_INCREMENT, ' +
-            'name VARCHAR(64), ' +
-            'age INT, ' +
-            'create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP, ' +
-            'PRIMARY KEY (id))'
+        const stmt = `CREATE TABLE table1 (
+            id INT AUTO_INCREMENT,
+            name VARCHAR(64),
+            text LONGTEXT,
+            age INT,
+            create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id))`
 
         await container.getDb().command(stmt)
     })
 
     test('insert', async () => {
+        const longText = utils.createChunk(5 * 1024 * 1024)
+
         const values = [
-            ['name2', 10],
-            ['한글2', 20]
+            ['name2', 10, longText],
+            ['한글2', 20, longText]
         ]
 
-        const log = await container.getDb().insert('INSERT INTO table1 (name, age) VALUES ?', [values])
+        const log = await container.getDb().insert('INSERT INTO table1 (name, age, text) VALUES ?', [values])
         console.log(log)
     })
 
     test('query', async () => {
-        const res = await container.getDb().query('select * from table1')
+        const res = await container.getDb().query('select id,name,text,UUID() from table1')
 
         expect(res.length).toEqual(2)
     })

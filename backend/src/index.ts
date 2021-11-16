@@ -23,13 +23,12 @@ export function port(): number {
 }
 
 async function initDatabase(): Promise<void> {
-    const stmt =
-        'CREATE TABLE seatmaps (' +
-        'id INT AUTO_INCREMENT, ' +
-        'name VARCHAR(64), ' +
-        'age INT, ' +
-        'create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP, ' +
-        'PRIMARY KEY (id))'
+    const stmt = `CREATE TABLE seatmaps (
+        id VARCHAR(64) NOT NULL,
+        name VARCHAR(256) NOT NULL,
+        text LONGTEXT NOT NULL,
+        create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id))`
 
     await container.getDb().command(stmt)
 }
