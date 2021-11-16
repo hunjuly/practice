@@ -1,4 +1,4 @@
-import { HttpServer, HttpRequest, StatusCode } from 'common'
+import { HttpServer, HttpRequest, StatusCode, utils, SqlDb, CommandResult } from 'common'
 import * as router from './router'
 
 describe('routes', () => {
@@ -8,7 +8,7 @@ describe('routes', () => {
     let server: HttpServer | undefined
 
     beforeAll(async () => {
-        const routers = [router.create({ name: '', version: '' })]
+        const routers = [router.create(new SqlDbMock())]
         server = HttpServer.create(routers)
 
         await server.start(port)
@@ -18,15 +18,27 @@ describe('routes', () => {
         if (server) await server.stop()
     })
 
-    test('api를 호출', async () => {
-        const res = await HttpRequest.get(`${host}`)
-
-        expect(res.status).toEqual(StatusCode.Ok)
-    })
-
     test('좌석 선점', async () => {
         const res = await HttpRequest.put(`${host}/seats`, {})
 
         expect(res.status).toEqual(StatusCode.Ok)
     })
 })
+
+class SqlDbMock implements SqlDb {
+    public async close(): Promise<void> {
+        await utils.sleep(100)
+    }
+    public async query(_query: string): Promise<unknown[]> {
+        await utils.sleep(100)
+        return []
+    }
+    public async command(_query: string): Promise<CommandResult> {
+        await utils.sleep(100)
+        return { affectedRows: 1 }
+    }
+    public async insert(_query: string, _values: unknown): Promise<CommandResult> {
+        await utils.sleep(100)
+        return { affectedRows: 1 }
+    }
+}

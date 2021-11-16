@@ -1,6 +1,5 @@
 import { HttpRequest, StatusCode } from 'common'
-import * as router from './router'
-import { close, port, starting } from '.'
+import { close, port, waitForReady } from '.'
 
 type Region = { x: number; y: number; width: number; height: number }
 
@@ -49,19 +48,11 @@ describe('index', () => {
     const host = `http://localhost:${port()}`
 
     beforeAll(async () => {
-        await starting()
-    })
+        await waitForReady()
+    }, 60 * 1000)
 
     afterAll(async () => {
         await close()
-    })
-
-    test('service info', async () => {
-        const res = await HttpRequest.get(`${host}`)
-
-        const body = res.json() as router.PackageInfo
-
-        expect(body.name).toEqual('backend')
     })
 
     test('전체 좌석 상태 조회', async () => {

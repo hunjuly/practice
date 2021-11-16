@@ -1,11 +1,12 @@
-import { HttpServer, File } from 'common'
+import { HttpServer, SqlContainer } from 'common'
 import * as router from './router'
 
-export function close(): Promise<void> {
-    return server.stop()
+export async function close(): Promise<void> {
+    await server.stop()
+    await container.stop()
 }
 
-export function starting(): Promise<void> {
+export async function waitForReady(): Promise<void> {
     return promise
 }
 
@@ -16,15 +17,35 @@ export function port(): number {
 
     const port = parseInt(envValue)
 
-    assert(!isNaN(port), `wrong SERVICE_PORT, '${envValue}'`)
+    assert(0 < port, `wrong SERVICE_PORT, '${envValue}'`)
 
     return port
 }
 
-const pkgInfo = File.readJson('package.json') as router.PackageInfo
+async function initDatabase(): Promise<void> {
+    const stmt =
+        'CREATE TABLE seatmaps (' +
+        'id INT AUTO_INCREMENT, ' +
+        'name VARCHAR(64), ' +
+        'age INT, ' +
+        'create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP, ' +
+        'PRIMARY KEY (id))'
 
-const routers = [router.create(pkgInfo)]
+    await container.getDb().command(stmt)
+}
 
-const server = HttpServer.create(routers)
+async function start(): Promise<void> {
+    await container.start('performanceDb')
+    await initDatabase()
 
-const promise = server.start(port())
+    const routers = [router.create(container.getDb())]
+
+    server = HttpServer.create(routers)
+
+    return server.start(port())
+}
+
+const container = new SqlContainer()
+let server: HttpServer
+
+const promise = start()

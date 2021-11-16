@@ -80,18 +80,20 @@ export class Docker {
         return res.text()
     }
 
-    public async waitLog(msg: string, seconds: number): Promise<boolean> {
+    public async waitLog(patterns: string[], seconds: number): Promise<string | undefined> {
         for (let i = 0; i < seconds; i++) {
             await utils.sleep(1000)
 
             const log = await this.logs()
 
-            if (log.includes(msg)) {
-                return true
+            for (const pattern of patterns) {
+                if (log.includes(pattern)) {
+                    return pattern
+                }
             }
         }
 
-        return false
+        return undefined
     }
 
     public async exec(cmd: string[]): Promise<StatusCode> {

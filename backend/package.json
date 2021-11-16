@@ -8,7 +8,6 @@
         "install": "docker pull mysql:8",
         "start": "node output/bin",
         "watch": "npm-run-all -p watch:*",
-        "watch:jest": "jest --watch",
         "watch:bundle": "webpack --watch --mode development",
         "watch:nodemon": "SERVICE_PORT=3000 nodemon --inspect output/bin",
         "build": "npm-run-all -s build:*",
