@@ -4,18 +4,22 @@ import { Region } from './domain'
 type Seat = { num: string; status: string; region: Region }
 type Row = { name: string; seats: Seat[] }
 type Block = { name: string; rows: Row[] }
-type Seatmap = { name: string; blocks: Block[] }
+type SeatmapCreating = { name: string; blocks: Block[] }
 
 export function create(_db: SqlDb): HttpRouter {
     const router = HttpRouter.create('/')
 
     // 좌석도 생성
     router.add('post', '/seatmap', (tx: HttpTransaction) => {
+        const value = tx.body() as SeatmapCreating
+
+        seatmapRepository.add(value)
+
         tx.reply(StatusCode.Ok)
     })
 
     // 좌석도 조회
-    router.add('get', '/seatmap', (tx: HttpTransaction) => {
+    router.add('get', '/seatmap/', (tx: HttpTransaction) => {
         tx.reply(StatusCode.Ok)
     })
 
