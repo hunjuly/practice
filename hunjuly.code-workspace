@@ -4,11 +4,17 @@
             "path": "docs"
         },
         {
+            "path": "common.node"
+        },
+        {
             "path": "backend"
         }
     ],
     "extensions": {
-        "recommendations": ["ms-vscode-remote.remote-containers", "vscode-icons-team.vscode-icons"]
+        "recommendations": [
+            "ms-vscode-remote.remote-containers",
+            "vscode-icons-team.vscode-icons"
+        ]
     },
     "settings": {
         "files.watcherExclude": {

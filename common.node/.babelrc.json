@@ -16,17 +16,6 @@
             {
                 "regenerator": true
             }
-        ],
-        [
-            "module-resolver",
-            {
-                "root": [
-                    "./src"
-                ],
-                "alias": {
-                    "infrastructure": "./src/infrastructure"
-                }
-            }
         ]
     ]
 }

@@ -1,7 +1,7 @@
 import { request, IncomingMessage, RequestOptions } from 'http'
 import { URL } from 'url'
 import { Readable, Writable, pipeline } from 'stream'
-import { BufferReadStream, BufferWriteStream, NullStream } from 'common'
+import { BufferReadStream, BufferWriteStream, NullStream } from '../'
 
 // "  https:   //    user   :   pass   @ sub.example.com : 8080   /p/a/t/h  ?  query=string   #hash "
 // ┌────────────────────────────────────────────────────────────────────────────────────────────────┐

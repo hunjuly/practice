@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Base64 } from 'common'
+import { Base64 } from '../'
 import { StatusCode } from '.'
 
 declare global {

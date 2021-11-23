@@ -1,4 +1,4 @@
-import { Docker, utils, SqlDb, Shell } from 'common'
+import { Docker, utils, SqlDb, Shell } from '../'
 
 export class SqlContainer {
     private db: SqlDb | undefined

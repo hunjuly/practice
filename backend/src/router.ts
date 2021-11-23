@@ -4,16 +4,19 @@ import { Region } from './domain'
 type Seat = { num: string; status: string; region: Region }
 type Row = { name: string; seats: Seat[] }
 type Block = { name: string; rows: Row[] }
-type SeatmapCreating = { name: string; blocks: Block[] }
+type CreateSeatmapCommand = { name: string; blocks: Block[] }
 
 export function create(_db: SqlDb): HttpRouter {
     const router = HttpRouter.create('/')
 
-    // 좌석도 생성
+    // 좌석도 생성, db 생성 할 때 그냥 다 때려넣자
     router.add('post', '/seatmap', (tx: HttpTransaction) => {
-        const value = tx.body() as SeatmapCreating
+        const value = tx.body() as CreateSeatmapCommand
 
-        seatmapRepository.add(value)
+        // 하여튼 여기에서 CreateSeatmapCommand 사용해서 Seatmap을 만든다.
+        // Domain은 Infra나 App을 모른다.
+        // CreateSeatmapCommand은 App레이어다.
+        // seatmapRepository.add(seatmap)
 
         tx.reply(StatusCode.Ok)
     })
