@@ -5,7 +5,6 @@
     "author": "hunjuly@gmail.com",
     "main": "index.js",
     "scripts": {
-        "preinstall":"npm ci --prefix ../common.node",
         "start": "node output/bin",
         "watch": "npm-run-all -p watch:*",
         "watch:bundle": "webpack --watch --mode development",
