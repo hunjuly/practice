@@ -8,6 +8,7 @@
     "types": "output/types",
     "scripts": {
         "install": "docker pull mysql:8",
+        "postinstall": "npm run build",
         "build": "npm-run-all -s build:*",
         "build:clean": "rm -rf ./output",
         "build:prettier": "prettier -c --write src/**",
