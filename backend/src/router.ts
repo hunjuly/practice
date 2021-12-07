@@ -12,6 +12,7 @@ export function create(_db: SqlDb): HttpRouter {
     // 좌석도 생성, db 생성 할 때 그냥 다 때려넣자
     router.add('post', '/seatmap', (tx: HttpTransaction) => {
         const value = tx.body() as CreateSeatmapCommand
+        console.log(value)
 
         // 하여튼 여기에서 CreateSeatmapCommand 사용해서 Seatmap을 만든다.
         // Domain은 Infra나 App을 모른다.
