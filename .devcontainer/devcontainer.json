@@ -13,5 +13,5 @@
         "esbenp.prettier-vscode",
         "firsttris.vscode-jest-runner"
     ],
-    "postCreateCommand": "npm ci --prefix common.node;npm ci --prefix backend"
+    "postCreateCommand": "npm ci --prefix common.node;npm ci --prefix practice"
 }

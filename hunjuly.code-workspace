@@ -1,13 +1,10 @@
 {
     "folders": [
         {
-            "path": "docs"
-        },
-        {
             "path": "common.node"
         },
         {
-            "path": "backend"
+            "path": "performance"
         }
     ],
     "extensions": {
