@@ -13,5 +13,8 @@
         "esbenp.prettier-vscode",
         "firsttris.vscode-jest-runner"
     ],
-    "postCreateCommand": "npm ci --prefix common.node;npm ci --prefix performance"
+    "forwardPorts": [
+        3000
+    ],
+    "postCreateCommand": "npm ci --prefix common.node;npm build --prefix common.node;npm ci --prefix performance;npm ci --prefix react.recipes"
 }

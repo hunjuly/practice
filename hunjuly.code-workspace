@@ -5,6 +5,9 @@
         },
         {
             "path": "performance"
+        },
+        {
+            "path": "react.recipes"
         }
     ],
     "extensions": {
