@@ -14,7 +14,7 @@
         "firsttris.vscode-jest-runner"
     ],
     "forwardPorts": [
-        3000
+        5300
     ],
-    "postCreateCommand": "npm ci --prefix common.node;npm build --prefix common.node;npm ci --prefix performance;npm ci --prefix react.recipes"
+    "postCreateCommand": "sh .devcontainer/postCreateCommand.sh"
 }

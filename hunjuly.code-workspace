@@ -28,14 +28,14 @@
             "**/output": true
         },
         "files.exclude": {
-            "**/node_modules/**": true,
-            "**/package-lock.json": true
+            "node_modules": true,
+            "package-lock.json": true,
+            "src/react-app-env.d.ts": true
         },
         "typescript.format.enable": false,
         "javascript.format.enable": false,
         "prettier.resolveGlobalModules": true,
         "prettier.prettierPath": "/usr/local/lib/node_modules/prettier",
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
         "[dockerfile]": {
             "editor.defaultFormatter": "ms-azuretools.vscode-docker"
         },
