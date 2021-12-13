@@ -5,7 +5,7 @@ describe('Mysql', () => {
     const container = new SqlContainer()
 
     beforeAll(async () => {
-        await container.start('testdb')
+        await container.start('testDb', 'adminpw')
     }, 60 * 1000)
 
     afterAll(async () => {

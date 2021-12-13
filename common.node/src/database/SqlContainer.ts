@@ -21,13 +21,14 @@ export class SqlContainer {
         error('this.db undef')
     }
 
-    public async start(dbName: string) {
+    public async start(dbName: string, password: string) {
         await Shell.exec(`docker rm -f ${dbName}`)
+        await Shell.exec(`docker volume rm -f ${dbName}`)
 
         this.container = await Docker.create({
             Image: 'mysql:8',
             name: dbName,
-            Env: ['MYSQL_ROOT_PASSWORD=adminpw'],
+            Env: ['MYSQL_ROOT_PASSWORD=' + password],
             HostConfig: { Binds: [`${dbName}:/var/lib/mysql`] }
         })
 
@@ -39,7 +40,7 @@ export class SqlContainer {
             try {
                 await this.container.exec([
                     'mysql',
-                    '-padminpw',
+                    `-p${password}`,
                     '-e',
                     `drop database if exists ${dbName};create database ${dbName};`
                 ])
@@ -50,7 +51,7 @@ export class SqlContainer {
                     host: info.NetworkSettings.IPAddress,
                     port: 3306,
                     user: 'root',
-                    password: 'adminpw',
+                    password: password,
                     database: dbName
                 })
 
