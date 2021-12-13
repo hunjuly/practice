@@ -1,6 +1,60 @@
+import { SqlDb } from 'common'
 import { Block, Row, Seat } from './repository'
 
-export function createBlocks(): Block[] {
+export async function installFixtures(db: SqlDb): Promise<void> {
+    await createSeatmapsTable(db)
+    await createStatusesTable(db)
+
+    const blocks = createBlocks()
+    await insertSeatmap(db, blocks)
+    await insertStatuses(db, blocks)
+}
+
+async function createSeatmapsTable(db: SqlDb): Promise<void> {
+    const seatmaps = `CREATE TABLE seatmaps (
+    id VARCHAR(64) NOT NULL,
+    name VARCHAR(256) NOT NULL,
+    contents LONGTEXT NOT NULL,
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+    )`
+
+    await db.command(seatmaps)
+}
+
+async function createStatusesTable(db: SqlDb): Promise<void> {
+    const statuses = `CREATE TABLE statuses (
+        seatId VARCHAR(64) NOT NULL,
+        status VARCHAR(16) NOT NULL,
+        PRIMARY KEY (seatId)
+        )`
+
+    await db.command(statuses)
+}
+
+async function insertSeatmap(db: SqlDb, blocks: Block[]): Promise<void> {
+    const contents = JSON.stringify(blocks)
+    const values = [['seatmapId#1', '연습공연장', contents]]
+
+    await db.insert('INSERT INTO seatmaps(id,name,contents) VALUES ?', [values])
+}
+
+async function insertStatuses(db: SqlDb, blocks: Block[]): Promise<void> {
+    const values: unknown[][] = []
+
+    for (const block of blocks) {
+        for (const row of block.rows) {
+            for (const seat of row.seats) {
+                const value = [seat.id, 'available']
+                values.push(value)
+            }
+        }
+    }
+
+    await db.insert('INSERT INTO statuses(seatId,status) VALUES ?', [values])
+}
+
+function createBlocks(): Block[] {
     const blocks: Block[] = []
 
     for (let blockIdx = 0; blockIdx < 10; blockIdx++) {
@@ -35,7 +89,7 @@ export function createBlocks(): Block[] {
     return blocks
 }
 
-export const blocks = [
+const blocks = [
     {
         id: 'block0001',
         name: 'A',
@@ -67,3 +121,5 @@ export const blocks = [
         ]
     }
 ]
+
+notUsed(blocks)

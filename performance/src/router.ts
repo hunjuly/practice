@@ -4,11 +4,6 @@ import { Repository } from './repository'
 export function create(repository: Repository): HttpRouter {
     const router = HttpRouter.create('/')
 
-    // 테스트 준비
-    router.add('get', '/prepare', (tx: HttpTransaction) => {
-        tx.reply(StatusCode.Ok)
-    })
-
     // 좌석도 조회
     router.add('get', '/seatmap', (tx: HttpTransaction) => {
         const seatmap = repository.getSeatmap()
