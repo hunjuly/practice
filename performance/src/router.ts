@@ -1,5 +1,5 @@
 import { HttpRouter, HttpTransaction, StatusCode } from 'common'
-import { Repository } from './repository'
+import { Repository, SeatStatus } from './repository'
 
 export function create(repository: Repository): HttpRouter {
     const router = HttpRouter.create('/')
@@ -20,7 +20,9 @@ export function create(repository: Repository): HttpRouter {
 
     // 좌석 상태 업데이트 = 좌석 선점/해제, 좌석 구매/취소
     router.add('put', '/seats', (tx: HttpTransaction) => {
-        repository.setStatus([])
+        const statuses = tx.body() as SeatStatus[]
+
+        repository.setStatus(statuses)
 
         tx.reply(StatusCode.Ok)
     })
