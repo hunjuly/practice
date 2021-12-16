@@ -27,15 +27,35 @@ export class Repository {
         notUsed(seatmap)
     }
 
-    public getSeatmap(): Seatmap {
-        return { id: 'seatmap0001', name: '오늘의공연', blocks: [] }
+    public async getSeatmap(seatmapId: string): Promise<Seatmap> {
+        const res = await this.db.query(`SELECT id,name,contents FROM seatmaps WHERE id='${seatmapId}'`)
+
+        const values = res as { id: string; name: string; contents: string }[]
+
+        assert(values.length <= 1)
+
+        const value = values[0]
+
+        const blocks = JSON.parse(value.contents) as Block[]
+
+        return { id: value.id, name: value.name, blocks }
     }
 
-    public getStatus(): SeatStatus[] {
-        return []
+    public async getStatus(seatmapId: string): Promise<SeatStatus[]> {
+        const res = await this.db.query(`SELECT seatId,status FROM statuses WHERE seatmapId='${seatmapId}'`)
+
+        return res as SeatStatus[]
     }
 
-    public setStatus(statuses: SeatStatus[]) {
-        notUsed(statuses)
+    public async setStatus(seatmapId: string, statuses: SeatStatus[]): Promise<boolean> {
+        for (const status of statuses) {
+            const query = `UPDATE statuses SET status = '${status.status}' WHERE seatmapId = '${seatmapId}' AND seatId = '${status.seatId}'`
+
+            const res = await this.db.command(query)
+
+            assert(res.affectedRows === 1)
+        }
+
+        return true
     }
 }

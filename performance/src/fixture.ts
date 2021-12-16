@@ -1,13 +1,14 @@
 import { SqlDb } from 'common'
-import { Block, Row, Seat } from './repository'
+import { Seatmap, Block, Row, Seat } from './repository'
 
 export async function installFixtures(db: SqlDb): Promise<void> {
     await createSeatmapsTable(db)
     await createStatusesTable(db)
 
-    const blocks = createBlocks()
-    await insertSeatmap(db, blocks)
-    await insertStatuses(db, blocks)
+    const seatmap = createSeatmap()
+
+    await insertSeatmap(db, seatmap)
+    await insertStatuses(db, seatmap)
 }
 
 async function createSeatmapsTable(db: SqlDb): Promise<void> {
@@ -23,38 +24,46 @@ async function createSeatmapsTable(db: SqlDb): Promise<void> {
 }
 
 async function createStatusesTable(db: SqlDb): Promise<void> {
+    // seat를 포함하는 것은 seatmap 외에도 block과 row가 있다.
+    // 그럼에도 block과 row를 제외한 것은 당장 사용하지 않기 때문이다.
+    // 향후에 기능이 확장/변경 되면서 statuses에 block과 row가 필요할 지 모른다.
+    // 그러면 그 때 마이그레이션을 하면 된다.
     const statuses = `CREATE TABLE statuses (
+        seatmapId VARCHAR(64) NOT NULL,
         seatId VARCHAR(64) NOT NULL,
         status VARCHAR(16) NOT NULL,
-        PRIMARY KEY (seatId)
+        PRIMARY KEY (seatmapId,seatId)
         )`
 
     await db.command(statuses)
 }
 
-async function insertSeatmap(db: SqlDb, blocks: Block[]): Promise<void> {
-    const contents = JSON.stringify(blocks)
-    const values = [['seatmapId#1', '연습공연장', contents]]
+async function insertSeatmap(db: SqlDb, seatmap: Seatmap): Promise<void> {
+    const contents = JSON.stringify(seatmap.blocks)
+
+    const values = [[seatmap.id, seatmap.name, contents]]
 
     await db.insert('INSERT INTO seatmaps(id,name,contents) VALUES ?', [values])
 }
 
-async function insertStatuses(db: SqlDb, blocks: Block[]): Promise<void> {
+async function insertStatuses(db: SqlDb, seatmap: Seatmap): Promise<void> {
     const values: unknown[][] = []
 
-    for (const block of blocks) {
+    for (const block of seatmap.blocks) {
         for (const row of block.rows) {
             for (const seat of row.seats) {
-                const value = [seat.id, 'available']
+                const value = [seatmap.id, seat.id, 'available']
                 values.push(value)
             }
         }
     }
 
-    await db.insert('INSERT INTO statuses(seatId,status) VALUES ?', [values])
+    await db.insert('INSERT INTO statuses(seatmapId,seatId,status) VALUES ?', [values])
 }
 
-function createBlocks(): Block[] {
+function createSeatmap(): Seatmap {
+    const seatmapId = 'seatmapId-1'
+
     const blocks: Block[] = []
 
     for (let blockIdx = 0; blockIdx < 10; blockIdx++) {
@@ -64,7 +73,7 @@ function createBlocks(): Block[] {
             const seats: Seat[] = []
 
             for (let seatIdx = 0; seatIdx < 100; seatIdx++) {
-                const id = `seatId-${blockIdx}_${rowIdx}_${seatIdx}`
+                const id = `seatId-${seatmapId}_${blockIdx}_${rowIdx}_${seatIdx}`
                 const num = `SeatNum-${seatIdx}`
                 const region = { x: 0, y: 0, width: 2, height: 2 }
                 const seat = { id, num, region }
@@ -72,21 +81,21 @@ function createBlocks(): Block[] {
                 seats.push(seat)
             }
 
-            const id = `rowId-${blockIdx}_${rowIdx}`
+            const id = `rowId-${seatmapId}_${blockIdx}_${rowIdx}`
             const name = `RowName-${rowIdx}`
             const row = { id, name, seats }
 
             rows.push(row)
         }
 
-        const id = `blockId-${blockIdx}`
+        const id = `blockId-${seatmapId}_${blockIdx}`
         const name = `BlockName-${blockIdx}`
         const block = { id, name, rows }
 
         blocks.push(block)
     }
 
-    return blocks
+    return { id: seatmapId, name: '연습공연장', blocks }
 }
 
 const blocks = [
