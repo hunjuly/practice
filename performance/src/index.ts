@@ -1,5 +1,5 @@
 import { HttpServer, SqlContainer } from 'common'
-import * as router from './router'
+import { seatmaps, tests } from './routers'
 import { Repository } from './repository'
 import { installFixtures } from './fixture'
 
@@ -31,9 +31,9 @@ async function start(): Promise<void> {
 
     const repository = Repository.create(container.getDb())
 
-    const routers = [router.create(repository)]
+    const routers = [seatmaps.create(repository), tests.create(repository)]
 
-    server = HttpServer.create(routers)
+    server = HttpServer.create(routers, { logger: 'tiny' })
 
     return server.start(port())
 }

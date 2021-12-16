@@ -8,7 +8,7 @@ export async function installFixtures(db: SqlDb): Promise<void> {
     const seatmap = createSeatmap()
 
     await insertSeatmap(db, seatmap)
-    await insertStatuses(db, seatmap)
+    await insertStatus(db, seatmap)
 }
 
 async function createSeatmapsTable(db: SqlDb): Promise<void> {
@@ -46,7 +46,7 @@ async function insertSeatmap(db: SqlDb, seatmap: Seatmap): Promise<void> {
     await db.insert('INSERT INTO seatmaps(id,name,contents) VALUES ?', [values])
 }
 
-async function insertStatuses(db: SqlDb, seatmap: Seatmap): Promise<void> {
+async function insertStatus(db: SqlDb, seatmap: Seatmap): Promise<void> {
     const values: unknown[][] = []
 
     for (const block of seatmap.blocks) {

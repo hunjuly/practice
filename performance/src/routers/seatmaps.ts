@@ -1,5 +1,5 @@
 import { HttpRouter, HttpTransaction, StatusCode } from 'common'
-import { Repository, SeatStatus } from './repository'
+import { Repository, SeatStatus } from '../repository'
 
 export function create(repository: Repository): HttpRouter {
     const router = HttpRouter.create('/')
@@ -39,8 +39,6 @@ export function create(repository: Repository): HttpRouter {
                 tx.reply(body ? StatusCode.Ok : StatusCode.Error)
             })
             .catch(console.log)
-
-        tx.reply(StatusCode.Ok)
     })
 
     return router
