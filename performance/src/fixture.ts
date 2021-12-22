@@ -68,7 +68,7 @@ function createSeatmap(): Seatmap {
 
     const blocks: Block[] = []
 
-    for (let blockIdx = 0; blockIdx < 10; blockIdx++) {
+    for (let blockIdx = 0; blockIdx < 9; blockIdx++) {
         const rows: Row[] = []
 
         for (let rowIdx = 0; rowIdx < 100; rowIdx++) {
@@ -77,8 +77,8 @@ function createSeatmap(): Seatmap {
             for (let seatIdx = 0; seatIdx < 100; seatIdx++) {
                 const id = `seatId-${seatmapId}_${blockIdx}_${rowIdx}_${seatIdx}`
                 const num = `SeatNum-${seatIdx}`
-                const x = blockIdx * 110 * 2 + seatIdx * 2
-                const y = rowIdx * 2.2
+                const x = (blockIdx % 3) * 110 * 2.2 + seatIdx * 2.2
+                const y = Math.floor(blockIdx / 3) * 110 * 2.2 + rowIdx * 2.2
                 const region = { x, y, width: 2, height: 2 }
                 const seat = { id, num, region }
 
@@ -99,7 +99,7 @@ function createSeatmap(): Seatmap {
         blocks.push(block)
     }
 
-    return { id: seatmapId, name: '연습공연장', width: 10 * 110 * 2, height: 100 * 2.2, blocks }
+    return { id: seatmapId, name: '연습공연장', width: 3 * 110 * 2.2, height: 3 * 110 * 2.2, blocks }
 }
 
 const blocks = [
