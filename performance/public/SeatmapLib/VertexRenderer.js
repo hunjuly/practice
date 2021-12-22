@@ -44,7 +44,7 @@ function VertexRenderer() {
         gl.vertexAttribPointer(vertex_vertexColorAttribute, 4, gl.FLOAT, false, 0, 0)
 
         setMatrixUniforms(shader)
-        gl.drawArrays(gl.TRIANGLES, 0, vertices.length * 3)
+        gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 2)
     }
 
     function FragmentShaderSource() {

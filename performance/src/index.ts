@@ -33,7 +33,10 @@ async function start(): Promise<void> {
 
     const routers = [seatmaps.create(repository), tests.create(repository)]
 
-    server = HttpServer.create(routers, { logger: 'tiny' })
+    server = HttpServer.create(routers, {
+        logger: 'tiny',
+        staticFolders: [{ prefix: '/', path: 'public' }]
+    })
 
     return server.start(port())
 }

@@ -8,7 +8,7 @@ export type Row = { id: string; name: string; seats: Seat[] }
 
 export type Block = { id: string; name: string; rows: Row[] }
 
-export type Seatmap = { id: string; name: string; blocks: Block[] }
+export type Seatmap = { id: string; name: string; width: number; height: number; blocks: Block[] }
 
 export type SeatStatus = { seatId: string; status: 'available' | 'hold' | 'sold' }
 
@@ -28,9 +28,11 @@ export class Repository {
     }
 
     public async getSeatmap(seatmapId: string): Promise<Seatmap> {
-        const res = await this.db.query(`SELECT id,name,contents FROM seatmaps WHERE id='${seatmapId}'`)
+        const res = await this.db.query(
+            `SELECT id,name,width,height,contents FROM seatmaps WHERE id='${seatmapId}'`
+        )
 
-        const values = res as { id: string; name: string; contents: string }[]
+        const values = res as { id: string; name: string; contents: string; width: number; height: number }[]
 
         assert(values.length <= 1)
 
@@ -38,7 +40,7 @@ export class Repository {
 
         const blocks = JSON.parse(value.contents) as Block[]
 
-        return { id: value.id, name: value.name, blocks }
+        return { id: value.id, name: value.name, width: value.width, height: value.height, blocks }
     }
 
     public async getStatus(seatmapId: string): Promise<SeatStatus[]> {

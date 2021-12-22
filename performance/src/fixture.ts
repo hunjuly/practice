@@ -15,6 +15,8 @@ async function createSeatmapsTable(db: SqlDb): Promise<void> {
     const seatmaps = `CREATE TABLE seatmaps (
     id VARCHAR(64) NOT NULL,
     name VARCHAR(256) NOT NULL,
+    width INT NOT NULL,
+    height INT NOT NULL,
     contents LONGTEXT NOT NULL,
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
@@ -41,9 +43,9 @@ async function createStatusesTable(db: SqlDb): Promise<void> {
 async function insertSeatmap(db: SqlDb, seatmap: Seatmap): Promise<void> {
     const contents = JSON.stringify(seatmap.blocks)
 
-    const values = [[seatmap.id, seatmap.name, contents]]
+    const values = [[seatmap.id, seatmap.name, seatmap.width, seatmap.height, contents]]
 
-    await db.insert('INSERT INTO seatmaps(id,name,contents) VALUES ?', [values])
+    await db.insert('INSERT INTO seatmaps(id,name,width,height,contents) VALUES ?', [values])
 }
 
 async function insertStatus(db: SqlDb, seatmap: Seatmap): Promise<void> {
@@ -75,7 +77,9 @@ function createSeatmap(): Seatmap {
             for (let seatIdx = 0; seatIdx < 100; seatIdx++) {
                 const id = `seatId-${seatmapId}_${blockIdx}_${rowIdx}_${seatIdx}`
                 const num = `SeatNum-${seatIdx}`
-                const region = { x: 0, y: 0, width: 2, height: 2 }
+                const x = blockIdx * 110 * 2 + seatIdx * 2
+                const y = rowIdx * 2.2
+                const region = { x, y, width: 2, height: 2 }
                 const seat = { id, num, region }
 
                 seats.push(seat)
@@ -95,7 +99,7 @@ function createSeatmap(): Seatmap {
         blocks.push(block)
     }
 
-    return { id: seatmapId, name: '연습공연장', blocks }
+    return { id: seatmapId, name: '연습공연장', width: 10 * 110 * 2, height: 100 * 2.2, blocks }
 }
 
 const blocks = [
