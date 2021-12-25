@@ -1,7 +1,19 @@
 import { SqlDb } from 'common'
 import { Seatmap, Block, Row, Seat } from './repository'
 
-export async function installFixtures(db: SqlDb): Promise<void> {
+export const seatmapId = 'seatmapId-1'
+
+const blockLength = 9
+const rowLength = 100
+const seatLength = 100
+
+export const totalSeatCount = blockLength * rowLength * seatLength
+
+export function getSeatId(index: number) {
+    return `seatId${index}`
+}
+
+export async function install(db: SqlDb): Promise<void> {
     await createSeatmapsTable(db)
     await createStatusesTable(db)
 
@@ -64,42 +76,51 @@ async function insertStatus(db: SqlDb, seatmap: Seatmap): Promise<void> {
 }
 
 function createSeatmap(): Seatmap {
-    const seatmapId = 'seatmapId-1'
-
     const blocks: Block[] = []
 
-    for (let blockIdx = 0; blockIdx < 9; blockIdx++) {
+    const seatSize = 1.0
+    let seatSequence = 0
+
+    for (let blockIdx = 0; blockIdx < blockLength; blockIdx++) {
         const rows: Row[] = []
 
-        for (let rowIdx = 0; rowIdx < 100; rowIdx++) {
+        for (let rowIdx = 0; rowIdx < rowLength; rowIdx++) {
             const seats: Seat[] = []
 
-            for (let seatIdx = 0; seatIdx < 100; seatIdx++) {
-                const id = `seatId-${seatmapId}_${blockIdx}_${rowIdx}_${seatIdx}`
-                const num = `SeatNum-${seatIdx}`
-                const x = (blockIdx % 3) * 110 * 2.2 + seatIdx * 2.2
-                const y = Math.floor(blockIdx / 3) * 110 * 2.2 + rowIdx * 2.2
-                const region = { x, y, width: 2, height: 2 }
+            for (let seatIdx = 0; seatIdx < seatLength; seatIdx++) {
+                const id = getSeatId(seatSequence)
+                const num = `SeatNumber_${seatIdx}`
+                const x = (blockIdx % 3) * seatLength * seatSize + seatIdx * seatSize
+                const y = Math.floor(blockIdx / 3) * rowLength * seatSize + rowIdx * seatSize
+                const region = { x, y, width: seatSize * 0.9, height: seatSize * 0.9 }
                 const seat = { id, num, region }
 
                 seats.push(seat)
+
+                seatSequence += 1
             }
 
-            const id = `rowId-${seatmapId}_${blockIdx}_${rowIdx}`
-            const name = `RowName-${rowIdx}`
+            const id = `rowId_${rowIdx}`
+            const name = `RowName_${rowIdx}`
             const row = { id, name, seats }
 
             rows.push(row)
         }
 
-        const id = `blockId-${seatmapId}_${blockIdx}`
-        const name = `BlockName-${blockIdx}`
+        const id = `blockId_${blockIdx}`
+        const name = `BlockName_${blockIdx}`
         const block = { id, name, rows }
 
         blocks.push(block)
     }
 
-    return { id: seatmapId, name: '연습공연장', width: 3 * 110 * 2.2, height: 3 * 110 * 2.2, blocks }
+    return {
+        id: seatmapId,
+        name: '연습공연장',
+        width: 3 * seatLength * seatSize,
+        height: 3 * rowLength * seatSize,
+        blocks
+    }
 }
 
 const blocks = [

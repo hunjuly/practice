@@ -1,7 +1,7 @@
-import { HttpServer, SqlContainer } from 'common'
-import { seatmaps, tests } from './routers'
+import { HttpServer, HttpServerOption, SqlContainer } from 'common'
 import { Repository } from './repository'
-import { installFixtures } from './fixture'
+import * as fixture from './fixture'
+import * as router from './router'
 
 export async function close(): Promise<void> {
     await server.stop()
@@ -27,16 +27,15 @@ export function port(): number {
 async function start(): Promise<void> {
     await container.start('performanceDb', 'adminpw')
 
-    await installFixtures(container.getDb())
+    await fixture.install(container.getDb())
 
     const repository = Repository.create(container.getDb())
 
-    const routers = [seatmaps.create(repository), tests.create(repository)]
+    const routers = [router.create(repository)]
 
-    server = HttpServer.create(routers, {
-        logger: 'tiny',
-        staticFolders: [{ prefix: '/', path: 'public' }]
-    })
+    const option: HttpServerOption = { logger: 'tiny', statics: [{ prefix: '/', path: 'public' }] }
+
+    server = HttpServer.create(routers, option)
 
     return server.start(port())
 }

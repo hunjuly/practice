@@ -8,7 +8,7 @@ import { HttpRouter } from '.'
 
 export type HttpServerOption = {
     logger?: 'combined' | 'common' | 'dev' | 'short' | 'tiny'
-    staticFolders?: { prefix: string; path: string }[]
+    statics?: { prefix: string; path: string }[]
 }
 
 export class HttpServer {
@@ -23,8 +23,8 @@ export class HttpServer {
         if (option) {
             if (option.logger) app.use(morgan(option.logger))
 
-            for (const file of option.staticFolders ?? []) {
-                app.use(file.prefix, express.static(file.path))
+            for (const item of option.statics ?? []) {
+                app.use(item.prefix, express.static(item.path))
             }
         }
 

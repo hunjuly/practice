@@ -1,6 +1,7 @@
 import { HttpRequest, StatusCode, utils } from 'common'
 import { Seatmap, SeatStatus } from './repository'
 import { close, port, waitForReady } from '.'
+import { getSeatId } from './fixture'
 
 describe('index', () => {
     const host = `http://localhost:${port()}`
@@ -14,30 +15,28 @@ describe('index', () => {
     })
 
     test('좌석도 조회', async () => {
-        const res = await HttpRequest.get(`${host}/seatmaps/seatmapId-1`)
+        const res = await HttpRequest.get(`${host}/seatmap`)
 
         const seatmap = res.json() as Seatmap
 
-        expect(seatmap.id).toEqual('seatmapId-1')
-        expect(seatmap.name).toEqual('연습공연장')
-        expect(seatmap.blocks.length).toEqual(10)
+        expect(seatmap.blocks.length).toEqual(9)
     })
 
     test('좌석 상태 조회', async () => {
-        const res = await HttpRequest.get(`${host}/seatmaps/seatmapId-1/status`)
+        const res = await HttpRequest.get(`${host}/status`)
 
         const statuses = res.json() as SeatStatus[]
 
-        expect(statuses.length).toEqual(10 * 100 * 100)
+        expect(statuses.length).toEqual(9 * 100 * 100)
     })
 
     test('좌석 상태 업데이트', async () => {
         const body = [
-            { seatId: 'seatId-seatmapId-1_0_0_0', status: 'hold' },
-            { seatId: 'seatId-seatmapId-1_0_0_1', status: 'sold' }
+            { seatId: getSeatId(0), status: 'hold' },
+            { seatId: getSeatId(1), status: 'sold' }
         ]
 
-        const res = await HttpRequest.put(`${host}/seatmaps/seatmapId-1/status`, body)
+        const res = await HttpRequest.put(`${host}/status`, body)
 
         expect(res.status).toEqual(StatusCode.Ok)
     })
@@ -45,7 +44,7 @@ describe('index', () => {
     test('업데이트 검증', async () => {
         await utils.sleep(1000)
 
-        const res = await HttpRequest.get(`${host}/seatmaps/seatmapId-1/status`)
+        const res = await HttpRequest.get(`${host}/status`)
         const statuses = res.json() as SeatStatus[]
 
         expect(statuses[0].status).toEqual('hold')
