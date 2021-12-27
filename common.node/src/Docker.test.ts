@@ -8,7 +8,7 @@ test(
 
         await Shell.exec(`docker pull ${testimage}`)
 
-        const option = { Image: testimage }
+        const option = { Image: testimage, name: 'hello' }
 
         const container = await Docker.create(option)
 

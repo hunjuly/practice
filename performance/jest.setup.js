@@ -1,1 +1,1 @@
-process.env['SERVICE_PORT'] = '4000'
+import 'dotenv/config'

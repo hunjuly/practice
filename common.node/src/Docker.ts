@@ -111,6 +111,20 @@ export class Docker {
         return res2.status
     }
 
+    public static async info(containerName: string): Promise<ContainerInfo | undefined> {
+        const res = await Docker.get(`containers/json`)
+
+        const list = res.json() as ContainerInfo[]
+
+        for (const item of list) {
+            if (item.Names[0] === '/' + containerName) {
+                return item
+            }
+        }
+
+        return undefined
+    }
+
     private static get(path: string): Promise<ResponseMessage> {
         const opts = {
             socketPath: '/var/run/docker.sock',

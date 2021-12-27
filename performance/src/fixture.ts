@@ -14,6 +14,8 @@ export function getSeatId(index: number) {
 }
 
 export async function install(db: SqlDb): Promise<void> {
+    await db.command('DROP TABLE IF EXISTS seatmaps, statuses')
+
     await createSeatmapsTable(db)
     await createStatusesTable(db)
 

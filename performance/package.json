@@ -6,9 +6,10 @@
     "main": "index.js",
     "scripts": {
         "start": "node output/bin",
-        "watch": "npm-run-all -p watch:*",
+        "watch": "npm-run-all watch:setup -p watch:bundle watch:nodemon",
+        "watch:setup": "node setup.js start",
         "watch:bundle": "webpack --watch --mode development",
-        "watch:nodemon": "SERVICE_PORT=5300 nodemon --inspect output/bin",
+        "watch:nodemon": "nodemon --inspect output/bin",
         "build": "npm-run-all -s build:*",
         "build:clean": "rm -rf output",
         "build:prettier": "prettier -c --write src/**",
@@ -19,7 +20,8 @@
     },
     "dependencies": {
         "@babel/runtime": "^7.16.0",
-        "common": "file:../common.node"
+        "common": "file:../common.node",
+        "dotenv": "^10.0.0"
     },
     "devDependencies": {
         "@babel/core": "^7.16.0",

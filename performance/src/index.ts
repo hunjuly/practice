@@ -1,11 +1,13 @@
-import { HttpServer, HttpServerOption, SqlContainer } from 'common'
+import 'dotenv/config'
+import cluster from 'cluster'
+import { cpus } from 'os'
+import { HttpServer, HttpServerOption, SqlDb } from 'common'
 import { Repository } from './repository'
 import * as fixture from './fixture'
 import * as router from './router'
 
 export async function close(): Promise<void> {
     await server.stop()
-    await container.stop()
 }
 
 export async function waitForReady(): Promise<void> {
@@ -24,12 +26,24 @@ export function port(): number {
     return port
 }
 
+function createDb(): SqlDb {
+    const config = {
+        host: process.env['DB_HOST'] ?? '',
+        port: parseInt(process.env['DB_PORT'] ?? ''),
+        user: process.env['DB_USER'] ?? '',
+        password: process.env['DB_PASSWORD'] ?? '',
+        database: process.env['DB_NAME'] ?? ''
+    }
+
+    const db = SqlDb.create(config)
+
+    return db
+}
+
 async function start(): Promise<void> {
-    await container.start('performanceDb', 'adminpw')
+    const db = createDb()
 
-    await fixture.install(container.getDb())
-
-    const repository = Repository.create(container.getDb())
+    const repository = Repository.create(db)
 
     const routers = [router.create(repository)]
 
@@ -40,7 +54,32 @@ async function start(): Promise<void> {
     return server.start(port())
 }
 
-const container = new SqlContainer()
 let server: HttpServer
+let promise: Promise<void>
 
-const promise = start()
+if (cluster.isPrimary) {
+    const db = createDb()
+
+    fixture
+        .install(db)
+        .then(() => {
+            console.log(`Master ${process.pid} is running`)
+
+            const numCPUs = cpus().length
+
+            for (let i = 0; i < numCPUs; i++) {
+                cluster.fork()
+            }
+
+            cluster.on('exit', (worker, code: number, signal: string) => {
+                console.log(`worker ${worker.process.pid ?? 'undefined'} died`, code, signal)
+            })
+
+            void db.close()
+        })
+        .catch(console.log)
+} else {
+    console.log(`Cluster ${process.pid} is running`)
+
+    promise = start()
+}

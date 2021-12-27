@@ -21,6 +21,16 @@ export class SqlContainer {
         error('this.db undef')
     }
 
+    public async getIpaddr(): Promise<string> {
+        if (this.container) {
+            const info = await this.container.info()
+
+            return info.NetworkSettings.IPAddress
+        }
+
+        return 'container not running.'
+    }
+
     public async start(dbName: string, password: string) {
         await Shell.exec(`docker rm -f ${dbName}`)
         await Shell.exec(`docker volume rm -f ${dbName}`)
@@ -45,10 +55,8 @@ export class SqlContainer {
                     `drop database if exists ${dbName};create database ${dbName};`
                 ])
 
-                const info = await this.container.info()
-
                 this.db = SqlDb.create({
-                    host: info.NetworkSettings.IPAddress,
+                    host: await this.getIpaddr(),
                     port: 3306,
                     user: 'root',
                     password: password,
