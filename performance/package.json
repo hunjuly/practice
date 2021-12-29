@@ -1,5 +1,5 @@
 {
-    "name": "backend",
+    "name": "performance",
     "version": "1.0.0",
     "description": "",
     "author": "hunjuly@gmail.com",
@@ -7,7 +7,7 @@
     "scripts": {
         "start": "node output/bin",
         "watch": "npm-run-all watch:setup -p watch:bundle watch:nodemon",
-        "watch:setup": "node setup.js start",
+        "watch:setup": "node watch.setup.js",
         "watch:bundle": "webpack --watch --mode development",
         "watch:nodemon": "nodemon --inspect output/bin",
         "build": "npm-run-all -s build:*",

@@ -73,6 +73,8 @@ if (cluster.isPrimary) {
 
             cluster.on('exit', (worker, code: number, signal: string) => {
                 console.log(`worker ${worker.process.pid ?? 'undefined'} died`, code, signal)
+
+                cluster.fork()
             })
 
             void db.close()
