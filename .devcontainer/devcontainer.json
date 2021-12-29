@@ -14,7 +14,7 @@
         "firsttris.vscode-jest-runner"
     ],
     "forwardPorts": [
-        5300
+        3000
     ],
     "postCreateCommand": "sh .devcontainer/postCreateCommand.sh"
 }

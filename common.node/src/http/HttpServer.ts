@@ -37,7 +37,7 @@ export class HttpServer {
         return new HttpServer(server)
     }
 
-    private readonly server: Server
+    public readonly server: Server
 
     private constructor(server: Server) {
         this.server = server

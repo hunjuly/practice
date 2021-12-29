@@ -1,6 +1,6 @@
 import { HttpRequest, StatusCode, utils } from 'common'
 import { Seatmap, SeatStatus } from './repository'
-import { close, port, waitForReady } from '.'
+import { close, port, waitForReady } from './index.single'
 import { getSeatId } from './fixture'
 
 describe('index', () => {

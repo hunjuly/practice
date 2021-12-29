@@ -6,15 +6,7 @@ import { Repository } from './repository'
 import * as fixture from './fixture'
 import * as router from './router'
 
-export async function close(): Promise<void> {
-    await server.stop()
-}
-
-export async function waitForReady(): Promise<void> {
-    return promise
-}
-
-export function port(): number {
+function port(): number {
     const envValue = process.env['SERVICE_PORT'] as string
 
     assert(envValue !== undefined, 'missing SERVICE_PORT')
@@ -49,13 +41,10 @@ async function start(): Promise<void> {
 
     const option: HttpServerOption = { logger: 'tiny', statics: [{ prefix: '/', path: 'public' }] }
 
-    server = HttpServer.create(routers, option)
+    const server = HttpServer.create(routers, option)
 
-    return server.start(port())
+    await server.start(port())
 }
-
-let server: HttpServer
-let promise: Promise<void>
 
 if (cluster.isPrimary) {
     const db = createDb()
@@ -83,5 +72,5 @@ if (cluster.isPrimary) {
 } else {
     console.log(`Cluster ${process.pid} is running`)
 
-    promise = start()
+    void start()
 }
