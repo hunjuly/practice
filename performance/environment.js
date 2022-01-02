@@ -4,7 +4,7 @@ const SERVICE_PORT = '3000'
 const password = 'adminpw'
 const dbName = 'performance'
 
-async function start() {
+async function create() {
     const container = new SqlContainer()
 
     await container.start(dbName, password)
@@ -23,13 +23,14 @@ DB_NAME='${dbName}'
     console.log('DB prepared.')
 }
 
-async function stop() {
+async function clear() {
     await Shell.exec(`docker rm -f ${dbName}`)
     await Shell.exec(`docker volume rm -f ${dbName}`)
+    await Shell.exec(`rm -f .env`)
 }
 
-if (3 <= process.argv.length && 'stop' === process.argv[2]) {
-    void stop()
+if (3 <= process.argv.length && 'clear' === process.argv[2]) {
+    void clear()
 } else {
-    void start()
+    void create()
 }

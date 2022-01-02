@@ -2,6 +2,15 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Environment",
+            "type": "shell",
+            "command": "node",
+            "args": [
+                "environment.js",
+                "${input:SetupTask}"
+            ]
+        },
+        {
             "label": "Watch",
             "type": "shell",
             "command": "npm run watch"
@@ -10,6 +19,18 @@
             "label": "Build",
             "type": "shell",
             "command": "npm run build"
+        }
+    ],
+    "inputs": [
+        {
+            "type": "pickString",
+            "id": "SetupTask",
+            "description": "실행환경 생성/해제",
+            "options": [
+                "setup",
+                "clear"
+            ],
+            "default": "setup"
         }
     ]
 }

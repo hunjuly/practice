@@ -5,7 +5,7 @@ const { resolve } = require('path')
 module.exports = function (env, argv) {
     const config = {
         plugins: [new CleanWebpackPlugin()],
-        entry: './src/index.multi.ts',
+        entry: './src/index.ts',
         externals: [
             nodeExternals(),
             {

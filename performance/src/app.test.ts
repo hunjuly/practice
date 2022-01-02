@@ -1,17 +1,20 @@
 import { HttpRequest, StatusCode, utils } from 'common'
 import { Seatmap, SeatStatus } from './repository'
-import { close, port, waitForReady } from './index.single'
-import { getSeatId } from './fixture'
+import * as fixture from './fixture'
+import * as app from './app'
 
 describe('index', () => {
-    const host = `http://localhost:${port()}`
+    const host = `http://localhost:${app.port()}`
+    let server: app.Server
 
     beforeAll(async () => {
-        await waitForReady()
+        await fixture.install()
+
+        server = await app.start()
     }, 60 * 1000)
 
     afterAll(async () => {
-        await close()
+        await app.close(server)
     })
 
     test('좌석도 조회', async () => {
@@ -32,8 +35,8 @@ describe('index', () => {
 
     test('좌석 상태 업데이트', async () => {
         const body = [
-            { seatId: getSeatId(0), status: 'hold' },
-            { seatId: getSeatId(1), status: 'sold' }
+            { seatId: fixture.getSeatId(0), status: 'hold' },
+            { seatId: fixture.getSeatId(1), status: 'sold' }
         ]
 
         const res = await HttpRequest.put(`${host}/status`, body)

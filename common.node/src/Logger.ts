@@ -2,25 +2,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 export interface Logger {
-    info(msg: string | any): void
-    warning(msg: string | any): void
-    error(msg: string | any): void
+    info(...data: any[]): void
+    warning(...data: any[]): void
+    error(...data: any[]): void
 }
 
 export class DefaultLogger implements Logger {
-    public info(msg: string | any): void {
-        if (typeof msg === 'string') console.log(msg)
-        else console.log(JSON.stringify(msg))
+    public info(...data: any[]): void {
+        console.log(data)
     }
 
-    public warning(msg: string | any): void {
-        if (typeof msg === 'string') console.log(msg)
-        else console.log(JSON.stringify(msg))
+    public warning(...data: any[]): void {
+        console.log(data)
     }
 
-    public error(msg: string | any): void {
-        if (typeof msg === 'string') console.log(msg)
-        else console.log(JSON.stringify(msg))
+    public error(...data: any[]): void {
+        console.log(data)
     }
 }
 

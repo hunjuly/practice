@@ -6,8 +6,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node output/bin",
-        "watch": "npm-run-all watch:setup -p watch:bundle watch:nodemon",
-        "watch:setup": "node watch.setup.js",
+        "watch": "npm-run-all -p watch:*",
         "watch:bundle": "webpack --watch --mode development",
         "watch:nodemon": "nodemon --inspect output/bin",
         "build": "npm-run-all -s build:*",
