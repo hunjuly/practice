@@ -15,7 +15,11 @@
         "build:eslint": "eslint src/**",
         "build:compile": "tsc --noEmit true",
         "build:jest": "jest --no-cache --coverage --detectOpenHandles",
-        "build:bundle": "webpack --mode production"
+        "build:bundle": "webpack --mode production",
+        "prof": "npm-run-all -s prof:*",
+        "prof:clean": "rm -rf output && rm isolate-*.log",
+        "prof:bundle": "webpack --mode development",
+        "prof:start": "node --prof --no-logfile-per-isolate output/bin"
     },
     "dependencies": {
         "@babel/runtime": "^7.16.0",
