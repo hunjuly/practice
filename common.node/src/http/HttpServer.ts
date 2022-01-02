@@ -37,15 +37,15 @@ export class HttpServer {
         return new HttpServer(server)
     }
 
-    public readonly server: Server
+    public readonly handle: Server
 
     private constructor(server: Server) {
-        this.server = server
+        this.handle = server
     }
 
     public start(port: number): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.server.on('error', (err?: NodeJS.ErrnoException) => {
+            this.handle.on('error', (err?: NodeJS.ErrnoException) => {
                 if (typeof err !== 'undefined') {
                     if (err.syscall !== 'listen') {
                         reject(err)
@@ -64,7 +64,7 @@ export class HttpServer {
                 }
             })
 
-            this.server.listen(port, () => {
+            this.handle.listen(port, () => {
                 console.log(`starting server, port=${port}`)
 
                 resolve()
@@ -74,8 +74,8 @@ export class HttpServer {
 
     public stop(): Promise<void> {
         return new Promise((resolve, reject) => {
-            if (this.server.listening) {
-                this.server.close((err?: Error) => {
+            if (this.handle.listening) {
+                this.handle.close((err?: Error) => {
                     if (err) reject(err)
                     else resolve()
                 })

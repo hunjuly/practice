@@ -3,11 +3,11 @@ import { HttpServer, HttpServerOption, SqlDb } from 'common'
 import { Repository } from './repository'
 import * as router from './router'
 
-export type Server = { http: HttpServer; db: SqlDb }
+export type Context = { http: HttpServer; db: SqlDb }
 
-export async function close(server: Server): Promise<void> {
-    await server.http.stop()
-    await server.db.close()
+export async function close(context: Context): Promise<void> {
+    await context.http.stop()
+    await context.db.close()
 }
 
 export function port(): number {
@@ -40,7 +40,7 @@ export function createDb(): SqlDb {
     error('missing config.')
 }
 
-export async function start(): Promise<Server> {
+export async function start(): Promise<Context> {
     const db = createDb()
 
     const repository = Repository.create(db)
@@ -49,9 +49,9 @@ export async function start(): Promise<Server> {
 
     const option: HttpServerOption = { logger: 'tiny', statics: [{ prefix: '/', path: 'public' }] }
 
-    const server = HttpServer.create(routers, option)
+    const http = HttpServer.create(routers, option)
 
-    await server.start(port())
+    await http.start(port())
 
-    return { http: server, db }
+    return { http, db }
 }

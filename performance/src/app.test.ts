@@ -5,7 +5,7 @@ import * as app from './app'
 
 describe('index', () => {
     const host = `http://localhost:${app.port()}`
-    let server: app.Server
+    let server: app.Context
 
     beforeAll(async () => {
         await fixture.install()
