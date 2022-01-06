@@ -1,31 +1,9 @@
 <html>
-    <head>
-        <script type="text/javascript" src="/webgl/matrix.js"></script>
-        <script type="text/javascript" src="/webgl/glUtils.js"></script>
-        <script type="text/javascript" src="/webgl/VertexRenderer.js"></script>
-        <script type="text/javascript" src="./SeatmapView.js"></script>
-
-        <script>
-            async function SeatmapCreate() {
-                const res = await fetch('/seatmap')
-                const seatmap = await res.json()
-
-                const canvas = document.getElementById('glcanvas')
-
-                const seatmapView = new SeatmapView()
-                seatmapView.Initialize(seatmap, canvas)
-
-                setInterval(async () => {
-                    const res = await fetch('/status')
-                    const statuses = await res.json()
-
-                    seatmapView.Draw(statuses)
-                }, 1000)
-            }
-        </script>
-    </head>
-    <body onload="SeatmapCreate()">
-        <!-- width,height를 <style>안에서 지정하면 webgl에서 제대로 인식하지 않음 -->
-        <canvas id="glcanvas" width="600" height="600"></canvas>
+    <body>
+        /v1<br />
+        최대한 간단하게<br />
+        /v2<br />
+        /v3<br />
+        /v4<br />
     </body>
 </html>

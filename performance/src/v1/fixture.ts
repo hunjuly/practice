@@ -1,6 +1,5 @@
 import { SqlDb } from 'common'
 import { Seatmap, Block, Row, Seat } from './repository'
-import * as app from './app'
 
 export const seatmapId = 'seatmapId-1'
 
@@ -14,9 +13,7 @@ export function getSeatId(index: number) {
     return `seatId${index}`
 }
 
-export async function install(): Promise<void> {
-    const db = app.createDb()
-
+export async function install(db: SqlDb): Promise<void> {
     await db.command('DROP TABLE IF EXISTS seatmaps, statuses')
 
     await createSeatmapsTable(db)
@@ -26,8 +23,6 @@ export async function install(): Promise<void> {
 
     await insertSeatmap(db, seatmap)
     await insertStatus(db, seatmap)
-
-    await db.close()
 }
 
 async function createSeatmapsTable(db: SqlDb): Promise<void> {

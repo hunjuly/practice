@@ -3,7 +3,24 @@ import { Repository, SeatStatus } from './repository'
 import { seatmapId, totalSeatCount, getSeatId } from './fixture'
 
 export function create(repository: Repository): HttpRouter {
-    const router = HttpRouter.create('/')
+    const router = HttpRouter.create('/v1')
+
+    // 좌석도 조회
+    router.add('get', '/seatmap', (tx: HttpTransaction) => {
+        getSeatmap(tx)
+    })
+
+    // 전체좌석 상태 조회
+    router.add('get', '/status', (tx: HttpTransaction) => {
+        getStatus(tx)
+    })
+
+    // 좌석 상태 업데이트 = 좌석 선점/해제, 좌석 구매/취소
+    router.add('put', '/status', (tx: HttpTransaction) => {
+        const statuses = tx.body() as SeatStatus[]
+
+        putStatus(tx, statuses)
+    })
 
     let readWriteCount = 0
 
@@ -36,23 +53,6 @@ export function create(repository: Repository): HttpRouter {
         putStatus(tx, statuses)
 
         writeCount += 1
-    })
-
-    // 좌석도 조회
-    router.add('get', '/seatmap', (tx: HttpTransaction) => {
-        getSeatmap(tx)
-    })
-
-    // 전체좌석 상태 조회
-    router.add('get', '/status', (tx: HttpTransaction) => {
-        getStatus(tx)
-    })
-
-    // 좌석 상태 업데이트 = 좌석 선점/해제, 좌석 구매/취소
-    router.add('put', '/status', (tx: HttpTransaction) => {
-        const statuses = tx.body() as SeatStatus[]
-
-        putStatus(tx, statuses)
     })
 
     const getSeatmap = (tx: HttpTransaction) => {

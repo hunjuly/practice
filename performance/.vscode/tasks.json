@@ -2,11 +2,11 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Environment",
+            "label": "Infrastructure",
             "type": "shell",
             "command": "node",
             "args": [
-                "environment.js",
+                "infrastructure.js",
                 "${input:SetupTask}"
             ]
         },

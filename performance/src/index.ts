@@ -1,7 +1,7 @@
 import cluster from 'cluster'
 import { cpus } from 'os'
-import * as fixture from './fixture'
-import * as app from './app'
+import * as v1 from './v1'
+import { App } from './app'
 
 function createClusters(numCPUs: number) {
     for (let i = 0; i < numCPUs; i++) {
@@ -16,13 +16,13 @@ function createClusters(numCPUs: number) {
 }
 
 async function startPrimary() {
-    await fixture.install()
+    await v1.install()
 
     log.info(`Primary ${process.pid} is running`)
 
     // const numCPUs = cpus().length
-    notUsed(cpus)
     const numCPUs = 1
+    notUsed(cpus)
 
     if (1 < numCPUs) {
         createClusters(numCPUs)
@@ -34,6 +34,7 @@ async function startPrimary() {
 async function startCluster() {
     log.info(`Cluster ${process.pid} is running`)
 
+    const app = new App()
     await app.start()
 }
 
