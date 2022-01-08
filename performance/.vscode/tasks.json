@@ -2,23 +2,22 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Infrastructure",
+            "label": "Runtime Infrastructure",
             "type": "shell",
             "command": "node",
             "args": [
-                "infrastructure.js",
+                "runtime.js",
                 "${input:SetupTask}"
             ]
         },
         {
-            "label": "Watch",
+            "label": "Run",
             "type": "shell",
-            "command": "npm run watch"
-        },
-        {
-            "label": "Build",
-            "type": "shell",
-            "command": "npm run build"
+            "command": "npm",
+            "args": [
+                "run",
+                "${input:RunTask}"
+            ]
         }
     ],
     "inputs": [
@@ -28,9 +27,20 @@
             "description": "실행환경 생성/해제",
             "options": [
                 "setup",
-                "clear"
+                "teardown"
             ],
             "default": "setup"
+        },
+        {
+            "type": "pickString",
+            "id": "RunTask",
+            "description": "npm run cmd",
+            "options": [
+                "watch",
+                "profile",
+                "build"
+            ],
+            "default": "watch"
         }
     ]
 }

@@ -67,7 +67,7 @@ export function create(repository: Repository): HttpRouter {
     const getStatus = (tx: HttpTransaction) => {
         repository
             .getStatus(seatmapId)
-            .then((body: SeatStatus[]) => {
+            .then((body: unknown) => {
                 tx.replyJson(StatusCode.Ok, body)
             })
             .catch(console.log)

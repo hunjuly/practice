@@ -24,13 +24,13 @@ DB_NAME='${dbName}'
     console.log('DB prepared.')
 }
 
-async function clear() {
+async function teardown() {
     await Shell.exec(`docker rm -f ${dbName}`)
     await Shell.exec(`docker volume rm -f ${dbName}`)
     await Shell.exec(`rm -f .env`)
 }
 
-if (3 <= process.argv.length && 'clear' === process.argv[2]) {
+if (3 <= process.argv.length && 'teardown' === process.argv[2]) {
     void clear()
 } else {
     void create()
