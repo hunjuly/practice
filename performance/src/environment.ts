@@ -1,3 +1,4 @@
+import { cpus } from 'os'
 import { SqlDb } from 'common'
 
 export function createSqlDb(): SqlDb {
@@ -19,13 +20,25 @@ export function createSqlDb(): SqlDb {
 }
 
 export function port(): number {
-    const envValue = process.env['SERVICE_PORT']
+    const value = process.env['SERVICE_PORT']
 
-    if (!envValue) error('missing SERVICE_PORT')
+    if (!value) error('missing SERVICE_PORT')
 
-    const port = parseInt(envValue)
+    const port = parseInt(value)
 
-    assert(0 < port, `wrong SERVICE_PORT, '${envValue}'`)
+    assert(0 < port, `wrong SERVICE_PORT, '${value}'`)
 
     return port
+}
+
+export function processCount(): number {
+    const value = process.env['PROCESS_COUNT']
+
+    if (value) {
+        const port = parseInt(value)
+
+        if (0 < port) return port
+    }
+
+    return cpus().length
 }

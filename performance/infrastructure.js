@@ -11,6 +11,7 @@ async function create() {
     const ipaddr = await container.getIpaddr()
 
     const data = `
+PROCESS_COUNT='1'
 SERVICE_PORT='${SERVICE_PORT}'
 DB_HOST='${ipaddr}'
 DB_PORT='3306'

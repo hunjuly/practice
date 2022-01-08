@@ -1,5 +1,5 @@
 import { SqlDb } from 'common'
-import { createSqlDb } from '../infrastructure'
+import { createSqlDb } from '../environment'
 import { Repository } from './repository'
 import * as router from './router'
 import * as fixture from './fixture'

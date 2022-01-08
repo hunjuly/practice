@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import { HttpServer, HttpServerOption, SqlDb } from 'common'
-import { createSqlDb, port } from './infrastructure'
+import { createSqlDb, port } from './environment'
 import * as v1 from './v1'
 
 export class App {
