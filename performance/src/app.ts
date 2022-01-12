@@ -2,6 +2,7 @@ import 'dotenv/config'
 import { HttpServer, HttpServerOption, SqlDb } from 'common'
 import { createSqlDb, port } from './environment'
 import * as v1 from './v1'
+import * as v2 from './v2'
 
 export class App {
     private http: HttpServer | undefined
@@ -15,7 +16,7 @@ export class App {
     public async start(): Promise<void> {
         const sqlDb = createSqlDb()
 
-        const routers = [v1.getRouter(sqlDb)]
+        const routers = [v1.getRouter(sqlDb), v2.getRouter(sqlDb)]
 
         const option: HttpServerOption = { logger: 'tiny', statics: [{ prefix: '/', path: 'public' }] }
 
