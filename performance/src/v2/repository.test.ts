@@ -54,20 +54,18 @@ describe('index', () => {
 
     test('압축 해제', () => {
         const buffer = compress(statuses, 'hold')
-        const array = new Uint8Array(buffer)
+        const base64 = buffer.toString('base64')
 
-        const decoder = new TextDecoder('utf8')
-        const str = decoder.decode(array)
-        const b64encoded = btoa(str)
+        const decode = Buffer.from(base64, 'base64')
+        const decodeArray = new Uint8Array(decode)
 
-        const holdStatuses = decompress(array)
+        const holdStatuses = decompress(decodeArray)
+        console.log(holdStatuses)
 
         for (let i = 0; i < statuses.length; i++) {
             if (statuses[i].status === 'hold') {
                 expect(statuses[i].status).toEqual(holdStatuses[i])
             }
         }
-
-        console.log(holdStatuses)
     })
 })

@@ -12,7 +12,9 @@ export type Seatmap = { id: string; name: string; width: number; height: number;
 
 export type SeatStatus = { seatId: string; status: 'available' | 'hold' | 'sold' }
 
-export function compress(statuses: SeatStatus[], status: string) {
+export type CompressedStatus = { holds: string; solds: string }
+
+export function compress(statuses: SeatStatus[], status: string): Buffer {
     const size = Math.ceil(statuses.length / 8)
 
     const buffer = new ArrayBuffer(size)
@@ -41,7 +43,7 @@ export function compress(statuses: SeatStatus[], status: string) {
     mask <<= 8 - (index % 8)
     array[arrayIdx] = mask
 
-    return buffer
+    return Buffer.from(buffer)
 }
 
 export class Repository {
@@ -75,31 +77,15 @@ export class Repository {
         return { id: value.id, name: value.name, width: value.width, height: value.height, blocks }
     }
 
-    public async getStatus(seatmapId: string): Promise<number[]> {
+    public async getStatus(seatmapId: string): Promise<CompressedStatus> {
         const res = await this.db.query(`SELECT seatId,status FROM statuses WHERE seatmapId='${seatmapId}'`)
 
         const statuses = res as SeatStatus[]
 
-        // return statuses
-        const bitStatuses: number[] = []
+        const holds = compress(statuses, 'hold').toString('base64')
+        const solds = compress(statuses, 'sold').toString('base64')
 
-        let index = 0
-        let current = 0
-
-        for (const status of statuses) {
-            // 'hold', 'sold'
-            if (status.status === 'hold') {
-            }
-
-            index = index + 1
-
-            if (index % 64 === 0) {
-                bitStatuses.push(current)
-                current = 0
-            }
-        }
-
-        return bitStatuses
+        return { holds, solds }
     }
 
     public async setStatus(seatmapId: string, statuses: SeatStatus[]): Promise<boolean> {
