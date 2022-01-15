@@ -115,7 +115,7 @@ function SeatmapView() {
             case 7:
                 return statuses & 0x01
             default:
-                console.log('overflow ' + statusesIdx)
+                console.error('overflow ' + statusesIdx)
                 break
         }
     }
