@@ -1,12 +1,12 @@
-export * from './fixture'
-export * from './types'
-
 import { SqlDb } from 'common'
 import { createSqlDb } from '../environment'
 import { Repository } from './repository'
 import { Service, ServiceTest } from './service'
 import * as router from './router'
 import * as fixture from './fixture'
+
+export * from './fixture'
+export * from './types'
 
 export function getRouter(sqlDb: SqlDb) {
     const repository = Repository.create(sqlDb)
