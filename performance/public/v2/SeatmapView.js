@@ -58,12 +58,10 @@ function SeatmapView() {
     }
 
     this.Draw = function (holds, solds) {
-        // available
-        for (let i = 0; i < colorsSize; i += 4) {
-            colors[i + 0] = 0.5
-            colors[i + 1] = 0.5
-            colors[i + 2] = 0.5
-            colors[i + 3] = 1.0 // alpha
+        const defaultColor = { r: 0.5, g: 0.5, b: 0.5 }
+
+        for (let i = 0; i < seatCount; i++) {
+            fillColor(colors, i, defaultColor)
         }
 
         this.decompress(holds, { r: 0.25, g: 1.0, b: 0.25 })
@@ -71,6 +69,31 @@ function SeatmapView() {
 
         gl.viewport(0, 0, canvas.width, canvas.height)
         vertexRenderer.Draw(seatmap.width, seatmap.height, colors)
+    }
+
+    this.decompress = function (array, color) {
+        for (let i = 0; i < seatCount; i++) {
+            const arrayIdx = Math.floor(i / 8)
+            const seatStatuses = array[arrayIdx]
+            const statusesIdx = i % 8
+
+            if (isOn(seatStatuses, statusesIdx)) {
+                fillColor(colors, i, color)
+            }
+        }
+    }
+
+    function fillColor(buffer, index, color) {
+        const colorIdx = index * 6 * 4
+
+        for (let x = 0; x < 6; x += 4) {
+            const pointIdx = colorIdx + x * 4
+
+            buffer[pointIdx + 0] = color.r
+            buffer[pointIdx + 1] = color.g
+            buffer[pointIdx + 2] = color.b
+            buffer[pointIdx + 3] = 1.0 // alpha
+        }
     }
 
     function isOn(statuses, statusesIdx) {
@@ -96,28 +119,6 @@ function SeatmapView() {
                 break
         }
     }
-
-    this.decompress = function (array, color) {
-        let index = 0
-
-        for (let i = 0; i < seatCount; i++) {
-            const arrayIdx = i / 8
-            const seatStatuses = array[arrayIdx]
-
-            const statusesIdx = i % 8
-
-            if (isOn(seatStatuses, statusesIdx)) {
-                for (let x = 0; x < 6; ++x) {
-                    colors[index++] = color.r
-                    colors[index++] = color.g
-                    colors[index++] = color.b
-                    colors[index++] = 1.0 // alpha
-                }
-            } else {
-                index += 24
-            }
-        }
-    }
 }
 
 async function createSeatmapView() {
@@ -133,8 +134,11 @@ async function createSeatmapView() {
         const res = await fetch('/v2/status')
         const base64Statuses = await res.json()
 
-        const holds = Uint8Array.from(atob(base64Statuses.holds), (c) => c.charCodeAt(0))
-        const solds = Uint8Array.from(atob(base64Statuses.solds), (c) => c.charCodeAt(0))
+        const holdBuffer = atob(base64Statuses.holds)
+        const holds = Uint8Array.from(holdBuffer, (c) => c.charCodeAt(0))
+
+        const soldBuffer = atob(base64Statuses.solds)
+        const solds = Uint8Array.from(soldBuffer, (c) => c.charCodeAt(0))
 
         seatmapView.Draw(holds, solds)
 

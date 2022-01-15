@@ -18,6 +18,15 @@
                 "run",
                 "${input:RunTask}"
             ]
+        },
+        {
+            "label": "Test",
+            "type": "shell",
+            "command": "sh",
+            "args": [
+                "-c",
+                "${input:TestTask}"
+            ]
         }
     ],
     "inputs": [
@@ -39,6 +48,17 @@
                 "watch",
                 "profile",
                 "build"
+            ],
+            "default": "watch"
+        },
+        {
+            "type": "pickString",
+            "id": "TestTask",
+            "description": "npm run $cmd",
+            "options": [
+                "ab -k -n 90000 -c 10 'http://localhost:3000/v2/stress/write'",
+                "curl http://localhost:3000/v2/status",
+                "node --prof-process v8.log > processed.txt"
             ],
             "default": "watch"
         }
