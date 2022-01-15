@@ -1,5 +1,6 @@
 import { HttpRouter, HttpTransaction, StatusCode } from 'common'
-import { Repository, SeatStatus } from './repository'
+import { Repository } from './repository'
+import { SeatStatus } from './types'
 import { seatmapId, totalSeatCount, getSeatId } from './fixture'
 
 export function create(repository: Repository): HttpRouter {
@@ -66,7 +67,7 @@ export function create(repository: Repository): HttpRouter {
 
     const getStatus = (tx: HttpTransaction) => {
         repository
-            .getStatus(seatmapId)
+            .getStatuses(seatmapId)
             .then((body: unknown) => {
                 tx.replyJson(StatusCode.Ok, body)
             })

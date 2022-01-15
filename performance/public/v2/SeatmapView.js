@@ -119,3 +119,27 @@ function SeatmapView() {
         }
     }
 }
+
+async function createSeatmapView() {
+    const res = await fetch('/v2/seatmap')
+    const seatmap = await res.json()
+
+    const canvas = document.getElementById('glcanvas')
+
+    const seatmapView = new SeatmapView()
+    seatmapView.Initialize(seatmap, canvas)
+
+    const reload = async () => {
+        const res = await fetch('/v2/status')
+        const base64Statuses = await res.json()
+
+        const holds = Uint8Array.from(atob(base64Statuses.holds), (c) => c.charCodeAt(0))
+        const solds = Uint8Array.from(atob(base64Statuses.solds), (c) => c.charCodeAt(0))
+
+        seatmapView.Draw(holds, solds)
+
+        setTimeout(reload, 1000)
+    }
+
+    reload()
+}

@@ -1,5 +1,5 @@
 import { SqlDb } from 'common'
-import { Seatmap, Block, Row, Seat } from './repository'
+import { Seatmap, Block, Row, Seat } from './types'
 
 export const seatmapId = 'seatmapId-1'
 
@@ -10,11 +10,13 @@ const seatLength = 100
 export const totalSeatCount = blockLength * rowLength * seatLength
 
 export function getSeatId(index: number) {
-    return `seatId${index}`
+    const normalized = String(index).padStart(8, '0')
+
+    return `seatId${normalized}`
 }
 
 export async function install(db: SqlDb): Promise<void> {
-    await db.command('DROP TABLE IF EXISTS seatmaps, statuses')
+    await db.command('DROP TABLE IF EXISTS seatmapsV2, statusesV2')
 
     await createSeatmapsTable(db)
     await createStatusesTable(db)
@@ -26,7 +28,7 @@ export async function install(db: SqlDb): Promise<void> {
 }
 
 async function createSeatmapsTable(db: SqlDb): Promise<void> {
-    const seatmaps = `CREATE TABLE seatmaps (
+    const seatmaps = `CREATE TABLE seatmapsV2 (
     id VARCHAR(64) NOT NULL,
     name VARCHAR(256) NOT NULL,
     width INT NOT NULL,
@@ -34,21 +36,18 @@ async function createSeatmapsTable(db: SqlDb): Promise<void> {
     contents LONGTEXT NOT NULL,
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
-    )`
+)`
 
     await db.command(seatmaps)
 }
 
 async function createStatusesTable(db: SqlDb): Promise<void> {
-    // seat를 포함하는 것은 seatmap 외에도 block과 row가 있다.
-    // 그럼에도 block과 row를 제외한 것은 당장 사용하지 않기 때문이다.
-    // 향후에 기능이 확장/변경 되면서 statuses에 block과 row가 필요할 지 모른다.
-    // 그러면 그 때 마이그레이션을 하면 된다.
-    const statuses = `CREATE TABLE statuses (
+    const statuses = `CREATE TABLE statusesV2 (
         seatmapId VARCHAR(64) NOT NULL,
         seatId VARCHAR(64) NOT NULL,
+        sequence INT UNSIGNED NOT NULL,
         status VARCHAR(16) NOT NULL,
-        PRIMARY KEY (seatmapId,seatId)
+        PRIMARY KEY (seatmapId,seatId,sequence)
         )`
 
     await db.command(statuses)
@@ -59,7 +58,7 @@ async function insertSeatmap(db: SqlDb, seatmap: Seatmap): Promise<void> {
 
     const values = [[seatmap.id, seatmap.name, seatmap.width, seatmap.height, contents]]
 
-    await db.insert('INSERT INTO seatmaps(id,name,width,height,contents) VALUES ?', [values])
+    await db.insert('INSERT INTO seatmapsV2(id,name,width,height,contents) VALUES ?', [values])
 }
 
 async function insertStatus(db: SqlDb, seatmap: Seatmap): Promise<void> {
@@ -68,13 +67,13 @@ async function insertStatus(db: SqlDb, seatmap: Seatmap): Promise<void> {
     for (const block of seatmap.blocks) {
         for (const row of block.rows) {
             for (const seat of row.seats) {
-                const value = [seatmap.id, seat.id, 'available']
+                const value = [seatmap.id, seat.id, seat.sequence, 'available']
                 values.push(value)
             }
         }
     }
 
-    await db.insert('INSERT INTO statuses(seatmapId,seatId,status) VALUES ?', [values])
+    await db.insert('INSERT INTO statusesV2(seatmapId,seatId,sequence,status) VALUES ?', [values])
 }
 
 function createSeatmap(): Seatmap {
@@ -91,26 +90,31 @@ function createSeatmap(): Seatmap {
 
             for (let seatIdx = 0; seatIdx < seatLength; seatIdx++) {
                 const id = getSeatId(seatSequence)
-                const num = `SeatNumber_${seatIdx}`
-                const x = (blockIdx % 3) * seatLength * seatSize + seatIdx * seatSize
-                const y = Math.floor(blockIdx / 3) * rowLength * seatSize + rowIdx * seatSize
-                const region = { x, y, width: seatSize * 0.9, height: seatSize * 0.9 }
-                const seat = { id, num, region }
+                const num = `Seat_${seatIdx}`
+                const sequence = seatSequence
+                const region = {
+                    x: (blockIdx % 3) * seatLength * seatSize + seatIdx * seatSize,
+                    y: Math.floor(blockIdx / 3) * rowLength * seatSize + rowIdx * seatSize,
+                    width: seatSize * 0.9,
+                    height: seatSize * 0.9
+                }
+
+                const seat = { id, sequence, num, region }
 
                 seats.push(seat)
 
                 seatSequence += 1
             }
 
-            const id = `rowId_${rowIdx}`
-            const name = `RowName_${rowIdx}`
+            const id = `row_${rowIdx}`
+            const name = `Row_${rowIdx}`
             const row = { id, name, seats }
 
             rows.push(row)
         }
 
-        const id = `blockId_${blockIdx}`
-        const name = `BlockName_${blockIdx}`
+        const id = `block_${blockIdx}`
+        const name = `Block_${blockIdx}`
         const block = { id, name, rows }
 
         blocks.push(block)
@@ -135,17 +139,20 @@ const blocks = [
                 name: '가',
                 seats: [
                     {
-                        id: 'seat0001',
+                        id: 'seat001',
+                        sequence: 0,
                         num: '3',
                         region: { x: 0, y: 0, width: 2, height: 2 }
                     },
                     {
-                        id: 'seat0002',
+                        id: 'seat001',
+                        sequence: 1,
                         num: '2',
                         region: { x: 2, y: 0, width: 2, height: 2 }
                     },
                     {
-                        id: 'seat0003',
+                        id: 'seat001',
+                        sequence: 2,
                         num: '1',
                         region: { x: 4, y: 0, width: 2, height: 2 }
                     }

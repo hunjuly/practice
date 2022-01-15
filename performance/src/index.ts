@@ -1,10 +1,12 @@
 import cluster from 'cluster'
 import * as v1 from './v1'
+import * as v2 from './v2'
 import { App } from './app'
 import { processCount } from './environment'
 
 async function startPrimary() {
     await v1.install()
+    await v2.install()
 
     log.info(`Primary ${process.pid} is running`)
 

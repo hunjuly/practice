@@ -1,16 +1,6 @@
 import { SqlDb } from 'common'
-
-export type Region = { x: number; y: number; width: number; height: number }
-
-export type Seat = { id: string; num: string; region: Region }
-
-export type Row = { id: string; name: string; seats: Seat[] }
-
-export type Block = { id: string; name: string; rows: Row[] }
-
-export type Seatmap = { id: string; name: string; width: number; height: number; blocks: Block[] }
-
-export type SeatStatus = { seatId: string; status: 'available' | 'hold' | 'sold' }
+import { Seatmap, Block, SeatStatus } from './types'
+import { seatmapId } from './fixture'
 
 export class Repository {
     public static create(db: SqlDb) {
@@ -27,9 +17,9 @@ export class Repository {
         notUsed(seatmap)
     }
 
-    public async getSeatmap(seatmapId: string): Promise<Seatmap> {
+    public async getSeatmap() {
         const res = await this.db.query(
-            `SELECT id,name,width,height,contents FROM seatmaps WHERE id='${seatmapId}'`
+            `SELECT id,name,width,height,contents FROM seatmapsV1 WHERE id='${seatmapId}'`
         )
 
         const values = res as { id: string; name: string; contents: string; width: number; height: number }[]
@@ -43,15 +33,17 @@ export class Repository {
         return { id: value.id, name: value.name, width: value.width, height: value.height, blocks }
     }
 
-    public async getStatus(seatmapId: string): Promise<SeatStatus[]> {
-        const res = await this.db.query(`SELECT seatId,status FROM statuses WHERE seatmapId='${seatmapId}'`)
+    public async getStatuses() {
+        const res = await this.db.query(
+            `SELECT seatId, status FROM statusesV1 WHERE seatmapId='${seatmapId}' ORDER BY seatId`
+        )
 
         return res as SeatStatus[]
     }
 
-    public async setStatus(seatmapId: string, statuses: SeatStatus[]): Promise<boolean> {
+    public async setStatus(statuses: SeatStatus[]) {
         for (const status of statuses) {
-            const query = `UPDATE statuses SET status = '${status.status}' WHERE seatmapId = '${seatmapId}' AND seatId = '${status.seatId}'`
+            const query = `UPDATE statusesV1 SET status = '${status.status}' WHERE seatmapId = '${seatmapId}' AND seatId = '${status.seatId}'`
 
             const res = await this.db.command(query)
 

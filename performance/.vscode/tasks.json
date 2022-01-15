@@ -2,11 +2,11 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Runtime Infrastructure",
+            "label": "Infrastructure",
             "type": "shell",
             "command": "node",
             "args": [
-                "runtime.js",
+                "infrastructure.js",
                 "${input:SetupTask}"
             ]
         },
@@ -34,7 +34,7 @@
         {
             "type": "pickString",
             "id": "RunTask",
-            "description": "npm run cmd",
+            "description": "npm run $cmd",
             "options": [
                 "watch",
                 "profile",

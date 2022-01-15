@@ -20,3 +20,4 @@ export async function install() {
 
 export * from './repository'
 export * from './fixture'
+export * from './types'

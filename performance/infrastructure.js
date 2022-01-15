@@ -31,7 +31,7 @@ async function teardown() {
 }
 
 if (3 <= process.argv.length && 'teardown' === process.argv[2]) {
-    void clear()
+    void teardown()
 } else {
     void create()
 }

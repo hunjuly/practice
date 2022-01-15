@@ -1,7 +1,7 @@
 import { HttpRequest, StatusCode, utils } from 'common'
 import { port } from '../environment'
 import { App } from '../app'
-import { install, Seatmap, getSeatId, SeatStatus } from '.'
+import { install, getSeatId, Seatmap, SeatStatus } from '.'
 
 describe('index', () => {
     const host = `http://localhost:${port()}/v1`
@@ -11,7 +11,7 @@ describe('index', () => {
         await install()
 
         await app.start()
-    }, 60 * 1000)
+    })
 
     afterAll(async () => {
         await app.close()

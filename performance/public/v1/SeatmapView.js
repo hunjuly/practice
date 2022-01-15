@@ -79,3 +79,24 @@ function SeatmapView() {
         vertexRenderer.Draw(seatmap.width, seatmap.height, colors)
     }
 }
+
+async function createSeatmapView() {
+    const res = await fetch('/v1/seatmap')
+    const seatmap = await res.json()
+
+    const canvas = document.getElementById('glcanvas')
+
+    const seatmapView = new SeatmapView()
+    seatmapView.Initialize(seatmap, canvas)
+
+    const reload = async () => {
+        const res = await fetch('/v1/status')
+        const statuses = await res.json()
+
+        seatmapView.Draw(statuses)
+
+        setTimeout(reload, 1000)
+    }
+
+    reload()
+}

@@ -1,7 +1,7 @@
 import { HttpRequest, StatusCode, utils } from 'common'
 import { port } from '../environment'
 import { App } from '../app'
-import { install, Seatmap, getSeatId, SeatStatus } from '.'
+import { install, Seatmap, getSeatId, SeatStatus } from './'
 
 describe('index', () => {
     const host = `http://localhost:${port()}/v2`
@@ -28,11 +28,9 @@ describe('index', () => {
     test('좌석 상태 조회', async () => {
         const res = await HttpRequest.get(`${host}/status`)
 
-        const statuses = res.json() as number[]
+        const statuses = res.json() as SeatStatus[]
 
-        const expected = Math.ceil((9 * 100 * 100) / 64)
-
-        expect(statuses.length).toEqual(expected)
+        expect(statuses.length).toEqual(9 * 100 * 100)
     })
 
     test('좌석 상태 업데이트', async () => {
