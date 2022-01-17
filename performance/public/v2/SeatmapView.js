@@ -142,7 +142,7 @@ async function createSeatmapView() {
 
         seatmapView.Draw(holds, solds)
 
-        setTimeout(reload, 1000)
+        setTimeout(reload, 200)
     }
 
     reload()
