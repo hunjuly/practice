@@ -6,6 +6,6 @@
     "testMatch": ["<rootDir>/src/**/*.test.ts"],
     "collectCoverage": false,
     "collectCoverageFrom": ["<rootDir>/src/**/*.ts", "!<rootDir>/src/**/*.test.ts"],
-    "coverageDirectory": "output/coverage",
+    "coverageDirectory": "build/coverage",
     "coverageReporters": ["text", "lcov"]
 }

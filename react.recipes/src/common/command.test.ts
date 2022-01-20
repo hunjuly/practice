@@ -1,4 +1,10 @@
+import React from 'react'
+import { render, screen } from '@testing-library/react'
 import { useCommandContext } from './command'
+
+test('renders learn react link', () => {
+    render(<App />)
+})
 
 test('CommandContext', () => {
     const cmdCtx = useCommandContext()

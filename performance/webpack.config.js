@@ -13,7 +13,7 @@ module.exports = function (env, argv) {
             }
         ],
         output: {
-            path: resolve(__dirname, 'output/bin'),
+            path: resolve(__dirname, 'build/dist'),
             filename: 'index.js',
             libraryTarget: 'commonjs2',
             devtoolModuleFilenameTemplate: '../../[resource-path]'

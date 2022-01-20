@@ -5,21 +5,21 @@
     "author": "hunjuly@gmail.com",
     "main": "index.js",
     "scripts": {
-        "start": "node output/bin",
+        "start": "node build/dist",
         "watch": "npm-run-all -p watch:*",
         "watch:bundle": "webpack --watch --mode development",
-        "watch:nodemon": "nodemon --inspect output/bin",
+        "watch:nodemon": "nodemon --inspect build/dist",
         "build": "npm-run-all -s build:*",
-        "build:clean": "rm -rf output",
+        "build:clean": "rm -rf build",
         "build:prettier": "prettier -c --write src/**",
         "build:eslint": "eslint src/**",
         "build:compile": "tsc --noEmit true",
         "build:jest": "jest --no-cache --coverage --detectOpenHandles",
         "build:bundle": "webpack --mode production",
         "profile": "npm-run-all -s profile:*",
-        "profile:clean": "rm -rf output",
+        "profile:clean": "rm -rf build",
         "profile:bundle": "webpack --mode development",
-        "profile:start": "node --prof --no-logfile-per-isolate output/bin"
+        "profile:start": "node --prof --no-logfile-per-isolate build/dist"
     },
     "dependencies": {
         "@babel/runtime": "^7.16.0",
