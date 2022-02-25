@@ -6,12 +6,6 @@
         {
             "path": "performance"
         },
-        {
-            "path": "react.recipes"
-        },
-        {
-            "path": "articles"
-        }
     ],
     "extensions": {
         "recommendations": [
