@@ -1,6 +1,9 @@
 {
     "folders": [
         {
+            "path": "nestjs"
+        },
+        {
             "path": "common.node"
         },
         {
