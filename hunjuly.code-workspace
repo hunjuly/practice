@@ -8,7 +8,7 @@
         },
         {
             "path": "performance"
-        },
+        }
     ],
     "extensions": {
         "recommendations": [
@@ -34,8 +34,6 @@
         },
         "typescript.format.enable": false,
         "javascript.format.enable": false,
-        "prettier.resolveGlobalModules": true,
-        "prettier.prettierPath": "/usr/local/lib/node_modules/prettier",
         "[dockerfile]": {
             "editor.defaultFormatter": "ms-azuretools.vscode-docker"
         },
@@ -43,7 +41,6 @@
         "remote.downloadExtensionsLocally": true,
         "remote.autoForwardPorts": false,
         "workbench.iconTheme": "vscode-icons",
-        "jestrunner.jestPath": "/usr/local/bin/jest",
         "typescript.disableAutomaticTypeAcquisition": true
     }
 }
