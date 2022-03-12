@@ -4,6 +4,9 @@
             "path": "nestjs"
         },
         {
+            "path": "nextjs"
+        },
+        {
             "path": "common.node"
         },
         {
@@ -39,7 +42,6 @@
         },
         "typescript.tsc.autoDetect": "off",
         "remote.downloadExtensionsLocally": true,
-        "remote.autoForwardPorts": false,
         "workbench.iconTheme": "vscode-icons",
         "typescript.disableAutomaticTypeAcquisition": true
     }

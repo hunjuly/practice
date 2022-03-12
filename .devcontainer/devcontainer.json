@@ -13,8 +13,13 @@
         "esbenp.prettier-vscode",
         "firsttris.vscode-jest-runner"
     ],
-    "forwardPorts": [
-        3000
-    ],
     "postCreateCommand": "sh .devcontainer/postCreateCommand.sh"
+    // remote.autoForwardPorts이 true면 아래처럼 명시적으로 지정 할 필요가 없다.
+    // "forwardPorts": [
+    //     3000
+    // ],
+    // 다른 디바이스에서 접속하려면 아래 옵션을 활성화 해야 한다.
+    // "appPort": [
+    //     3000
+    // ],
 }
