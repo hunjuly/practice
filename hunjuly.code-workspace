@@ -7,6 +7,9 @@
             "path": "nextjs"
         },
         {
+            "path": "examples"
+        },
+        {
             "path": "common.node"
         },
         {

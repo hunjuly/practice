@@ -4,7 +4,9 @@ RUN apt update
 RUN apt upgrade -y
 
 # node에 반드시 필요한 것은 아니나, 자주 사용되기에 추가함
-RUN apt install -y jq tree libc6-dev gcc g++ libncurses5-dev libstdc++6 build-essential vim apache2-utils asciinema
+RUN apt install -y jq tree vim asciinema
+# ApacheBench
+RUN apt install -y apache2-utils
 
 # docker 설치, docker cli만 사용하기 때문에 아래처럼 간단하게 했다.
 RUN DOCKER_PKG="docker-20.10.1.tgz";\
