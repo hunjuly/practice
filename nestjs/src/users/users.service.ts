@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { ForbiddenException, HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 
@@ -20,8 +20,8 @@ export class UsersService {
     }
 
     findAll() {
-        throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
-
+        // throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
+        throw new ForbiddenException('message', 'description')
         return [{ email: 'test@gmail.com', self: '/users/12345' }]
     }
 
