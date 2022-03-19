@@ -55,9 +55,14 @@ export class LoggingInterceptor implements NestInterceptor {
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
+    // @Post()
+    // @Roles('admin')
+    // create(@Body(new ValidationPipe()) createUserDto: CreateUserDto) {
+    //     console.log(createUserDto)
+    //     return this.usersService.create(createUserDto)
+    // }
     @Post()
-    @Roles('admin')
-    create(@Body(new ValidationPipe()) createUserDto: CreateUserDto) {
+    create(@Body() createUserDto: CreateUserDto) {
         console.log(createUserDto)
         return this.usersService.create(createUserDto)
     }

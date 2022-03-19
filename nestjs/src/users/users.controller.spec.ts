@@ -20,18 +20,18 @@ describe('UsersController', () => {
         expect(controller).toBeDefined()
     })
 
-    it('user 생성', () => {
+    it('user 생성', async () => {
         const dto = { email: 'test@gmail.com', password: 'testpass' }
-        const actual = controller.create(dto)
+        const actual = await controller.create(dto)
 
         expect(actual.self).toBeDefined()
     })
 
-    it('user 생성 실패', () => {
+    it('user 생성 실패', async () => {
         // curl -d '{ "email": "test@gmail.com", "password": "testpass" }' -H "Content-Type: application/json" -X POST http://localhost:3000/users
 
         const dto = { email: 'test@gmail.com' } as CreateUserDto
-        const actual = controller.create(dto)
+        const actual = await controller.create(dto)
 
         expect(actual.self).toBeDefined()
     })
