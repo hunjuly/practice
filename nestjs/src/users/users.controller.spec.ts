@@ -1,50 +1,113 @@
-import { HttpException } from '@nestjs/common'
-import { Test, TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UsersController } from './users.controller'
 import { UsersService } from './users.service'
 
 describe('UsersController', () => {
     let controller: UsersController
+    let service: UsersService
 
     beforeEach(async () => {
-        const module: TestingModule = await Test.createTestingModule({
-            controllers: [UsersController],
-            providers: [UsersService]
-        }).compile()
+        const module = await createTestingModule()
 
         controller = module.get<UsersController>(UsersController)
+        service = module.get<UsersService>(UsersService)
     })
 
     it('should be defined', () => {
         expect(controller).toBeDefined()
     })
 
-    it('user 생성', async () => {
-        const dto = { email: 'test@gmail.com', password: 'testpass' }
+    it('create a user', async () => {
+        const dto = {
+            email: 'user1@test.com',
+            password: 'pass#001'
+        }
+
         const actual = await controller.create(dto)
+        const expected = expect.objectContaining({
+            id: expect.any(String),
+            email: 'user1@test.com'
+        })
 
-        expect(actual.self).toBeDefined()
+        expect(actual).toEqual(expected)
+        expect(service.create).toHaveBeenCalledWith(dto)
     })
 
-    it('user 생성 실패', async () => {
-        // curl -d '{ "email": "test@gmail.com", "password": "testpass" }' -H "Content-Type: application/json" -X POST http://localhost:3000/users
+    it('find all users ', async () => {
+        const actual = await controller.findAll()
+        const expected = userArray
 
-        const dto = { email: 'test@gmail.com' } as CreateUserDto
-        const actual = await controller.create(dto)
-
-        expect(actual.self).toBeDefined()
+        expect(actual).toEqual(expected)
+        expect(service.findAll).toHaveBeenCalled()
     })
 
-    it('user 삭제', () => {
-        const actual = controller.remove('userid')
+    it('find a user', async () => {
+        const actual = await controller.findOne('1')
+        const expected = expect.objectContaining({
+            id: '1',
+            email: expect.any(String)
+        })
 
-        expect(actual).toBe('The user was deleted successfully')
+        expect(actual).toEqual(expected)
+        expect(service.findOne).toHaveBeenCalledWith('1')
     })
 
-    it('user error', () => {
-        const actual = () => controller.findAll()
+    it('remove the user', async () => {
+        const actual = await controller.remove('2')
 
-        expect(actual).toThrow(HttpException)
+        expect(actual).toBeUndefined()
+        expect(service.remove).toHaveBeenCalledWith('2')
+    })
+
+    it('sample jest.spyOn', async () => {
+        // mock이 아닌 실제 인스턴스에 spy설치한다.
+        const spy = jest.spyOn(controller, 'remove')
+
+        await controller.remove('2')
+
+        expect(spy).toBeCalledWith('2')
     })
 })
+
+function createTestingModule() {
+    return Test.createTestingModule({
+        controllers: [UsersController],
+        providers: [
+            {
+                provide: UsersService,
+                useValue: {
+                    create: jest
+                        .fn()
+                        .mockImplementation((user: CreateUserDto) =>
+                            Promise.resolve({ id: 'uuid#1', ...user })
+                        ),
+                    findAll: jest.fn().mockResolvedValue(userArray),
+                    findOne: jest
+                        .fn()
+                        .mockImplementation((id: string) => Promise.resolve({ ...oneUser, id })),
+                    remove: jest.fn()
+                }
+            }
+        ]
+    }).compile()
+}
+
+const userArray = [
+    {
+        id: 'uuid#1',
+        email: 'user1@test.com',
+        password: 'pass#001'
+    },
+    {
+        id: 'uuid#2',
+        email: 'user2@test.com',
+        password: 'pass#001'
+    }
+]
+
+const oneUser = {
+    id: 'uuid#1',
+    email: 'user1@test.com',
+    password: 'pass#001'
+}

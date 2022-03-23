@@ -23,3 +23,4 @@ describe('AppController (e2e)', () => {
         return request(app.getHttpServer()).get('/users').expect(200).expect('Hello World!')
     })
 })
+// curl -d '{ "email": "test@gmail.com", "password": "testpass" }' -H "Content-Type: application/json" -X POST http://localhost:3000/users

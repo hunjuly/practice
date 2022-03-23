@@ -3,14 +3,14 @@ import { Photo } from '../../photos/entities/photo.entity'
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn()
-    id: number
+    @PrimaryGeneratedColumn('uuid')
+    id: string
 
     @Column()
-    firstName: string
+    email: string
 
     @Column()
-    lastName: string
+    password: string
 
     @Column({ default: true })
     isActive: boolean

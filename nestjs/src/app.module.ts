@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { UsersModule } from './users/users.module'
-import { UserHttpModule } from './users/users-http.module'
 import { PhotosModule } from './photos/photos.module'
 
 const typeOrm = TypeOrmModule.forRoot({
@@ -18,7 +17,7 @@ const typeOrm = TypeOrmModule.forRoot({
 })
 
 @Module({
-    imports: [UsersModule, UserHttpModule, typeOrm, PhotosModule],
+    imports: [UsersModule, typeOrm, PhotosModule],
     controllers: [AppController],
     providers: [AppService]
 })
