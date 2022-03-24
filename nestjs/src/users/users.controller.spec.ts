@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UsersController } from './users.controller'
-import { UsersService } from './users.service'
+import { UsersService } from 'src/users/users.service'
 
 describe('UsersController', () => {
     let controller: UsersController
@@ -58,15 +58,6 @@ describe('UsersController', () => {
 
         expect(actual).toBeUndefined()
         expect(service.remove).toHaveBeenCalledWith('2')
-    })
-
-    it('sample jest.spyOn', async () => {
-        // mock이 아닌 실제 인스턴스에 spy설치한다.
-        const spy = jest.spyOn(controller, 'remove')
-
-        await controller.remove('2')
-
-        expect(spy).toBeCalledWith('2')
     })
 })
 

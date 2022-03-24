@@ -3,7 +3,8 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 
 describe('AppController', () => {
-    let appController: AppController
+    let controller: AppController
+    let service: AppService
 
     beforeEach(async () => {
         const app: TestingModule = await Test.createTestingModule({
@@ -11,12 +12,16 @@ describe('AppController', () => {
             providers: [AppService]
         }).compile()
 
-        appController = app.get<AppController>(AppController)
+        controller = app.get<AppController>(AppController)
+        service = app.get<AppController>(AppController)
     })
 
-    describe('root', () => {
-        it('should return "Hello World!"', () => {
-            expect(appController.getHello()).toBe('Hello World!')
-        })
+    it('"Hello World!"', () => {
+        const spy = jest.spyOn(service, 'getHello')
+
+        const actual = controller.getHello()
+
+        expect(actual).toBe('Hello World!')
+        expect(spy).toBeCalled()
     })
 })

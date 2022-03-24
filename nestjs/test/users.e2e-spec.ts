@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
 import { AppModule } from 'src/app.module'
 
-describe('AppController (e2e)', () => {
+describe('UsersController (e2e)', () => {
     let app: INestApplication
 
     beforeEach(async () => {
@@ -19,7 +19,8 @@ describe('AppController (e2e)', () => {
         await app.close()
     })
 
-    it('/ (GET)', () => {
-        return request(app.getHttpServer()).get('/').expect(200).expect('Hello World!')
+    it('/users (GET)', () => {
+        return request(app.getHttpServer()).get('/users').expect(200).expect([])
     })
 })
+// curl -d '{ "email": "test@gmail.com", "password": "testpass" }' -H "Content-Type: application/json" -X POST http://localhost:3000/users

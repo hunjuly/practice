@@ -4,20 +4,10 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { UsersModule } from './users/users.module'
 import { PhotosModule } from './photos/photos.module'
-
-const typeOrm = TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: 'mysql',
-    port: 3306,
-    username: 'root',
-    password: 'password',
-    database: 'test',
-    autoLoadEntities: true,
-    synchronize: true
-})
+import { getOption } from './typeorm'
 
 @Module({
-    imports: [UsersModule, typeOrm, PhotosModule],
+    imports: [UsersModule, TypeOrmModule.forRoot(getOption()), PhotosModule],
     controllers: [AppController],
     providers: [AppService]
 })
