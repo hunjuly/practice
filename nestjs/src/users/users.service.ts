@@ -28,7 +28,7 @@ export class UsersService {
         const user = new User()
         user.email = createUserDto.email
         user.password = createUserDto.password
-        console.log(user)
+
         return this.usersRepository.save(user)
     }
 
