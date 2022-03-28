@@ -40,12 +40,16 @@
         },
         "typescript.format.enable": false,
         "javascript.format.enable": false,
-        "[dockerfile]": {
-            "editor.defaultFormatter": "ms-azuretools.vscode-docker"
-        },
         "typescript.tsc.autoDetect": "off",
         "remote.downloadExtensionsLocally": true,
         "workbench.iconTheme": "vscode-icons",
-        "typescript.disableAutomaticTypeAcquisition": true
+        "typescript.disableAutomaticTypeAcquisition": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "[dockerfile]": {
+            "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+        },
+        "[shellscript]": {
+            "editor.defaultFormatter": "foxundermoon.shell-format"
+        }
     }
 }
