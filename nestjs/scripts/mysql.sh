@@ -1,28 +1,66 @@
-dbName=mysql
+#! /bin/sh
+set -e
+cd "$(dirname "$0")"
 
-docker rm -f ${dbName}
-docker volume rm -f ${dbName}
+CONTAINER=practiceDb
 
-docker run -d --name mysql --network vscode \
-    -p 3306:3306 \
-    -e MYSQL_ROOT_PASSWORD=password \
-    --mount source="${dbName}",target=/var/lib/mysql,type=volume \
-    mysql
+DATABASE_TYPE='mysql'
+DATABASE_DATABASE='test'
+DATABASE_HOST=$CONTAINER
+DATABASE_PORT='3306'
+DATABASE_USERNAME='root'
+DATABASE_PASSWORD='password'
 
-i=0
+mysql() {
+    docker rm -f ${CONTAINER}
+    docker volume rm -f ${CONTAINER}
 
-while [ $i -lt 30 ]; do
-    found=$(docker logs mysql 2>&1 | grep -c "ready for connections. Version: '8.0.28'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306")
+    docker run -d --name ${CONTAINER} --network vscode \
+        -p ${DATABASE_PORT}:${DATABASE_PORT} \
+        -e MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD} \
+        --mount source="${CONTAINER}",target=/var/lib/mysql,type=volume \
+        mysql
 
-    if [ $found -gt 0 ]; then
-        docker exec mysql mysql -ppassword -e 'drop database if exists test;create database test;'
-        echo 'mysql booting success.('$i's)'
-        exit 0
-    else
-        i=$(($i + 1))
-        sleep 1s
-    fi
-done
+    i=0
+    while [ $i -lt 30 ]; do
+        set +e
+        found=$(docker logs ${CONTAINER} 2>&1 | grep -c "socket: '/var/run/mysqld/mysqld.sock'  port: ${DATABASE_PORT}")
+        set -e
 
-echo 'mysql booting failed.'
-exit 1
+        if [ $found -gt 0 ]; then
+            docker exec ${CONTAINER} mysql -p$DATABASE_PASSWORD -e "drop database if exists ${DATABASE_DATABASE};create database ${DATABASE_DATABASE};"
+            echo 'mysql booting success.('$i's)'
+            return 0
+        else
+            echo "wait for booting...$i"
+
+            i=$(($i + 1))
+            sleep 1s
+        fi
+    done
+
+    echo 'mysql booting failed.'
+    docker logs ${CONTAINER}
+    return 1
+}
+
+writeEnv() {
+    echo "DATABASE_TYPE=$DATABASE_TYPE" >../.env
+    echo "DATABASE_DATABASE=$DATABASE_DATABASE" >>../.env
+    echo "DATABASE_HOST=$DATABASE_HOST" >>../.env
+    echo "DATABASE_PORT=$DATABASE_PORT" >>../.env
+    echo "DATABASE_USERNAME=$DATABASE_USERNAME" >>../.env
+    echo "DATABASE_PASSWORD=$DATABASE_PASSWORD" >>../.env
+    echo "DATABASE_ENABLE_SYNC=true" >>../.env
+}
+
+mysql
+
+writeEnv
+
+echo 'press any key to stop'
+read ans
+
+docker rm -f $CONTAINER
+
+rm ../.env

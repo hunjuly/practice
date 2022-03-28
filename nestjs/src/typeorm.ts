@@ -1,7 +1,7 @@
 import 'dotenv/config'
-import { exit } from 'process'
+import { TypeOrmModule } from '@nestjs/typeorm'
 
-export function getOption() {
+export function getOrmModule() {
     const type = process.env['DATABASE_TYPE'] as 'mysql' | 'sqlite' | undefined
     const host = process.env['DATABASE_HOST']
     const portText = process.env['DATABASE_PORT']
@@ -11,15 +11,29 @@ export function getOption() {
     const database = process.env['DATABASE_DATABASE']
     const synchronize = process.env['DATABASE_ENABLE_SYNC'] === 'true'
 
-    if (type === undefined) {
-        console.log(`missing process.env['DATABASE_TYPE']`)
-        exit(1)
+    if (type && host && portText && port && username && password && database && synchronize) {
+        return TypeOrmModule.forRoot({
+            type,
+            host,
+            port,
+            username,
+            password,
+            database,
+            synchronize,
+            autoLoadEntities: true
+        })
     }
 
-    if (database === undefined) {
-        console.log(`missing process.env['DATABASE_DATABASE']`)
-        exit(1)
-    }
+    console.log('WARNING database connection is not set. using MEMORY DB.')
 
-    return { type, host, port, username, password, database, synchronize, autoLoadEntities: true }
+    return TypeOrmModule.forRoot({
+        type: 'sqlite' as 'mysql' | 'sqlite' | undefined,
+        database: ':memory:',
+        synchronize: true,
+        autoLoadEntities: true,
+        host,
+        port,
+        username,
+        password
+    })
 }
