@@ -12,7 +12,6 @@
         "ms-azuretools.vscode-docker",
         "esbenp.prettier-vscode",
         "firsttris.vscode-jest-runner",
-        "ms-vscode.live-server",
         "foxundermoon.shell-format"
     ],
     "initializeCommand": "docker network create vscode || true",

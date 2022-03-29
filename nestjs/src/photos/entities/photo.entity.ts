@@ -3,8 +3,8 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
 @Entity()
 export class Photo {
     @PrimaryGeneratedColumn()
-    id: number
+    id: string
 
     @Column()
-    user: number
+    user: string
 }
