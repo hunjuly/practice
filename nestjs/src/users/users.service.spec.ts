@@ -79,8 +79,7 @@ function createTestingModule() {
                         .mockImplementation((user: CreateUserDto) =>
                             Promise.resolve({ id: 'uuid#1', ...user })
                         ),
-                    remove: jest.fn(),
-                    delete: jest.fn()
+                    delete: jest.fn().mockImplementation(() => Promise.resolve({ affected: 1 }))
                 }
             }
         ]
