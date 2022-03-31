@@ -1,19 +1,16 @@
 {
     "folders": [
         {
+            "name": "nestjs",
             "path": "nestjs"
         },
         {
+            "name": "nextjs",
             "path": "nextjs"
         },
         {
-            "path": "examples"
-        },
-        {
-            "path": "common.node"
-        },
-        {
-            "path": "performance"
+            "name": "archive",
+            "path": "archive"
         }
     ],
     "extensions": {
