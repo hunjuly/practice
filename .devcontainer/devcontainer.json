@@ -20,7 +20,8 @@
         "vscode"
     ],
     "remoteEnv": {
-        "WORKSPACE_ROOT": "${containerWorkspaceFolder}"
+        "WORKSPACE_ROOT": "${containerWorkspaceFolder}",
+        "FILE_STORAGE": "/workspaces/files"
     },
     "postCreateCommand": "sh .devcontainer/postCreateCommand.sh"
     // remote.autoForwardPorts이 true면 아래처럼 명시적으로 지정 할 필요가 없다.
