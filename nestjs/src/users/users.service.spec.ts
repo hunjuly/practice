@@ -2,8 +2,41 @@ import { Test } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { User } from './entities/user.entity'
 import { UsersService } from './users.service'
+import { FilesService } from 'src/files/files.service'
 import { Repository } from 'typeorm'
-import { CreateUserDto } from './dto/create-user.dto'
+
+function createTestingModule() {
+    return Test.createTestingModule({
+        providers: [
+            UsersService,
+            {
+                provide: FilesService,
+                useValue: {
+                    create: jest.fn().mockResolvedValue(oneUser),
+                    findAll: jest.fn().mockResolvedValue(userArray),
+                    findOne: jest.fn().mockResolvedValue(oneUser),
+                    remove: jest.fn()
+                }
+            },
+            {
+                provide: getRepositoryToken(User),
+                useValue: {
+                    find: jest.fn().mockResolvedValue(userArray),
+                    findOne: jest.fn().mockResolvedValue(oneUser),
+                    save: jest.fn().mockResolvedValue(oneUser),
+                    delete: jest.fn().mockResolvedValue(deleteResult)
+                }
+            }
+        ]
+    }).compile()
+}
+
+const userArray = [
+    { id: 'uuid#1', email: 'user1@test.com' },
+    { id: 'uuid#2', email: 'user2@test.com' }
+]
+const oneUser = { id: 'uuid#1', email: 'user1@test.com' }
+const deleteResult = { affected: 1 }
 
 describe('UsersService', () => {
     let service: UsersService
@@ -13,6 +46,7 @@ describe('UsersService', () => {
         const module = await createTestingModule()
 
         service = module.get<UsersService>(UsersService)
+
         repository = module.get<Repository<User>>(getRepositoryToken(User))
     })
 
@@ -22,18 +56,17 @@ describe('UsersService', () => {
 
     it('create a user', async () => {
         const dto = {
-            email: 'user1@test.com',
+            email: 'user@test.com',
             password: 'pass#001'
         }
 
         const actual = await service.create(dto)
-        const expected = expect.objectContaining({
-            id: expect.any(String),
-            email: 'user1@test.com'
-        })
+        const expected = oneUser
 
         expect(actual).toEqual(expected)
-        expect(repository.save).toHaveBeenCalledWith(dto)
+        expect(repository.save).toHaveBeenCalledWith({
+            email: 'user@test.com'
+        })
     })
 
     it('find all users ', async () => {
@@ -45,62 +78,17 @@ describe('UsersService', () => {
     })
 
     it('find a user', async () => {
-        const actual = await service.findOne('1')
-        const expected = expect.objectContaining({
-            id: '1',
-            email: expect.any(String)
-        })
+        const actual = await service.findOne('userId#1')
+        const expected = oneUser
 
         expect(actual).toEqual(expected)
-        expect(repository.findOne).toHaveBeenCalledWith('1')
+        expect(repository.findOne).toHaveBeenCalledWith('userId#1')
     })
 
     it('remove the user', async () => {
-        const actual = await service.remove('2')
+        const actual = await service.remove('userId#2')
 
         expect(actual).toBeUndefined()
-        expect(repository.delete).toHaveBeenCalledWith('2')
+        expect(repository.delete).toHaveBeenCalledWith('userId#2')
     })
 })
-
-function createTestingModule() {
-    return Test.createTestingModule({
-        providers: [
-            UsersService,
-            {
-                provide: getRepositoryToken(User),
-                useValue: {
-                    find: jest.fn().mockResolvedValue(userArray),
-                    findOne: jest
-                        .fn()
-                        .mockImplementation((id: string) => Promise.resolve({ ...oneUser, id })),
-                    save: jest
-                        .fn()
-                        .mockImplementation((user: CreateUserDto) =>
-                            Promise.resolve({ id: 'uuid#1', ...user })
-                        ),
-                    delete: jest.fn().mockImplementation(() => Promise.resolve({ affected: 1 }))
-                }
-            }
-        ]
-    }).compile()
-}
-
-const userArray = [
-    {
-        id: 'uuid#1',
-        email: 'user1@test.com',
-        password: 'pass#001'
-    },
-    {
-        id: 'uuid#2',
-        email: 'user2@test.com',
-        password: 'pass#001'
-    }
-]
-
-const oneUser = {
-    id: 'uuid#1',
-    email: 'user1@test.com',
-    password: 'pass#001'
-}

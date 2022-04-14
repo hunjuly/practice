@@ -1,12 +1,6 @@
-# nestjs
+# market-service
 
-nestjs 테스트 프로젝트.
-
-## Installation
-
-```bash
-$ npm install
-```
+DataMarket services
 
 ## Debugging
 
@@ -19,8 +13,18 @@ $ npm install
 ## Running
 
 -   이 프로젝트를 실행하기 위해서 MySQL이 필요하다면 `scripts/mysql.sh`를 실행한다. 이 스크립트를 실행하면 접속 정보 등을 담고있는 `.env`가 생성된다.
+
     > DB를 정의하는 `.env`가 없다면 `sqlite(memory)`로 실행한다.
+
 -
+
+# tsconfig.json 변경사항
+
+## Installation
+
+```bash
+$ npm install
+```
 
 ## Running the app
 
@@ -47,3 +51,17 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+## Support
+
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+
+## Stay in touch
+
+-   Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
+-   Website - [https://nestjs.com](https://nestjs.com/)
+-   Twitter - [@nestframework](https://twitter.com/nestframework)
+
+## License
+
+Nest is [MIT licensed](LICENSE).

@@ -1,7 +1,30 @@
 import { Test } from '@nestjs/testing'
-import { CreateUserDto } from './dto/create-user.dto'
 import { UsersController } from './users.controller'
 import { UsersService } from './users.service'
+
+function createTestingModule() {
+    return Test.createTestingModule({
+        controllers: [UsersController],
+        providers: [
+            {
+                provide: UsersService,
+                useValue: {
+                    create: jest.fn().mockResolvedValue(oneUser),
+                    findAll: jest.fn().mockResolvedValue(userArray),
+                    findOne: jest.fn().mockResolvedValue(oneUser),
+                    remove: jest.fn()
+                }
+            }
+        ]
+    }).compile()
+}
+
+const userArray = [
+    { id: 'uuid#1', email: 'user1@test.com' },
+    { id: 'uuid#2', email: 'user2@test.com' }
+]
+
+const oneUser = { id: 'uuid#1', email: 'user1@test.com' }
 
 describe('UsersController', () => {
     let controller: UsersController
@@ -25,10 +48,7 @@ describe('UsersController', () => {
         }
 
         const actual = await controller.create(dto)
-        const expected = expect.objectContaining({
-            id: expect.any(String),
-            email: 'user1@test.com'
-        })
+        const expected = oneUser
 
         expect(actual).toEqual(expected)
         expect(service.create).toHaveBeenCalledWith(dto)
@@ -43,62 +63,17 @@ describe('UsersController', () => {
     })
 
     it('find a user', async () => {
-        const actual = await controller.findOne('1')
-        const expected = expect.objectContaining({
-            id: '1',
-            email: expect.any(String)
-        })
+        const actual = await controller.findOne('userId#1')
+        const expected = oneUser
 
         expect(actual).toEqual(expected)
-        expect(service.findOne).toHaveBeenCalledWith('1')
+        expect(service.findOne).toHaveBeenCalledWith('userId#1')
     })
 
     it('remove the user', async () => {
-        const actual = await controller.remove('2')
+        const actual = await controller.remove('userId#2')
 
         expect(actual).toBeUndefined()
-        expect(service.remove).toHaveBeenCalledWith('2')
+        expect(service.remove).toHaveBeenCalledWith('userId#2')
     })
 })
-
-function createTestingModule() {
-    return Test.createTestingModule({
-        controllers: [UsersController],
-        providers: [
-            {
-                provide: UsersService,
-                useValue: {
-                    create: jest
-                        .fn()
-                        .mockImplementation((user: CreateUserDto) =>
-                            Promise.resolve({ id: 'uuid#1', ...user })
-                        ),
-                    findAll: jest.fn().mockResolvedValue(userArray),
-                    findOne: jest
-                        .fn()
-                        .mockImplementation((id: string) => Promise.resolve({ ...oneUser, id })),
-                    remove: jest.fn()
-                }
-            }
-        ]
-    }).compile()
-}
-
-const userArray = [
-    {
-        id: 'uuid#1',
-        email: 'user1@test.com',
-        password: 'pass#001'
-    },
-    {
-        id: 'uuid#2',
-        email: 'user2@test.com',
-        password: 'pass#001'
-    }
-]
-
-const oneUser = {
-    id: 'uuid#1',
-    email: 'user1@test.com',
-    password: 'pass#001'
-}

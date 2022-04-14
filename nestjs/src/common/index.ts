@@ -35,3 +35,4 @@ export class LoggingInterceptor implements NestInterceptor {
 }
 
 export * from './Path_'
+export * from './utils'

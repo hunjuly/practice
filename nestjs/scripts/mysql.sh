@@ -2,7 +2,7 @@
 set -e
 cd "$(dirname "$0")"
 
-CONTAINER=practiceDb
+CONTAINER=$(basename $WORKSPACE_ROOT)
 
 DATABASE_TYPE='mysql'
 DATABASE_DATABASE='test'
@@ -15,7 +15,9 @@ mysql() {
     docker rm -f ${CONTAINER}
     docker volume rm -f ${CONTAINER}
 
-    docker run -d --name ${CONTAINER} --network vscode \
+    docker run \
+        --platform linux/amd64 \
+        -d --name ${CONTAINER} --network vscode \
         -p ${DATABASE_PORT}:${DATABASE_PORT} \
         -e MYSQL_ROOT_PASSWORD=${DATABASE_PASSWORD} \
         --mount source="${CONTAINER}",target=/var/lib/mysql,type=volume \

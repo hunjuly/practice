@@ -1,10 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm'
+import { User } from 'src/users/entities/user.entity'
 
 @Entity()
 export class Photo {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn('uuid')
     id: string
 
+    @ManyToOne((type) => User, (user) => user.photos)
+    user: User
+
     @Column()
-    user: string
+    data: string
 }

@@ -1,40 +1,19 @@
-import { Test } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
-import { AppModule } from 'src/app.module'
+import { createApp, closeApp } from './common'
 
-// curl -d '{ "email": "test@gmail.com", "password": "testpass" }' -H "Content-Type: application/json" -X POST http://localhost:3000/users
 describe('UsersController (e2e)', () => {
     let app: INestApplication
 
     beforeEach(async () => {
-        const module = await Test.createTestingModule({
-            imports: [AppModule]
-        }).compile()
-
-        app = module.createNestApplication()
-        await app.init()
+        app = await createApp()
     })
 
     afterEach(async () => {
-        await app.close()
+        await closeApp(app)
     })
 
-    it('/users (POST)', async () => {
-        const body = { email: 'test@gmail.com', password: 'testpass' }
-
-        const res = await request(app.getHttpServer()).post('/users').send(body)
-
-        expect(res.statusCode).toEqual(201)
-        expect(res.body).toEqual(
-            expect.objectContaining({
-                id: expect.any(String),
-                email: 'test@gmail.com'
-            })
-        )
-    })
-
-    async function createUser(email: string, password: string) {
+    async function createUser(email = 'default@ignore.com', password = 'default') {
         const res = await request(app.getHttpServer()).post('/users').send({ email, password })
 
         expect(res.statusCode).toEqual(201)
@@ -42,72 +21,91 @@ describe('UsersController (e2e)', () => {
         return res
     }
 
-    it('/users (GET)', async () => {
-        await createUser('test1@gmail.com', 'testpass')
-        await createUser('test2@gmail.com', 'testpass')
+    // curl -d '{ "email": "test@gmail.com", "password": "testpass" }' -H "Content-Type: application/json" -X POST http://localhost:3000/users
+    it('/users (POST)', async () => {
+        const res = await createUser('test@gmail.com', 'testpass')
 
-        const res = await request(app.getHttpServer()).get('/users')
-
-        expect(res.statusCode).toEqual(200)
-        expect(res.body.length).toEqual(2)
-        expect(res.body[0]).toEqual(
-            expect.objectContaining({
-                id: expect.any(String),
-                email: 'test1@gmail.com'
-            })
-        )
-        expect(res.body[1]).toEqual(
-            expect.objectContaining({
-                id: expect.any(String),
-                email: 'test2@gmail.com'
-            })
-        )
-    })
-
-    it('/users/:id (GET)', async () => {
-        const createRes = await createUser('test@gmail.com', 'testpass')
-
-        const createdUser = createRes.body as { id: string; email: string }
-
-        const res = await request(app.getHttpServer()).get(`/users/${createdUser.id}`)
-
-        expect(res.statusCode).toEqual(200)
+        expect(res.statusCode).toEqual(201)
         expect(res.body).toEqual(
             expect.objectContaining({
-                id: createdUser.id,
+                id: expect.any(String),
                 email: 'test@gmail.com'
             })
         )
     })
 
+    it('/users/:id (GET)', async () => {
+        const createRes = await createUser('test2@gmail.com')
+
+        const entity = createRes.body as { id: string }
+
+        const res = await request(app.getHttpServer()).get(`/users/${entity.id}`)
+
+        expect(res.statusCode).toEqual(200)
+        expect(res.body).toEqual(
+            expect.objectContaining({
+                id: entity.id,
+                email: 'test2@gmail.com'
+            })
+        )
+    })
+
+    it('password는 노출되면 안 된다.', async () => {
+        const createRes = await createUser('test2@gmail.com')
+
+        const entity = createRes.body as { id: string }
+
+        const res = await request(app.getHttpServer()).get(`/users/${entity.id}`)
+
+        expect(res.body).not.toEqual(
+            expect.objectContaining({
+                password: expect.any(String)
+            })
+        )
+    })
+
+    it('/users (GET)', async () => {
+        await createUser()
+        await createUser()
+
+        const res = await request(app.getHttpServer()).get('/users')
+
+        expect(res.statusCode).toEqual(200)
+        expect(res.body.length).toEqual(2)
+
+        const expectHasId = expect.objectContaining({ id: expect.any(String) })
+        expect(res.body[0]).toEqual(expectHasId)
+        expect(res.body[1]).toEqual(expectHasId)
+    })
+
     it('/users/:id (DELETE)', async () => {
-        const createRes = await createUser('test@gmail.com', 'testpass')
+        const createRes = await createUser()
 
-        const createdUser = createRes.body as { id: string; email: string }
+        const entity = createRes.body as { id: string }
 
-        const res1 = await request(app.getHttpServer()).delete(`/users/${createdUser.id}`)
+        const res1 = await request(app.getHttpServer()).delete(`/users/${entity.id}`)
         expect(res1.statusCode).toEqual(200)
 
-        const res2 = await request(app.getHttpServer()).get(`/users/${createdUser.id}`)
+        const res2 = await request(app.getHttpServer()).get(`/users/${entity.id}`)
         expect(res2.statusCode).toEqual(404)
     })
 
     it('/users/:id (PATCH)', async () => {
-        const createRes = await createUser('test@gmail.com', 'testpass')
+        const createRes = await createUser()
 
-        const createdUser = createRes.body as { id: string; email: string }
+        const entity = createRes.body as { id: string }
 
-        const res = await request(app.getHttpServer()).patch(`/users/${createdUser.id}`).send({
+        const res = await request(app.getHttpServer()).patch(`/users/${entity.id}`).send({
             email: 'new@gmail.com'
         })
 
         expect(res.statusCode).toEqual(200)
 
-        const getRes = await request(app.getHttpServer()).get(`/users/${createdUser.id}`)
+        const getRes = await request(app.getHttpServer()).get(`/users/${entity.id}`)
 
         expect(getRes.body).toEqual(
             expect.objectContaining({
-                id: createdUser.id,
+                id: entity.id,
                 email: 'new@gmail.com'
             })
         )
