@@ -4,11 +4,19 @@ import { User } from './entities/user.entity'
 import { UsersService } from './users.service'
 import { FilesService } from 'src/files/files.service'
 import { Repository } from 'typeorm'
+import * as bcrypt from 'bcrypt'
+import { AuthService } from 'src/auth/auth.service'
 
 function createTestingModule() {
     return Test.createTestingModule({
         providers: [
             UsersService,
+            {
+                provide: AuthService,
+                useValue: {
+                    createAccount: jest.fn()
+                }
+            },
             {
                 provide: FilesService,
                 useValue: {
@@ -41,17 +49,29 @@ const deleteResult = { affected: 1 }
 describe('UsersService', () => {
     let service: UsersService
     let repository: Repository<User>
+    let authService: AuthService
 
     beforeEach(async () => {
         const module = await createTestingModule()
 
         service = module.get<UsersService>(UsersService)
+        authService = module.get<AuthService>(AuthService)
 
         repository = module.get<Repository<User>>(getRepositoryToken(User))
     })
 
     it('should be defined', () => {
         expect(service).toBeDefined()
+    })
+
+    it('compare hash with salt ', async () => {
+        const saltOrRounds = 3
+        const password = 'random_password'
+        const hash = await bcrypt.hash(password, saltOrRounds)
+
+        const isMatch = await bcrypt.compare(password, hash)
+
+        expect(isMatch).toBeTruthy()
     })
 
     it('create a user', async () => {
@@ -64,9 +84,8 @@ describe('UsersService', () => {
         const expected = oneUser
 
         expect(actual).toEqual(expected)
-        expect(repository.save).toHaveBeenCalledWith({
-            email: 'user@test.com'
-        })
+        expect(repository.save).toHaveBeenCalledWith({ email: 'user@test.com' })
+        expect(authService.createAccount).toHaveBeenCalledWith(expect.any(String), 'pass#001')
     })
 
     it('find all users ', async () => {

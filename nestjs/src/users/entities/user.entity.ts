@@ -15,8 +15,8 @@ export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
-    @Column()
-    password: string
+    // @Column()
+    // password: string
 
     @Column()
     email: string
