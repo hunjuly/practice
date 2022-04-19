@@ -27,35 +27,24 @@ export class UsersService {
         return newUser
     }
 
+    async login(request: any) {
+        const user = await this.findOne(request.email)
+
+        return this.authService.login(user.id, request.password)
+    }
+
     async findAll() {
         const files = await this.fileService.findAll()
 
         return this.repository.find()
     }
 
-    // async findOne(id: string) {
-    //     const res = await this.repository.findOne(id)
+    async findOne(id: string) {
+        const res = await this.repository.findOne(id)
 
-    //     if (res === undefined) throw new NotFoundException()
+        if (res === undefined) throw new NotFoundException()
 
-    //     return res
-    // }
-
-    async findOne(email: string): Promise<User | undefined> {
-        const users = [
-            {
-                id: '1',
-                email: 'john',
-                password: 'changeme'
-            },
-            {
-                id: '2',
-                email: 'maria',
-                password: 'guess'
-            }
-        ] as unknown as User[]
-
-        return users.find((user) => user.email === email)
+        return res
     }
 
     async remove(id: string) {

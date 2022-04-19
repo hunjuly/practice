@@ -1,4 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe } from '@nestjs/common'
+import {
+    Controller,
+    Request,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    ValidationPipe,
+    UseGuards
+} from '@nestjs/common'
+import { LocalAuthGuard } from 'src/auth/local-auth.guard'
+import { JwtAuthGuard, Public } from 'src/auth/jwt-auth.guard'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
@@ -30,5 +43,17 @@ export class UsersController {
     @Delete(':id')
     remove(@Param('id') id: string) {
         return this.service.remove(id)
+    }
+
+    @UseGuards(LocalAuthGuard)
+    @Public()
+    @Post('auth/login')
+    async login(@Request() req) {
+        return this.service.login(req.user)
+    }
+
+    @Get('profile')
+    getProfile(@Request() req) {
+        return req.user
     }
 }

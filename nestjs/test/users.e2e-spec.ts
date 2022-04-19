@@ -34,6 +34,10 @@ describe('UsersController (e2e)', () => {
         )
     })
 
+    // it('/users/:id/profile (GET)', () => {
+    //     return request(app.getHttpServer()).get('/profile').expect(200)
+    // })
+
     it('/users/:id (GET)', async () => {
         const createRes = await createUser('test2@gmail.com')
 
