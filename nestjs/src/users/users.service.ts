@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { CreateUserDto } from './dto/create-user.dto'
@@ -17,6 +17,10 @@ export class UsersService {
     ) {}
 
     async create(createUserDto: CreateUserDto) {
+        const res = await this.repository.findOne({ where: { email: createUserDto.email } })
+
+        if (res) throw new ConflictException()
+
         const user = new User()
         user.email = createUserDto.email
 
@@ -27,10 +31,12 @@ export class UsersService {
         return newUser
     }
 
-    async login(request: any) {
-        const user = await this.findOne(request.email)
+    async get(id: string) {
+        const res = await this.repository.findOne(id)
 
-        return this.authService.login(user.id, request.password)
+        if (res === undefined) throw new NotFoundException()
+
+        return res
     }
 
     async findAll() {
@@ -39,8 +45,8 @@ export class UsersService {
         return this.repository.find()
     }
 
-    async findOne(id: string) {
-        const res = await this.repository.findOne(id)
+    async findByEmail(email: string) {
+        const res = await this.repository.findOne({ where: { email } })
 
         if (res === undefined) throw new NotFoundException()
 
@@ -57,5 +63,9 @@ export class UsersService {
         const res = await this.repository.update(id, updateUserDto)
 
         if (res.affected !== 1) throw new NotFoundException()
+    }
+
+    async login(payload: { id: string }) {
+        return this.authService.login(payload.id)
     }
 }

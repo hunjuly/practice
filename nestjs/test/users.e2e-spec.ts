@@ -1,6 +1,5 @@
 import { INestApplication } from '@nestjs/common'
-import * as request from 'supertest'
-import { createApp, closeApp } from './common'
+import { createApp, closeApp, post, get, del, patch } from './common'
 
 describe('UsersController (e2e)', () => {
     let app: INestApplication
@@ -14,72 +13,68 @@ describe('UsersController (e2e)', () => {
     })
 
     async function createUser(email = 'default@ignore.com', password = 'default') {
-        const res = await request(app.getHttpServer()).post('/users').send({ email, password })
-
-        expect(res.statusCode).toEqual(201)
-
-        return res
+        return post(app, '/users', { email, password })
     }
 
-    // curl -d '{ "email": "test@gmail.com", "password": "testpass" }' -H "Content-Type: application/json" -X POST http://localhost:3000/users
     it('/users (POST)', async () => {
-        const res = await createUser('test@gmail.com', 'testpass')
+        const res = await createUser('test@mail.com')
+
+        const expected = expect.objectContaining({
+            id: expect.any(String),
+            email: 'test@mail.com'
+        })
 
         expect(res.statusCode).toEqual(201)
-        expect(res.body).toEqual(
-            expect.objectContaining({
-                id: expect.any(String),
-                email: 'test@gmail.com'
-            })
-        )
+        expect(res.body).toEqual(expected)
     })
 
-    // it('/users/:id/profile (GET)', () => {
-    //     return request(app.getHttpServer()).get('/profile').expect(200)
-    // })
+    it('should be failed because user exists', async () => {
+        const first = await createUser('test@mail.com')
+        const second = await createUser('test@mail.com')
+
+        expect(first.statusCode).toEqual(201)
+        expect(second.statusCode).toEqual(409)
+    })
+
+    it('/users/login', async () => {
+        await createUser('test@mail.com', 'testpass')
+
+        const res = await post(app, '/users/login', { email: 'test@mail.com', password: 'testpass' })
+
+        const expected = { access_token: expect.any(String) }
+
+        expect(res.statusCode).toEqual(201)
+        expect(res.body).toEqual(expected)
+    })
 
     it('/users/:id (GET)', async () => {
-        const createRes = await createUser('test2@gmail.com')
+        const createRes = await createUser('test2@mail.com')
 
         const entity = createRes.body as { id: string }
 
-        const res = await request(app.getHttpServer()).get(`/users/${entity.id}`)
+        const res = await get(app, `/users/${entity.id}`)
+
+        const expected = expect.objectContaining({
+            id: entity.id,
+            email: 'test2@mail.com'
+        })
 
         expect(res.statusCode).toEqual(200)
-        expect(res.body).toEqual(
-            expect.objectContaining({
-                id: entity.id,
-                email: 'test2@gmail.com'
-            })
-        )
-    })
-
-    it('password는 노출되면 안 된다.', async () => {
-        const createRes = await createUser('test2@gmail.com')
-
-        const entity = createRes.body as { id: string }
-
-        const res = await request(app.getHttpServer()).get(`/users/${entity.id}`)
-
-        expect(res.body).not.toEqual(
-            expect.objectContaining({
-                password: expect.any(String)
-            })
-        )
+        expect(res.body).toEqual(expected)
     })
 
     it('/users (GET)', async () => {
-        await createUser()
-        await createUser()
+        await createUser('test1@mail.com')
+        await createUser('test2@mail.com')
 
-        const res = await request(app.getHttpServer()).get('/users')
+        const res = await get(app, '/users')
+
+        const expected = expect.objectContaining({ id: expect.any(String) })
 
         expect(res.statusCode).toEqual(200)
         expect(res.body.length).toEqual(2)
-
-        const expectHasId = expect.objectContaining({ id: expect.any(String) })
-        expect(res.body[0]).toEqual(expectHasId)
-        expect(res.body[1]).toEqual(expectHasId)
+        expect(res.body[0]).toEqual(expected)
+        expect(res.body[1]).toEqual(expected)
     })
 
     it('/users/:id (DELETE)', async () => {
@@ -87,10 +82,10 @@ describe('UsersController (e2e)', () => {
 
         const entity = createRes.body as { id: string }
 
-        const res1 = await request(app.getHttpServer()).delete(`/users/${entity.id}`)
-        expect(res1.statusCode).toEqual(200)
+        const res1 = await del(app, `/users/${entity.id}`)
+        const res2 = await get(app, `/users/${entity.id}`)
 
-        const res2 = await request(app.getHttpServer()).get(`/users/${entity.id}`)
+        expect(res1.statusCode).toEqual(200)
         expect(res2.statusCode).toEqual(404)
     })
 
@@ -99,19 +94,15 @@ describe('UsersController (e2e)', () => {
 
         const entity = createRes.body as { id: string }
 
-        const res = await request(app.getHttpServer()).patch(`/users/${entity.id}`).send({
-            email: 'new@gmail.com'
-        })
+        const patchRes = await patch(app, `/users/${entity.id}`, { email: 'new@mail.com' })
+        const getRes = await get(app, `/users/${entity.id}`)
 
-        expect(res.statusCode).toEqual(200)
+        const expected = {
+            id: entity.id,
+            email: 'new@mail.com'
+        }
 
-        const getRes = await request(app.getHttpServer()).get(`/users/${entity.id}`)
-
-        expect(getRes.body).toEqual(
-            expect.objectContaining({
-                id: entity.id,
-                email: 'new@gmail.com'
-            })
-        )
+        expect(patchRes.statusCode).toEqual(200)
+        expect(getRes.body).toEqual(expect.objectContaining(expected))
     })
 })

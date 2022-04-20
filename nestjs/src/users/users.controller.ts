@@ -10,16 +10,17 @@ import {
     ValidationPipe,
     UseGuards
 } from '@nestjs/common'
-import { LocalAuthGuard } from 'src/auth/local-auth.guard'
-import { JwtAuthGuard, Public } from 'src/auth/jwt-auth.guard'
+import { Public } from 'src/auth/jwt-auth.guard'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
+import { LocalAuthGuard } from './local-auth.guard'
 
 @Controller('users')
 export class UsersController {
     constructor(private readonly service: UsersService) {}
 
+    @Public()
     @Post()
     create(@Body(new ValidationPipe()) createUserDto: CreateUserDto) {
         return this.service.create(createUserDto)
@@ -32,7 +33,7 @@ export class UsersController {
 
     @Get(':id')
     findOne(@Param('id') id: string) {
-        return this.service.findOne(id)
+        return this.service.get(id)
     }
 
     @Patch(':id')
@@ -45,15 +46,15 @@ export class UsersController {
         return this.service.remove(id)
     }
 
-    @UseGuards(LocalAuthGuard)
-    @Public()
-    @Post('auth/login')
-    async login(@Request() req) {
-        return this.service.login(req.user)
-    }
-
     @Get('profile')
     getProfile(@Request() req) {
         return req.user
+    }
+
+    @UseGuards(LocalAuthGuard)
+    @Public()
+    @Post('login')
+    async login(@Request() req) {
+        return this.service.login(req.user)
     }
 }
