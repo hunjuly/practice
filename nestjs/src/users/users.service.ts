@@ -65,7 +65,7 @@ export class UsersService {
         if (res.affected !== 1) throw new NotFoundException()
     }
 
-    async login(payload: { id: string }) {
-        return this.authService.login(payload.id)
+    async login(payload: { id: string }, session: Record<string, any>) {
+        return this.authService.login(payload.id, session)
     }
 }

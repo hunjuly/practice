@@ -1,4 +1,4 @@
-import { SetMetadata } from '@nestjs/common'
+import { Logger, SetMetadata } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { Injectable, CanActivate, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common'
 import { Observable } from 'rxjs'
@@ -28,9 +28,11 @@ export class LoggingInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         console.log('Before...')
 
+        const logger = new Logger('Logger')
+
         const now = Date.now()
 
-        return next.handle().pipe(tap(() => console.log(`After... ${Date.now() - now}ms`)))
+        return next.handle().pipe(tap(() => logger.log(`After... ${Date.now() - now}ms`)))
     }
 }
 

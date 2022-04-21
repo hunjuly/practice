@@ -40,9 +40,11 @@ export class AuthService {
         return null
     }
 
-    async login(userId: string) {
-        return {
-            access_token: this.jwtService.sign({ id: userId })
-        }
+    async login(userId: string, session: Record<string, any>) {
+        const access_token = this.jwtService.sign({ id: userId })
+
+        session.access_token = access_token
+
+        return { access_token }
     }
 }

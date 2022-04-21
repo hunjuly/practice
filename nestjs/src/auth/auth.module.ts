@@ -6,6 +6,7 @@ import { jwtConstants } from './constants'
 import { JwtStrategy } from './jwt.strategy'
 import { Authentication } from './entities/authentication.entity'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { AuthSerializer } from './serialization.provider'
 
 @Module({
     imports: [
@@ -16,7 +17,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
             signOptions: { expiresIn: '360s' }
         })
     ],
-    providers: [AuthService, JwtStrategy],
+    providers: [AuthService, JwtStrategy, AuthSerializer],
     exports: [AuthService]
 })
 export class AuthModule {}

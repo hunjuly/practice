@@ -10,7 +10,7 @@ import {
     ValidationPipe,
     UseGuards
 } from '@nestjs/common'
-import { Public } from 'src/auth/jwt-auth.guard'
+import { Public, SessionGuard } from 'src/auth/jwt-auth.guard'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
@@ -26,11 +26,13 @@ export class UsersController {
         return this.service.create(createUserDto)
     }
 
+    // @UseGuards(SessionGuard)
     @Get()
     findAll() {
         return this.service.findAll()
     }
 
+    @Public()
     @Get(':id')
     findOne(@Param('id') id: string) {
         return this.service.get(id)
@@ -55,6 +57,6 @@ export class UsersController {
     @Public()
     @Post('login')
     async login(@Request() req) {
-        return this.service.login(req.user)
+        return this.service.login(req.user, req.session)
     }
 }

@@ -14,6 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(payload: any) {
+        console.log('---------------3', payload)
         // 여기에서 db와 비교해서 검증하는거 넣는다.
         return { userId: payload.userId }
     }
