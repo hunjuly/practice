@@ -35,6 +35,14 @@ export class UsersController {
         return { url: `/users/${req.user.id}` }
     }
 
+    @Delete('logout')
+    @Redirect()
+    async logout(@Request() req) {
+        await req.logOut()
+
+        return { url: `/login` }
+    }
+
     @Get()
     findAll() {
         return this.service.findAll()

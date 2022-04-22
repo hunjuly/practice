@@ -1,18 +1,11 @@
 import { CanActivate, ExecutionContext, INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { AppModule } from 'src/app.module'
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { UserGuard } from 'src/auth/user.guard'
 import * as request from 'supertest'
 
 class MockAuthGuard implements CanActivate {
     canActivate(context: ExecutionContext) {
-        // const request = context.switchToHttp().getRequest()
-
-        // request.user = {
-        //     password: 'user#1',
-        //     email: 'notused@test.net'
-        // }
-
         return true
     }
 }
@@ -21,7 +14,7 @@ export async function createApp() {
     const moduleRef = await Test.createTestingModule({
         imports: [AppModule]
     })
-        .overrideProvider(JwtAuthGuard)
+        .overrideProvider(UserGuard)
         .useClass(MockAuthGuard)
         .compile()
 
@@ -35,18 +28,34 @@ export async function closeApp(app: INestApplication) {
     return app.close()
 }
 
-export async function post(app: INestApplication, path: string, body: object) {
-    return request(app.getHttpServer()).post(path).send(body)
+function addHeader(req: request.Test, headers: object[]) {
+    headers.map((header) => {
+        req.set(header)
+    })
+
+    return req
 }
 
-export async function patch(app: INestApplication, path: string, body: object) {
-    return request(app.getHttpServer()).patch(path).send(body)
+export function post(app: INestApplication, path: string, body: object, headers: object[] = []) {
+    const req = request(app.getHttpServer()).post(path).send(body)
+
+    return addHeader(req, headers)
 }
 
-export async function get(app: INestApplication, path: string) {
-    return request(app.getHttpServer()).get(path)
+export function patch(app: INestApplication, path: string, body: object, headers: object[] = []) {
+    const req = request(app.getHttpServer()).patch(path).send(body)
+
+    return addHeader(req, headers)
 }
 
-export async function del(app: INestApplication, path: string) {
-    return request(app.getHttpServer()).delete(path)
+export function get(app: INestApplication, path: string, headers: object[] = []) {
+    const req = request(app.getHttpServer()).get(path)
+
+    return addHeader(req, headers)
+}
+
+export function del(app: INestApplication, path: string, headers: object[] = []) {
+    const req = request(app.getHttpServer()).delete(path)
+
+    return addHeader(req, headers)
 }

@@ -36,15 +36,13 @@ describe('UsersController (e2e)', () => {
         expect(second.statusCode).toEqual(409)
     })
 
-    it('/users/login', async () => {
+    // auth에서 하고 있다.
+    it.skip('/users/login', async () => {
         await createUser('test@mail.com', 'testpass')
 
         const res = await post(app, '/users/login', { email: 'test@mail.com', password: 'testpass' })
 
-        const expected = { access_token: expect.any(String) }
-
-        expect(res.statusCode).toEqual(201)
-        expect(res.body).toEqual(expected)
+        expect(res.statusCode).toEqual(302)
     })
 
     it('/users/:id (GET)', async () => {

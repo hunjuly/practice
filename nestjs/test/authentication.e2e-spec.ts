@@ -1,8 +1,7 @@
 import { Test } from '@nestjs/testing'
 import { AppModule } from 'src/app.module'
 import { INestApplication } from '@nestjs/common'
-import * as request from 'supertest'
-import { post, get } from './common'
+import { post, get, del } from './common'
 
 describe('authentication (e2e)', () => {
     let app: INestApplication
@@ -21,7 +20,7 @@ describe('authentication (e2e)', () => {
     })
 
     let userId: string
-    let accessToken: string
+    let cookie: string
 
     // curl http://localhost:3000/users -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" | jq
     it('create a new user', async () => {
@@ -36,18 +35,16 @@ describe('authentication (e2e)', () => {
     it('login the user', async () => {
         const res = await post(app, '/users/login', { email: 'test@mail.com', password: 'testpass' })
 
-        const expected = { access_token: expect.any(String) }
+        // < Set-Cookie: connect.sid=s%3AQu2pnp84rzMhMik5w1w8ijslwStFT1Ow0; Path=/; HttpOnly
+        const cookies = res.headers['set-cookie'][0].split(';')
+        cookie = cookies[0]
 
-        expect(res.body).toEqual(expected)
-
-        accessToken = res.body.access_token
+        expect(res.statusCode).toEqual(302)
     })
 
-    // curl http://localhost:3000/users -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2Vybm..."
+    // curl http://localhost:3000/users --cookie "connect.sid=s%3AW263OQ3h8lMvJrqGc;"
     it('get user info with JWT', async () => {
-        const res = await request(app.getHttpServer())
-            .get(`/users/${userId}`)
-            .set({ Authorization: `Bearer ${accessToken}` })
+        const res = await get(app, `/users/${userId}`, [{ cookie: cookie }])
 
         const expected = expect.objectContaining({
             id: userId,
@@ -58,32 +55,16 @@ describe('authentication (e2e)', () => {
         expect(res.body).toEqual(expected)
     })
 
+    // curl -X delete http://localhost:3000/users/logout --cookie "connect.sid=s%3AW263OQ3h8lMvJrqGc;"
     it('logout the user', async () => {
-        const res = await post(app, '/users/logout', { access_token: 'test@mail.com' })
+        const res = await del(app, '/users/logout', [{ cookie: cookie }])
 
-        expect(res.statusCode).toEqual(201)
+        expect(res.statusCode).toEqual(302)
     })
 
     it('should be failed after logout', async () => {
-        const res = await request(app.getHttpServer())
-            .get(`/users/${userId}`)
-            .set({ Authorization: `Bearer ${accessToken}` })
+        const res = await get(app, `/users/${userId}`, [{ cookie: cookie }])
 
-        expect(res.statusCode).toEqual(401)
+        expect(res.statusCode).toEqual(403)
     })
 })
-
-// < HTTP/1.1 201 Created
-// < X-Powered-By: Express
-// < Content-Type: application/json; charset=utf-8
-// < Content-Length: 206
-// < ETag: W/"ce-bF/hnGuTD1O8o7SpA786nJz77WE"
-// < Set-Cookie: connect.sid=s%3AQu2pnp84rzMhMi_zPipBgI6SZdRmX7Xy.4YU6uom6I3m0P0dPip5jVV96k5w1w8ijslwStFT1Ow0; Path=/; HttpOnly
-// < Date: Thu, 21 Apr 2022 09:13:12 GMT
-// < Connection: keep-alive
-// < Keep-Alive: timeout=5
-// curl http://localhost:3000/users --cookie "connect.sid=s%3AWmVZ3FKk3VsuWBbDWc5gjG0SOm7gFPfu.HfT3YqSv%2BjIn%2FXjHClm6EfchJYH2ivQUDcj8QVZetb8;" -v | jq
-
-// curl http://localhost:3000/users -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" | jq;
-// curl http://localhost:3000/users/login -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" -v| jq
-// curl http://localhost:3000/users --cookie "connect.sid=s%3AW263vC4sZsKqQS_jL9fZg6cVlINQ-2UK.L6gNu6XL68w0%2FyNPQ24%2Bgr9mfvC%2BtDOQ3h8lMvJrqGc;" -v | jq
