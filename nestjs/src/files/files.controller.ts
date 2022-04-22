@@ -7,7 +7,8 @@ import {
     Param,
     Delete,
     UseInterceptors,
-    UploadedFile
+    UploadedFile,
+    UseGuards
 } from '@nestjs/common'
 import { FilesService } from './files.service'
 import { UpdateFileDto } from './dto/update-file.dto'
@@ -16,8 +17,10 @@ import { Express } from 'express'
 import { diskStorage } from 'multer'
 import { utils, Path } from 'src/common'
 import { CreateFileDto } from './dto/create-file.dto'
+import { UserGuard } from 'src/auth/user.guard'
 
 @Controller('files')
+@UseGuards(UserGuard)
 export class FilesController {
     constructor(private readonly filesService: FilesService) {}
 

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { UpdateFileDto } from './dto/update-file.dto'
-import { CreateFileServiceDto } from './dto/create-file.service.dto'
+import { CreateFileServiceDto } from './dto/create-file-service.dto'
 import { File } from './entities/file.entity'
 
 @Injectable()

@@ -7,7 +7,7 @@ import { FilesModule } from './files/files.module'
 import { createOrmModule } from './typeorm'
 import { AuthModule } from './auth/auth.module'
 import { APP_GUARD } from '@nestjs/core'
-import { JwtAuthGuard } from './auth/jwt-auth.guard'
+import { UserGuard } from './auth/user.guard'
 import * as session from 'express-session'
 import * as passport from 'passport'
 
@@ -16,16 +16,19 @@ import * as passport from 'passport'
     controllers: [AppController],
     providers: [
         AppService,
+        // app.useGlobalGuards()로 하는 것과 뭐가 다른 건가?
         {
             provide: APP_GUARD,
-            useExisting: JwtAuthGuard
+            useExisting: UserGuard
         },
-        JwtAuthGuard
+        UserGuard
     ]
 })
 export class AppModule implements NestModule {
     constructor() {}
 
+    // TODO
+    // session은 typeorm처럼 받아오게 하자
     configure(consumer: MiddlewareConsumer) {
         consumer
             .apply(
@@ -40,5 +43,3 @@ export class AppModule implements NestModule {
             .forRoutes('*')
     }
 }
-
-// app.use(passport.authenticate('session'))

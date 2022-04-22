@@ -3,7 +3,7 @@ import { PassportSerializer } from '@nestjs/passport'
 import { AuthService } from './auth.service'
 
 class Payload {
-    id: number
+    id: string
 }
 
 @Injectable()
@@ -12,14 +12,10 @@ export class AuthSerializer extends PassportSerializer {
         super()
     }
     serializeUser(user: Payload, done: (err: Error, user: Payload) => void) {
-        console.log('---------------1', JSON.stringify(user))
-
         done(null, user)
     }
 
-    deserializeUser(payload: Payload, done: (err: Error, user: Omit<Payload, 'password'>) => void) {
-        console.log('---------------2', payload)
-
+    deserializeUser(payload: Payload, done: (err: Error, user: Payload) => void) {
         done(null, payload)
     }
 }

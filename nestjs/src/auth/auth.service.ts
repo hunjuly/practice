@@ -9,12 +9,12 @@ import { Repository } from 'typeorm'
 export class AuthService {
     constructor(
         @InjectRepository(Authentication)
-        private repository: Repository<Authentication>,
-        private jwtService: JwtService
+        private repository: Repository<Authentication>
     ) {}
 
     async createAccount(userId: string, password: string) {
-        const saltOrRounds = 10
+        // 7을 선택한 이유는 없다. 적당히 골랐다.
+        const saltOrRounds = 7
         const hashed = await bcrypt.hash(password, saltOrRounds)
 
         const auth = new Authentication()
@@ -24,27 +24,13 @@ export class AuthService {
         await this.repository.save(auth)
     }
 
-    async validateUser(userId: string, password: string): Promise<any> {
-        return {
-            id: '1',
-            email: 'john'
+    async validateUser(userId: string, password: string) {
+        const auth = await this.repository.findOne(userId)
+
+        if (auth) {
+            return await bcrypt.compare(password, auth.password)
         }
 
-        // const user = await this.usersService.findOne(username)
-
-        // if (user && user.password === pass) {
-        //     const { password, ...result } = user
-        //     return result
-        // }
-
-        return null
-    }
-
-    async login(userId: string, session: Record<string, any>) {
-        const access_token = this.jwtService.sign({ id: userId })
-
-        session.access_token = access_token
-
-        return { access_token }
+        return false
     }
 }

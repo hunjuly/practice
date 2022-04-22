@@ -84,7 +84,6 @@ describe('authentication (e2e)', () => {
 // < Keep-Alive: timeout=5
 // curl http://localhost:3000/users --cookie "connect.sid=s%3AWmVZ3FKk3VsuWBbDWc5gjG0SOm7gFPfu.HfT3YqSv%2BjIn%2FXjHClm6EfchJYH2ivQUDcj8QVZetb8;" -v | jq
 
-
-curl http://localhost:3000/users -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" | jq;
-curl http://localhost:3000/users/login -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" -v| jq
-curl http://localhost:3000/users --cookie "connect.sid=s%3AxpNykqrxYDkzgtnlYO48g9RPiGwOSGMx.xDpj%2B3nqWPUVX3mhV7D7X2fThrhzv30hkaMykfvVpwg;" -v | jq
+// curl http://localhost:3000/users -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" | jq;
+// curl http://localhost:3000/users/login -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" -v| jq
+// curl http://localhost:3000/users --cookie "connect.sid=s%3AW263vC4sZsKqQS_jL9fZg6cVlINQ-2UK.L6gNu6XL68w0%2FyNPQ24%2Bgr9mfvC%2BtDOQ3h8lMvJrqGc;" -v | jq
