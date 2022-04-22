@@ -3,23 +3,6 @@ import { Readable } from 'stream'
 import { FilesController } from './files.controller'
 import { FilesService } from './files.service'
 
-function createTestingModule() {
-    return Test.createTestingModule({
-        controllers: [FilesController],
-        providers: [
-            {
-                provide: FilesService,
-                useValue: {
-                    create: jest.fn().mockResolvedValue(oneFile),
-                    findAll: jest.fn().mockResolvedValue(fileArray),
-                    findOne: jest.fn().mockResolvedValue(oneFile),
-                    remove: jest.fn()
-                }
-            }
-        ]
-    }).compile()
-}
-
 const fileArray = [
     {
         id: 'uuid#1',
@@ -50,10 +33,23 @@ describe('FilesController', () => {
     let service: FilesService
 
     beforeEach(async () => {
-        const module = await createTestingModule()
+        const module = await Test.createTestingModule({
+            controllers: [FilesController],
+            providers: [
+                {
+                    provide: FilesService,
+                    useValue: {
+                        create: jest.fn().mockResolvedValue(oneFile),
+                        findAll: jest.fn().mockResolvedValue(fileArray),
+                        findOne: jest.fn().mockResolvedValue(oneFile),
+                        remove: jest.fn()
+                    }
+                }
+            ]
+        }).compile()
 
-        controller = module.get<FilesController>(FilesController)
-        service = module.get<FilesService>(FilesService)
+        controller = module.get(FilesController)
+        service = module.get(FilesService)
     })
 
     it('should be defined', () => {

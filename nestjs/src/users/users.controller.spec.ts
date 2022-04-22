@@ -2,23 +2,6 @@ import { Test } from '@nestjs/testing'
 import { UsersController } from './users.controller'
 import { UsersService } from './users.service'
 
-function createTestingModule() {
-    return Test.createTestingModule({
-        controllers: [UsersController],
-        providers: [
-            {
-                provide: UsersService,
-                useValue: {
-                    create: jest.fn().mockResolvedValue(oneUser),
-                    findAll: jest.fn().mockResolvedValue(userArray),
-                    findOne: jest.fn().mockResolvedValue(oneUser),
-                    remove: jest.fn()
-                }
-            }
-        ]
-    }).compile()
-}
-
 const userArray = [
     { id: 'uuid#1', email: 'user1@test.com' },
     { id: 'uuid#2', email: 'user2@test.com' }
@@ -31,10 +14,23 @@ describe('UsersController', () => {
     let service: UsersService
 
     beforeEach(async () => {
-        const module = await createTestingModule()
+        const module = await Test.createTestingModule({
+            controllers: [UsersController],
+            providers: [
+                {
+                    provide: UsersService,
+                    useValue: {
+                        create: jest.fn().mockResolvedValue(oneUser),
+                        findAll: jest.fn().mockResolvedValue(userArray),
+                        get: jest.fn().mockResolvedValue(oneUser),
+                        remove: jest.fn()
+                    }
+                }
+            ]
+        }).compile()
 
-        controller = module.get<UsersController>(UsersController)
-        service = module.get<UsersService>(UsersService)
+        controller = module.get(UsersController)
+        service = module.get(UsersService)
     })
 
     it('should be defined', () => {
@@ -67,7 +63,7 @@ describe('UsersController', () => {
         const expected = oneUser
 
         expect(actual).toEqual(expected)
-        expect(service.findOne).toHaveBeenCalledWith('userId#1')
+        expect(service.get).toHaveBeenCalledWith('userId#1')
     })
 
     it('remove the user', async () => {

@@ -12,8 +12,8 @@ describe('FilesService', () => {
     beforeEach(async () => {
         const module = await createTestingModule()
 
-        service = module.get<FilesService>(FilesService)
-        repository = module.get<Repository<File>>(getRepositoryToken(File))
+        service = module.get(FilesService)
+        repository = module.get(getRepositoryToken(File))
     })
 
     it('should be defined', () => {
