@@ -8,21 +8,18 @@ import {
     UpdateDateColumn,
     VersionColumn
 } from 'typeorm'
-import { Photo } from 'src/photos/entities/photo.entity'
+import { Authentication } from 'src/auth/entities/authentication.entity'
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
-    // @Column()
-    // password: string
-
     @Column()
     email: string
 
-    @OneToMany((type) => Photo, (photo) => photo.user)
-    photos: Photo[]
+    @OneToMany(() => Authentication, (auth) => auth.user)
+    auths: Authentication[]
 
     @Column({ default: true })
     isActive: boolean

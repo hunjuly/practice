@@ -21,18 +21,18 @@ export class UsersService {
 
         if (res) throw new ConflictException()
 
-        const user = new User()
-        user.email = createUserDto.email
+        const value = new User()
+        value.email = createUserDto.email
 
-        const newUser = await this.repository.save(user)
+        const user = await this.repository.save(value)
 
-        await this.authService.createAccount(newUser.id, createUserDto.password)
+        await this.authService.createAccount(user, createUserDto.password)
 
-        return newUser
+        return user
     }
 
-    async get(id: string) {
-        const res = await this.repository.findOne(id)
+    async get(userId: string) {
+        const res = await this.repository.findOne(userId)
 
         if (res === undefined) throw new NotFoundException()
 
@@ -53,14 +53,18 @@ export class UsersService {
         return res
     }
 
-    async remove(id: string) {
-        const res = await this.repository.delete(id)
+    async remove(userId: string) {
+        const user = await this.get(userId)
+
+        await this.authService.removeAccount(user)
+
+        const res = await this.repository.delete(user.id)
 
         if (res.affected !== 1) throw new NotFoundException()
     }
 
-    async update(id: string, updateUserDto: UpdateUserDto) {
-        const res = await this.repository.update(id, updateUserDto)
+    async update(userId: string, updateUserDto: UpdateUserDto) {
+        const res = await this.repository.update(userId, updateUserDto)
 
         if (res.affected !== 1) throw new NotFoundException()
     }

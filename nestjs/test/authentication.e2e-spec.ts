@@ -31,7 +31,7 @@ describe('authentication (e2e)', () => {
         userId = res.body.id
     })
 
-    // curl http://localhost:3000/users/login -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" -v| jq
+    // curl http://localhost:3000/users/login -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" -v
     it('login the user', async () => {
         const res = await post(app, '/users/login', { email: 'test@mail.com', password: 'testpass' })
 

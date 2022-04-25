@@ -2,12 +2,29 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "npm run",
+            "label": "1. test",
             "type": "shell",
             "command": "npm",
             "args": [
                 "run",
                 "${input:RunTask}"
+            ]
+        },
+        {
+            "label": "2. run",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "start:debug"
+            ]
+        },
+        {
+            "label": "3. mysql",
+            "type": "shell",
+            "command": "sh",
+            "args": [
+                "scripts/mysql.sh"
             ]
         }
     ],

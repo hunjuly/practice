@@ -3,6 +3,7 @@ import * as bcrypt from 'bcrypt'
 import { Authentication } from './entities/authentication.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { User } from 'src/users/entities/user.entity'
 
 @Injectable()
 export class AuthService {
@@ -11,20 +12,26 @@ export class AuthService {
         private repository: Repository<Authentication>
     ) {}
 
-    async createAccount(userId: string, password: string) {
+    async createAccount(user: User, password: string) {
         // 7을 선택한 이유는 없다. 적당히 골랐다.
         const saltOrRounds = 7
         const hashed = await bcrypt.hash(password, saltOrRounds)
 
         const auth = new Authentication()
-        auth.userId = userId
+        auth.user = user
         auth.password = hashed
 
         await this.repository.save(auth)
     }
 
-    async validateUser(userId: string, password: string) {
-        const auth = await this.repository.findOne(userId)
+    async removeAccount(user: User) {
+        const auth = await this.repository.findOne({ where: { user } })
+
+        await this.repository.delete(auth.id)
+    }
+
+    async validateUser(user: User, password: string) {
+        const auth = await this.repository.findOne({ where: { user } })
 
         if (auth) {
             return await bcrypt.compare(password, auth.password)

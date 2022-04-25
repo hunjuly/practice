@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm'
 import { exit } from 'process'
+import { Logger } from '@nestjs/common'
 
 type DatabaseType = 'mysql' | 'sqlite' | undefined
 const type = process.env['DATABASE_TYPE'] as DatabaseType
@@ -22,7 +23,9 @@ export let ormOption: TypeOrmModuleOptions = {
     type: 'sqlite' as DatabaseType,
     database: ':memory:',
     synchronize: true,
-    autoLoadEntities: true
+    autoLoadEntities: true,
+    logger: 'advanced-console',
+    logging: ['error', 'warn', 'info', 'log']
 }
 
 if (type && host && portText && port && username && password && database && synchronize) {

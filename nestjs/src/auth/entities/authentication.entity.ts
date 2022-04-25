@@ -1,9 +1,13 @@
-import { Entity, Column, UpdateDateColumn, PrimaryColumn } from 'typeorm'
+import { User } from 'src/users/entities/user.entity'
+import { Entity, Column, UpdateDateColumn, PrimaryGeneratedColumn, ManyToOne } from 'typeorm'
 
 @Entity()
 export class Authentication {
-    @PrimaryColumn('uuid')
-    userId: string
+    @PrimaryGeneratedColumn()
+    id: number
+
+    @ManyToOne(() => User, (user) => user.auths)
+    user: User
 
     @Column()
     password: string
