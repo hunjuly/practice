@@ -95,6 +95,8 @@ mysql
 echo ""
 echo "docker exec -it $MYSQL_CONTAINER mysql -p$TYPEORM_PASSWORD"
 echo "docker run --rm -it --network vscode redis redis-cli -h $REDIS_CONTAINER"
+echo "keys *"
+echo "get (key)"
 echo ""
 echo 'press any key to stop'
 read ans

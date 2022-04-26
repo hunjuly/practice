@@ -1,4 +1,4 @@
-import { Inject, MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
+import { Inject, MiddlewareConsumer, Module, NestModule, Session } from '@nestjs/common'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { UsersModule } from './users/users.module'
@@ -9,11 +9,10 @@ import { APP_GUARD } from '@nestjs/core'
 import { UserGuard } from './auth/user.guard'
 import * as passport from 'passport'
 import * as session from 'express-session'
-import { RedisClient } from 'redis'
-import { REDIS, RedisModule, redisSessionOpt } from './redis'
+import { createSessionModule, SessionService } from './session'
 
 @Module({
-    imports: [createOrmModule(), UsersModule, FilesModule, AuthModule, RedisModule],
+    imports: [createOrmModule(), UsersModule, FilesModule, AuthModule, createSessionModule()],
     controllers: [AppController],
     providers: [
         AppService,
@@ -26,19 +25,11 @@ import { REDIS, RedisModule, redisSessionOpt } from './redis'
     ]
 })
 export class AppModule implements NestModule {
-    constructor(@Inject(REDIS) private readonly redis: RedisClient) {}
+    constructor( private readonly sessionService: SessionService) {}
 
-    // TODO
-    // session은 typeorm처럼 받아오게 하자
     configure(consumer: MiddlewareConsumer) {
         consumer
-            .apply(session(redisSessionOpt(this.redis)), passport.initialize(), passport.session())
+            .apply(session(this.sessionService.getOpt()), passport.initialize(), passport.session())
             .forRoutes('*')
     }
-}
-
-const sessionOpt2 = {
-    secret: 'my-secret',
-    resave: false,
-    saveUninitialized: false
 }
