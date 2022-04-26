@@ -1,11 +1,11 @@
-import { Inject, MiddlewareConsumer, Module, NestModule, Session } from '@nestjs/common'
+import { Inject, MiddlewareConsumer, Module, NestModule, Session, ValidationPipe } from '@nestjs/common'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { UsersModule } from './users/users.module'
 import { FilesModule } from './files/files.module'
 import { createOrmModule } from './typeorm'
 import { AuthModule } from './auth/auth.module'
-import { APP_GUARD } from '@nestjs/core'
+import { APP_GUARD, APP_PIPE } from '@nestjs/core'
 import { UserGuard } from './auth/user.guard'
 import * as passport from 'passport'
 import * as session from 'express-session'
@@ -16,16 +16,19 @@ import { createSessionModule, SessionService } from './session'
     controllers: [AppController],
     providers: [
         AppService,
-        // app.useGlobalGuards()로 하는 것과 뭐가 다른 건가?
         {
             provide: APP_GUARD,
             useExisting: UserGuard
+        },
+        {
+            provide: APP_PIPE,
+            useClass: ValidationPipe
         },
         UserGuard
     ]
 })
 export class AppModule implements NestModule {
-    constructor( private readonly sessionService: SessionService) {}
+    constructor(private readonly sessionService: SessionService) {}
 
     configure(consumer: MiddlewareConsumer) {
         consumer

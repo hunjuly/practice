@@ -7,32 +7,29 @@ import {
     Patch,
     Param,
     Delete,
-    ValidationPipe,
     UseGuards,
-    Redirect
+    Redirect,
+    ParseUUIDPipe
 } from '@nestjs/common'
 import { Public } from 'src/auth/public'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { LocalAuthGuard } from './local-auth.guard'
-import { ApiOperation, ApiProperty } from '@nestjs/swagger'
 
 @Controller('users')
 export class UsersController {
     constructor(private readonly service: UsersService) {}
 
     /**
-     * @description
      * A list of user's roles
      * @example ['admin']
      */
     @Post()
     @Public()
-    create(@Body(new ValidationPipe()) createUserDto: CreateUserDto) {
+    create(@Body() createUserDto: CreateUserDto) {
         return this.service.create(createUserDto)
     }
-    // @ApiOperation({ description: 'Create some resource' })
 
     @Post('login')
     @Public()
@@ -56,17 +53,17 @@ export class UsersController {
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
+    findOne(@Param('id', ParseUUIDPipe) id: string) {
         return this.service.get(id)
     }
 
     @Patch(':id')
-    update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
         return this.service.update(id, updateUserDto)
     }
 
     @Delete(':id')
-    remove(@Param('id') id: string) {
+    remove(@Param('id', ParseUUIDPipe) id: string) {
         return this.service.remove(id)
     }
 

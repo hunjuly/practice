@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsUUID } from 'class-validator'
+import { IsEmail, IsNotEmpty, IsUUID } from 'class-validator'
 
 export class CreateUserDto {
     /**
      * A list of user's roles?
      * @example ['admin']
      */
-    @IsUUID()
+    @IsEmail()
     email: string
 
     @IsNotEmpty()
