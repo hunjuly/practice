@@ -16,16 +16,23 @@ import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { LocalAuthGuard } from './local-auth.guard'
+import { ApiOperation, ApiProperty } from '@nestjs/swagger'
 
 @Controller('users')
 export class UsersController {
     constructor(private readonly service: UsersService) {}
 
+    /**
+     * @description
+     * A list of user's roles
+     * @example ['admin']
+     */
     @Post()
     @Public()
     create(@Body(new ValidationPipe()) createUserDto: CreateUserDto) {
         return this.service.create(createUserDto)
     }
+    // @ApiOperation({ description: 'Create some resource' })
 
     @Post('login')
     @Public()

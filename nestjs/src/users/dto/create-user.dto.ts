@@ -1,8 +1,13 @@
-import { IsString } from 'class-validator'
+import { IsNotEmpty, IsUUID } from 'class-validator'
 
 export class CreateUserDto {
-    @IsString()
+    /**
+     * A list of user's roles?
+     * @example ['admin']
+     */
+    @IsUUID()
     email: string
-    @IsString()
+
+    @IsNotEmpty()
     password: string
 }

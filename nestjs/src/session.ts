@@ -39,6 +39,7 @@ export function createSessionModule() {
 
 @Injectable()
 export class SessionService implements OnModuleInit {
+    // redis: RedisClient 사용 여부를 생성자에서 알아야 한다.
     constructor(private moduleRef: ModuleRef) {
         this.redis = undefined
     }
