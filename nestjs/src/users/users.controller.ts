@@ -9,23 +9,47 @@ import {
     Delete,
     UseGuards,
     Redirect,
-    ParseUUIDPipe,
-    ParseBoolPipe,
-    Query
+    ParseUUIDPipe
 } from '@nestjs/common'
 import { Public } from 'src/auth/public'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { LocalAuthGuard } from './local-auth.guard'
+import { ApiExtraModels, ApiOkResponse, ApiProperty, getSchemaPath, PickType } from '@nestjs/swagger'
+import { User } from './entities/user.entity'
+
+export class PaginatedDto<TData> {
+    @ApiProperty()
+    total: number
+
+    @ApiProperty()
+    limit: number
+
+    @ApiProperty()
+    offset: number
+
+    results: TData[]
+}
+
+export class UserDto extends PickType(User, [
+    'id',
+    'email',
+    'isActive',
+    'role',
+    'createDate',
+    'updateDate'
+] as const) {
+    link: string
+}
 
 @Controller('users')
+@ApiExtraModels(PaginatedDto, UserDto)
 export class UsersController {
     constructor(private readonly service: UsersService) {}
 
     /**
      * A list of user's roles?
-     * @example ['admin']
      */
     @Post()
     @Public()
@@ -51,19 +75,51 @@ export class UsersController {
 
     @Get()
     @Public()
+    @ApiOkResponse({
+        schema: {
+            allOf: [
+                { $ref: getSchemaPath(PaginatedDto) },
+                {
+                    properties: {
+                        results: {
+                            type: 'array',
+                            items: { $ref: getSchemaPath(UserDto) }
+                        }
+                    }
+                }
+            ]
+        }
+    })
+    // @ApiOkResponse({
+    //     description: 'The record has been successfully created.',
+    //     type: UserDto
+    // })
     findAll() {
-        return [
+        const values = [
             {
                 id: '4dc4db1b-d28f-48a8-8860-45f6485e91b1',
                 email: 'test@mail.com',
                 isActive: true,
                 role: 'user',
-                createDate: '2022-04-26T07:12:57.000Z',
-                updateDate: '2022-04-26T07:12:57.000Z',
+                createDate: new Date('2022-04-26T07:12:57.000Z'),
+                updateDate: new Date('2022-04-26T07:12:57.000Z'),
                 deleteDate: null,
                 version: 1
             }
         ]
+
+        const results = new Array<UserDto>()
+
+        values.map(({ deleteDate, version, role, ...dto }) => {
+            results.push({ ...dto, link: '', role: 'abcd' })
+        })
+
+        return {
+            total: 1999,
+            limit: 10,
+            offset: 3,
+            results
+        }
         // return this.service.findAll()
     }
 
