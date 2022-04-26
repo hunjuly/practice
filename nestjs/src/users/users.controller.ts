@@ -9,7 +9,9 @@ import {
     Delete,
     UseGuards,
     Redirect,
-    ParseUUIDPipe
+    ParseUUIDPipe,
+    ParseBoolPipe,
+    Query
 } from '@nestjs/common'
 import { Public } from 'src/auth/public'
 import { UsersService } from './users.service'
@@ -22,7 +24,7 @@ export class UsersController {
     constructor(private readonly service: UsersService) {}
 
     /**
-     * A list of user's roles
+     * A list of user's roles?
      * @example ['admin']
      */
     @Post()
@@ -48,8 +50,21 @@ export class UsersController {
     }
 
     @Get()
+    @Public()
     findAll() {
-        return this.service.findAll()
+        return [
+            {
+                id: '4dc4db1b-d28f-48a8-8860-45f6485e91b1',
+                email: 'test@mail.com',
+                isActive: true,
+                role: 'user',
+                createDate: '2022-04-26T07:12:57.000Z',
+                updateDate: '2022-04-26T07:12:57.000Z',
+                deleteDate: null,
+                version: 1
+            }
+        ]
+        // return this.service.findAll()
     }
 
     @Get(':id')
