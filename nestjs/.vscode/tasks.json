@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "1. test",
+            "label": "test",
             "type": "shell",
             "command": "npm",
             "args": [
@@ -11,7 +11,7 @@
             ]
         },
         {
-            "label": "2. run",
+            "label": "run",
             "type": "shell",
             "command": "npm",
             "args": [
@@ -20,11 +20,11 @@
             ]
         },
         {
-            "label": "3. mysql",
+            "label": "infra",
             "type": "shell",
             "command": "sh",
             "args": [
-                "scripts/mysql.sh"
+                "scripts/bootup_infra.sh"
             ]
         }
     ],
