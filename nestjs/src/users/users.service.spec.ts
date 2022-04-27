@@ -38,7 +38,7 @@ describe('UsersService', () => {
                     provide: getRepositoryToken(User),
                     useValue: {
                         findOne: jest.fn().mockResolvedValue(oneUser),
-                        find: jest.fn().mockResolvedValue(userArray),
+                        findAndCount: jest.fn().mockResolvedValue([userArray, 2]),
                         save: jest.fn().mockResolvedValue(oneUser),
                         delete: jest.fn().mockResolvedValue(deleteResult)
                     }
@@ -56,11 +56,14 @@ describe('UsersService', () => {
     })
 
     it('find all users ', async () => {
-        const actual = await service.findAll()
-        const expected = userArray
+        const [items, count] = await service.findAll({ offset: 0, limit: 10 })
+        const expected1 = expect.objectContaining(userArray[0])
+        const expected2 = expect.objectContaining(userArray[1])
 
-        expect(actual).toEqual(expected)
-        expect(repository.find).toHaveBeenCalled()
+        expect(count).toEqual(2)
+        expect(items[0]).toEqual(expected1)
+        expect(items[1]).toEqual(expected2)
+        expect(repository.findAndCount).toHaveBeenCalled()
     })
 
     it('find a user', async () => {

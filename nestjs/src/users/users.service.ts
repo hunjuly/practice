@@ -4,15 +4,14 @@ import { Repository } from 'typeorm'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './entities/user.entity'
-import { FilesService } from 'src/files/files.service'
 import { AuthService } from 'src/auth/auth.service'
+import { PageDto } from 'src/common/pagination'
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User)
         private repository: Repository<User>,
-        private readonly fileService: FilesService,
         private readonly authService: AuthService
     ) {}
 
@@ -39,10 +38,18 @@ export class UsersService {
         return res
     }
 
-    async findAll() {
-        const files = await this.fileService.findAll()
+    async count() {
+        return this.repository.count()
+    }
 
-        return this.repository.find()
+    async findAll(page: PageDto) {
+        return this.repository.findAndCount({
+            skip: page.offset,
+            take: page.limit,
+            order: {
+                id: 'DESC'
+            }
+        })
     }
 
     async findByEmail(email: string) {

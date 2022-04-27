@@ -64,5 +64,5 @@ async function logout(cookie: string) {
     // curl -X delete http://localhost:3000/users/logout --cookie "connect.sid=s%3AW263OQ3h8lMvJrqGc;"
     const res = await del(app, '/users/logout', [{ cookie: cookie }])
 
-    expect(res.statusCode).toEqual(302)
+    expect(res.statusCode).toEqual(200)
 }

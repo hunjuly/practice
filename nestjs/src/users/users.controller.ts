@@ -11,95 +11,83 @@ import {
     Redirect,
     ParseUUIDPipe
 } from '@nestjs/common'
+import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiProperty, OmitType } from '@nestjs/swagger'
+import { ApiPaginatedResponse, PageDto, PageQuery } from 'src/common/pagination'
 import { Public } from 'src/auth/public'
+import { LocalAuthGuard } from 'src/auth/local-auth.guard'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { LocalAuthGuard } from './local-auth.guard'
-import { ApiExtraModels, ApiOkResponse, ApiProperty, ApiQuery, PickType } from '@nestjs/swagger'
 import { User } from './entities/user.entity'
-import { ApiPaginatedResponse, Paginate, Page } from 'src/common/pagination'
+import { LoginUserDto } from './dto/login-user.dto'
 
-export class UserDto extends PickType(User, [
-    'id',
-    'email',
-    'isActive',
-    'role',
-    'createDate',
-    'updateDate'
-] as const) {
+class UserDto extends OmitType(User, ['auths', 'deleteDate'] as const) {
     @ApiProperty()
     link: string
+
+    static from(user: User) {
+        const { auths, deleteDate, ...value } = user
+
+        const link = `/users/${value.id}`
+
+        return { ...value, link }
+    }
 }
 
 @Controller('users')
-@ApiExtraModels(UserDto)
 export class UsersController {
     constructor(private readonly service: UsersService) {}
 
     /**
-     * A list of user's roles?
+     * 사용자 생성
      */
     @Post()
     @Public()
-    create(@Body() createUserDto: CreateUserDto) {
-        return this.service.create(createUserDto)
+    @ApiCreatedResponse({ type: UserDto })
+    async create(@Body() createUserDto: CreateUserDto) {
+        const item = await this.service.create(createUserDto)
+
+        return UserDto.from(item)
     }
 
     @Post('login')
     @Public()
     @UseGuards(LocalAuthGuard)
-    @Redirect()
+    @Redirect('/users', 302)
+    @ApiBody({ type: LoginUserDto })
     login(@Request() req) {
-        return { url: `/users/${req.user.id}` }
+        return { url: `/users/${req.user.id}`, statusCode: 302 }
     }
 
     @Delete('logout')
-    @Redirect()
     async logout(@Request() req) {
         await req.logOut()
-
-        return { url: `/login` }
     }
 
     @Get()
     @Public()
     @ApiPaginatedResponse(UserDto)
-    findAll(@Page() page?: Paginate) {
-        const values = [
-            {
-                id: '4dc4db1b-d28f-48a8-8860-45f6485e91b1',
-                email: 'test@mail.com',
-                isActive: true,
-                role: 'user',
-                createDate: new Date('2022-04-26T07:12:57.000Z'),
-                updateDate: new Date('2022-04-26T07:12:57.000Z'),
-                deleteDate: null,
-                version: 1
-            }
-        ]
+    async findAll(@PageQuery() page: PageDto) {
+        const [items, count] = await this.service.findAll(page)
 
         const results = new Array<UserDto>()
 
-        values.map(({ deleteDate, version, role, ...dto }) => {
-            const link = `/users/${dto.id}`
+        items.map((item) => results.push(UserDto.from(item)))
 
-            results.push({ ...dto, link, role: 'abcd' })
-        })
-
-        return results
         return {
-            total: 1999,
-            limit: 10,
-            offset: 3,
+            total: count,
+            limit: page.limit,
+            offset: page.offset,
             results
         }
-        // return this.service.findAll()
     }
 
     @Get(':id')
-    findOne(@Param('id', ParseUUIDPipe) id: string) {
-        return this.service.get(id)
+    @ApiOkResponse({ type: UserDto })
+    async findOne(@Param('id', ParseUUIDPipe) id: string) {
+        const item = await this.service.get(id)
+
+        return UserDto.from(item)
     }
 
     @Patch(':id')
@@ -110,10 +98,5 @@ export class UsersController {
     @Delete(':id')
     remove(@Param('id', ParseUUIDPipe) id: string) {
         return this.service.remove(id)
-    }
-
-    @Get('profile')
-    getProfile(@Request() req) {
-        return req.user
     }
 }

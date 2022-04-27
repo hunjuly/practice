@@ -60,10 +60,12 @@ describe('UsersController (e2e)', () => {
 
         const expected = expect.objectContaining({ id: expect.any(String) })
 
+        const results = res.body.results
+
         expect(res.statusCode).toEqual(200)
-        expect(res.body.length).toEqual(2)
-        expect(res.body[0]).toEqual(expected)
-        expect(res.body[1]).toEqual(expected)
+        expect(results.length).toEqual(2)
+        expect(results[0]).toEqual(expected)
+        expect(results[1]).toEqual(expected)
     })
 
     it('/users/:id (DELETE)', async () => {

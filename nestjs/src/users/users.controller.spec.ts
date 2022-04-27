@@ -21,9 +21,10 @@ describe('UsersController', () => {
                     provide: UsersService,
                     useValue: {
                         create: jest.fn().mockResolvedValue(oneUser),
-                        findAll: jest.fn().mockResolvedValue(userArray),
+                        findAll: jest.fn().mockResolvedValue([userArray, 2]),
                         get: jest.fn().mockResolvedValue(oneUser),
-                        remove: jest.fn()
+                        remove: jest.fn(),
+                        count: jest.fn().mockResolvedValue(99)
                     }
                 }
             ]
@@ -44,23 +45,25 @@ describe('UsersController', () => {
         }
 
         const actual = await controller.create(dto)
-        const expected = oneUser
+        const expected = expect.objectContaining(oneUser)
 
         expect(actual).toEqual(expected)
         expect(service.create).toHaveBeenCalledWith(dto)
     })
 
     it('find all users ', async () => {
-        const actual = await controller.findAll()
-        const expected = userArray
+        const actual = await controller.findAll({ offset: 0, limit: 10 })
+        const expected1 = expect.objectContaining(userArray[0])
+        const expected2 = expect.objectContaining(userArray[1])
 
-        expect(actual).toEqual(expected)
+        expect(actual.results[0]).toEqual(expected1)
+        expect(actual.results[1]).toEqual(expected2)
         expect(service.findAll).toHaveBeenCalled()
     })
 
     it('find a user', async () => {
         const actual = await controller.findOne('userId#1')
-        const expected = oneUser
+        const expected = expect.objectContaining(oneUser)
 
         expect(actual).toEqual(expected)
         expect(service.get).toHaveBeenCalledWith('userId#1')
