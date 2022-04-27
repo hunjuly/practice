@@ -16,21 +16,9 @@ import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { LocalAuthGuard } from './local-auth.guard'
-import { ApiExtraModels, ApiOkResponse, ApiProperty, getSchemaPath, PickType } from '@nestjs/swagger'
+import { ApiExtraModels, ApiOkResponse, ApiProperty, ApiQuery, PickType } from '@nestjs/swagger'
 import { User } from './entities/user.entity'
-
-export class PaginatedDto<TData> {
-    @ApiProperty()
-    total: number
-
-    @ApiProperty()
-    limit: number
-
-    @ApiProperty()
-    offset: number
-
-    results: TData[]
-}
+import { ApiPaginatedResponse, Paginate, Page } from 'src/common/pagination'
 
 export class UserDto extends PickType(User, [
     'id',
@@ -40,11 +28,12 @@ export class UserDto extends PickType(User, [
     'createDate',
     'updateDate'
 ] as const) {
+    @ApiProperty()
     link: string
 }
 
 @Controller('users')
-@ApiExtraModels(PaginatedDto, UserDto)
+@ApiExtraModels(UserDto)
 export class UsersController {
     constructor(private readonly service: UsersService) {}
 
@@ -75,26 +64,8 @@ export class UsersController {
 
     @Get()
     @Public()
-    @ApiOkResponse({
-        schema: {
-            allOf: [
-                { $ref: getSchemaPath(PaginatedDto) },
-                {
-                    properties: {
-                        results: {
-                            type: 'array',
-                            items: { $ref: getSchemaPath(UserDto) }
-                        }
-                    }
-                }
-            ]
-        }
-    })
-    // @ApiOkResponse({
-    //     description: 'The record has been successfully created.',
-    //     type: UserDto
-    // })
-    findAll() {
+    @ApiPaginatedResponse(UserDto)
+    findAll(@Page() page?: Paginate) {
         const values = [
             {
                 id: '4dc4db1b-d28f-48a8-8860-45f6485e91b1',
@@ -111,9 +82,12 @@ export class UsersController {
         const results = new Array<UserDto>()
 
         values.map(({ deleteDate, version, role, ...dto }) => {
-            results.push({ ...dto, link: '', role: 'abcd' })
+            const link = `/users/${dto.id}`
+
+            results.push({ ...dto, link, role: 'abcd' })
         })
 
+        return results
         return {
             total: 1999,
             limit: 10,

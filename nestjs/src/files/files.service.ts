@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { UpdateFileDto } from './dto/update-file.dto'
-import { CreateFileServiceDto } from './dto/create-file-service.dto'
+import { CreateFileDto } from './dto/create-file.dto'
 import { File } from './entities/file.entity'
 
 @Injectable()
@@ -19,7 +19,7 @@ export class FilesService {
         return file
     }
 
-    async create(dto: CreateFileServiceDto) {
+    async create(dto: CreateFileDto) {
         const file = new File()
         file.originalName = dto.originalName
         file.mimeType = dto.mimeType

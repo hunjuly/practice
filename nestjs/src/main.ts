@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
+import { PaginatedDto } from 'src/common/pagination'
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
@@ -14,8 +15,9 @@ async function bootstrap() {
         .setVersion('1.0')
         .addCookieAuth()
         .build()
+    const opt = { extraModels: [PaginatedDto] }
+    const document = SwaggerModule.createDocument(app, config, opt)
 
-    const document = SwaggerModule.createDocument(app, config)
     const customOptions = {
         swaggerOptions: {
             persistAuthorization: true

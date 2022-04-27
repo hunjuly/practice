@@ -16,8 +16,12 @@ import { Express } from 'express'
 import { diskStorage } from 'multer'
 import { utils, Path } from 'src/common'
 import { CreateFileDto } from './dto/create-file.dto'
+import { ApiConsumes, ApiExtraModels, PickType } from '@nestjs/swagger'
+
+export class CreateFilePartialDto extends PickType(CreateFileDto, ['fieldName'] as const) {}
 
 @Controller('files')
+@ApiExtraModels(CreateFilePartialDto)
 export class FilesController {
     constructor(private readonly filesService: FilesService) {}
 
@@ -30,7 +34,8 @@ export class FilesController {
             })
         })
     )
-    create(@Body() fields: CreateFileDto, @UploadedFile() file: Express.Multer.File) {
+    @ApiConsumes('multipart/form-data')
+    create(@Body() fields: CreateFilePartialDto, @UploadedFile() file: Express.Multer.File) {
         const dto = {
             originalName: file.originalname,
             mimeType: file.mimetype,
