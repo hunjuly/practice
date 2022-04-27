@@ -17,6 +17,8 @@ class SessionModule {
         const exports: any[] = [SessionService]
 
         if (host && port) {
+            console.log('USING REDIS SESSION', host, port)
+
             providers.push({
                 provide: REDIS,
                 useValue: Redis.createClient({ port, host })
