@@ -17,8 +17,6 @@ class SessionModule {
         const exports: any[] = [SessionService]
 
         if (host && port) {
-            console.log('USING REDIS SESSION', host, port)
-
             providers.push({
                 provide: REDIS,
                 useValue: Redis.createClient({ port, host })
@@ -44,18 +42,20 @@ export class SessionService implements OnModuleInit {
     // redis: RedisClient 사용 여부를 생성자에서 알아야 한다.
     constructor(private moduleRef: ModuleRef) {
         this.redis = undefined
-    }
 
-    private redis: RedisClient | undefined
-
-    onModuleInit() {
         if (host) {
             this.redis = this.moduleRef.get(REDIS)
         }
     }
 
+    private redis: RedisClient | undefined
+
+    onModuleInit() {}
+
     getOpt() {
-        if (this.redis)
+        if (this.redis) {
+            console.log('USING REDIS SESSION', host, port)
+
             return {
                 store: new (RedisStore(session))({ client: this.redis, logErrors: true }),
                 saveUninitialized: false,
@@ -68,6 +68,9 @@ export class SessionService implements OnModuleInit {
                 },
                 pauseStream: true
             }
+        }
+
+        console.log('USING DEFAULT SESSION')
 
         const sessionOpt2 = {
             secret: 'my-secret',
