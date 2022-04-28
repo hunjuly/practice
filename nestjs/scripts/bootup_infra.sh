@@ -70,6 +70,7 @@ redis() (
 
     docker run \
         -d --name ${CONTAINER} --network vscode \
+        -p ${REDIS_PORT}:${REDIS_PORT} \
         --mount source="${CONTAINER}",target=/data,type=volume \
         redis
 
