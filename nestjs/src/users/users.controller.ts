@@ -23,14 +23,14 @@ import { LoginUserDto } from './dto/login-user.dto'
 
 class UserDto extends OmitType(User, ['auths', 'deleteDate'] as const) {
     @ApiProperty()
-    link: string
+    url: string
 
     static from(user: User) {
         const { auths, deleteDate, ...value } = user
 
-        const link = `/users/${value.id}`
+        const url = `/users/${value.id}`
 
-        return { ...value, link }
+        return { ...value, url }
     }
 }
 

@@ -1,47 +1,56 @@
 import 'dotenv/config'
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm'
+import { TypeOrmModule, TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm'
 import { exit } from 'process'
+import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { LoggerOptions } from 'typeorm'
 
 type DatabaseType = 'mysql' | 'sqlite' | undefined
-const type = process.env['TYPEORM_TYPE'] as DatabaseType
-const host = process.env['TYPEORM_HOST']
-const portText = process.env['TYPEORM_PORT']
-const port = portText ? parseInt(portText) : undefined
-const username = process.env['TYPEORM_USERNAME']
-const password = process.env['TYPEORM_PASSWORD']
-const database = process.env['TYPEORM_DATABASE']
-const synchronize = process.env['TYPEORM_ENABLE_SYNC'] === 'true'
 
-if (synchronize && process.env['NODE_ENV'] === 'production') {
-    console.log('Do not use synchronize(TYPEORM_ENABLE_SYNC) on production')
+@Injectable()
+class TypeOrmConfigService implements TypeOrmOptionsFactory {
+    constructor(private configService: ConfigService) {}
 
-    exit(1)
-}
+    createTypeOrmOptions(): TypeOrmModuleOptions {
+        const nodeEnv = this.configService.get<string>('NODE_ENV')
+        const synchronize = this.configService.get<boolean>('TYPEORM_ENABLE_SYNC')
 
-export let ormOption: TypeOrmModuleOptions = {
-    type: 'sqlite' as DatabaseType,
-    database: ':memory:',
-    synchronize: true,
-    autoLoadEntities: true,
-    logger: 'advanced-console',
-    logging: ['error', 'warn', 'info', 'log']
-}
+        if (nodeEnv === 'production' && synchronize) {
+            console.log('Do not use synchronize(TYPEORM_ENABLE_SYNC) on production')
 
-if (type && host && portText && port && username && password && database && synchronize) {
-    ormOption = {
-        type,
-        host,
-        port,
-        username,
-        password,
-        database,
-        synchronize,
-        autoLoadEntities: true
+            exit(1)
+        }
+
+        const type = this.configService.get<DatabaseType>('TYPEORM_TYPE')
+
+        const commonOption = {
+            type,
+            synchronize,
+            autoLoadEntities: true,
+            logger: 'advanced-console' as 'advanced-console',
+            logging: ['error', 'warn', 'info', 'log'] as LoggerOptions
+        }
+
+        if (type === 'sqlite') {
+            console.log('WARNING database connection is not set. using MEMORY DB.')
+
+            return { ...commonOption, database: ':memory:' }
+        } else if (type === 'mysql') {
+            const host = this.configService.get<string>('TYPEORM_HOST')
+            const port = this.configService.get<number>('TYPEORM_PORT')
+            const database = this.configService.get<string>('TYPEORM_DATABASE')
+            const username = this.configService.get<string>('TYPEORM_USERNAME')
+            const password = this.configService.get<string>('TYPEORM_PASSWORD')
+
+            return { ...commonOption, type, host, port, database, username, password }
+        }
+
+        throw new Error(`unknown TYPEORM_TYPE(${type})`)
     }
-} else {
-    console.log('WARNING database connection is not set. using MEMORY DB.')
 }
 
-export function createOrmModule() {
-    return TypeOrmModule.forRoot(ormOption)
+export async function createOrmModule() {
+    return TypeOrmModule.forRootAsync({
+        useClass: TypeOrmConfigService
+    })
 }

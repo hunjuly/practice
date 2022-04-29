@@ -1,4 +1,5 @@
 FROM node:16
+ENV NODE_ENV=development
 
 RUN apt update
 RUN apt upgrade -y

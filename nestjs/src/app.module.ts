@@ -1,4 +1,4 @@
-import { Inject, MiddlewareConsumer, Module, NestModule, Session, ValidationPipe } from '@nestjs/common'
+import { MiddlewareConsumer, Module, NestModule, ValidationPipe } from '@nestjs/common'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { UsersModule } from './users/users.module'
@@ -11,9 +11,27 @@ import * as passport from 'passport'
 import * as session from 'express-session'
 import { createSessionModule, SessionService } from './session'
 import { LoggingInterceptor } from './common'
+import { ConfigModule } from '@nestjs/config'
+import * as Joi from 'joi'
 
 @Module({
-    imports: [createOrmModule(), UsersModule, FilesModule, AuthModule, createSessionModule()],
+    imports: [
+        createOrmModule(),
+        UsersModule,
+        FilesModule,
+        AuthModule,
+        createSessionModule(),
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: ['.env.development'],
+            validationSchema: Joi.object({
+                NODE_ENV: Joi.string().valid('development', 'production').default('development'),
+                TYPEORM_TYPE: Joi.string().default('sqlite'),
+                TYPEORM_ENABLE_SYNC: Joi.boolean().default(false)
+            })
+        })
+        // ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: process.env.NODE_ENV === 'development' })
+    ],
     controllers: [AppController],
     providers: [
         AppService,
