@@ -6,6 +6,8 @@ import { ConfigService } from '@nestjs/config'
 import { LoggerOptions } from 'typeorm'
 
 type DatabaseType = 'mysql' | 'sqlite' | undefined
+const logger = 'advanced-console' as 'advanced-console'
+const logging = ['error', 'warn', 'info', 'log'] as LoggerOptions
 
 @Injectable()
 class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -23,13 +25,7 @@ class TypeOrmConfigService implements TypeOrmOptionsFactory {
 
         const type = this.configService.get<DatabaseType>('TYPEORM_TYPE')
 
-        const commonOption = {
-            type,
-            synchronize,
-            autoLoadEntities: true,
-            logger: 'advanced-console' as 'advanced-console',
-            logging: ['error', 'warn', 'info', 'log'] as LoggerOptions
-        }
+        const commonOption = { type, synchronize, autoLoadEntities: true, logger, logging }
 
         if (type === 'sqlite') {
             console.log('WARNING database connection is not set. using MEMORY DB.')
@@ -42,7 +38,7 @@ class TypeOrmConfigService implements TypeOrmOptionsFactory {
             const username = this.configService.get<string>('TYPEORM_USERNAME')
             const password = this.configService.get<string>('TYPEORM_PASSWORD')
 
-            return { ...commonOption, type, host, port, database, username, password }
+            return { ...commonOption, host, port, database, username, password }
         }
 
         throw new Error(`unknown TYPEORM_TYPE(${type})`)

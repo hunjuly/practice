@@ -9,10 +9,11 @@ import { APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core'
 import { UserGuard } from './auth/user.guard'
 import * as passport from 'passport'
 import * as session from 'express-session'
-import { createSessionModule, SessionService } from './session'
+import { SessionService } from './session'
 import { LoggingInterceptor } from './common'
 import { ConfigModule } from '@nestjs/config'
 import * as Joi from 'joi'
+import { RedisService } from './redis'
 
 @Module({
     imports: [
@@ -20,7 +21,6 @@ import * as Joi from 'joi'
         UsersModule,
         FilesModule,
         AuthModule,
-        createSessionModule(),
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: ['.env.development'],
@@ -30,7 +30,6 @@ import * as Joi from 'joi'
                 TYPEORM_ENABLE_SYNC: Joi.boolean().default(false)
             })
         })
-        // ConfigModule.forRoot({ isGlobal: true, ignoreEnvFile: process.env.NODE_ENV === 'development' })
     ],
     controllers: [AppController],
     providers: [
@@ -48,7 +47,9 @@ import * as Joi from 'joi'
             provide: APP_INTERCEPTOR,
             useClass: LoggingInterceptor
         },
-        UserGuard
+        UserGuard,
+        RedisService,
+        SessionService
     ]
 })
 export class AppModule implements NestModule {
