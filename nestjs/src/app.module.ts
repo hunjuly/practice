@@ -25,8 +25,9 @@ import { RedisService } from './redis'
             isGlobal: true,
             envFilePath: ['.env.development'],
             validationSchema: Joi.object({
-                NODE_ENV: Joi.string().valid('development', 'production').default('development'),
-                TYPEORM_TYPE: Joi.string().default('sqlite'),
+                NODE_ENV: Joi.string().valid('development', 'production'),
+                TYPEORM_TYPE: Joi.string().valid('sqlite', 'mysql'),
+                SESSION_TYPE: Joi.string().valid('memory', 'redis'),
                 TYPEORM_ENABLE_SYNC: Joi.boolean().default(false)
             })
         })

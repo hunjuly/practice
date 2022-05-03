@@ -7,7 +7,7 @@
             "command": "npm",
             "args": [
                 "run",
-                "${input:RunTask}"
+                "${input:TestTask}"
             ]
         },
         {
@@ -24,20 +24,31 @@
             "type": "shell",
             "command": "sh",
             "args": [
-                "scripts/bootup_infra.sh"
+                "scripts/bootup_infra.sh",
+                "${input:InfraTask}_mode"
             ]
         }
     ],
     "inputs": [
         {
             "type": "pickString",
-            "id": "RunTask",
-            "description": "npm run $cmd",
+            "id": "TestTask",
+            "description": "",
             "options": [
                 "test",
                 "test:e2e",
             ],
             "default": "test:e2e"
+        },
+        {
+            "type": "pickString",
+            "id": "InfraTask",
+            "description": "",
+            "options": [
+                "memory",
+                "docker"
+            ],
+            "default": "memory"
         }
     ]
 }

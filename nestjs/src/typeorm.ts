@@ -24,21 +24,21 @@ class TypeOrmConfigService implements TypeOrmOptionsFactory {
         }
 
         const type = this.configService.get<DatabaseType>('TYPEORM_TYPE')
+        const database = this.configService.get<string>('TYPEORM_DATABASE')
 
-        const commonOption = { type, synchronize, autoLoadEntities: true, logger, logging }
+        const common = { type, synchronize, autoLoadEntities: true, logger, logging, database }
 
         if (type === 'sqlite') {
             console.log('WARNING database connection is not set. using MEMORY DB.')
 
-            return { ...commonOption, database: ':memory:' }
+            return common
         } else if (type === 'mysql') {
             const host = this.configService.get<string>('TYPEORM_HOST')
             const port = this.configService.get<number>('TYPEORM_PORT')
-            const database = this.configService.get<string>('TYPEORM_DATABASE')
             const username = this.configService.get<string>('TYPEORM_USERNAME')
             const password = this.configService.get<string>('TYPEORM_PASSWORD')
 
-            return { ...commonOption, host, port, database, username, password }
+            return { ...common, host, port, database, username, password }
         }
 
         throw new Error(`unknown TYPEORM_TYPE(${type})`)
