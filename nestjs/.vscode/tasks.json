@@ -35,7 +35,7 @@
             "id": "TestTask",
             "description": "",
             "options": [
-                "test",
+                "test:unit",
                 "test:e2e",
             ],
             "default": "test:e2e"
