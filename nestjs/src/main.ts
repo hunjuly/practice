@@ -2,7 +2,7 @@ import { INestApplication, Logger } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
-import { PaginatedDto } from 'src/common/pagination'
+import { PaginatedResponse } from 'src/common/pagination'
 
 function setApiDocument(app: INestApplication) {
     const config = new DocumentBuilder()
@@ -11,7 +11,9 @@ function setApiDocument(app: INestApplication) {
         .setVersion('1.0')
         .addCookieAuth()
         .build()
-    const opt = { extraModels: [PaginatedDto] }
+
+    const opt = { extraModels: [PaginatedResponse] }
+
     const document = SwaggerModule.createDocument(app, config, opt)
 
     const customOptions = {

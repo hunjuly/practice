@@ -6,8 +6,6 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { AuthSerializer } from './auth-serializer'
 import { LocalStrategy } from 'src/auth/local.strategy'
 import { UsersModule } from 'src/users/users.module'
-import { APP_GUARD } from '@nestjs/core'
-import { UserGuard } from 'src/auth/user.guard'
 
 @Module({
     imports: [
@@ -15,15 +13,7 @@ import { UserGuard } from 'src/auth/user.guard'
         PassportModule.register({ session: true }),
         forwardRef(() => UsersModule)
     ],
-    providers: [
-        AuthService,
-        AuthSerializer,
-        LocalStrategy,
-        {
-            provide: APP_GUARD,
-            useExisting: UserGuard
-        }
-    ],
+    providers: [AuthService, AuthSerializer, LocalStrategy],
     exports: [AuthService, LocalStrategy]
 })
 export class AuthModule {}

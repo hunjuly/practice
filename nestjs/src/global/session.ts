@@ -10,7 +10,7 @@ type SessionType = 'memory' | 'redis' | undefined
 export class SessionService {
     constructor(private configService: ConfigService, private redisService: RedisService) {}
 
-    getOpt() {
+    createOption() {
         const type = this.configService.get<SessionType>('SESSION_TYPE')
 
         if (type === 'redis') {

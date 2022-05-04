@@ -12,7 +12,7 @@ import {
     ParseUUIDPipe
 } from '@nestjs/common'
 import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiProperty, OmitType } from '@nestjs/swagger'
-import { ApiPaginatedResponse, PageDto, PageQuery } from 'src/common/pagination'
+import { ApiPaginatedResponse, Pagination, PageQuery } from 'src/common/pagination'
 import { Public } from 'src/auth/public'
 import { LocalAuthGuard } from 'src/auth/local-auth.guard'
 import { UsersService } from './users.service'
@@ -67,19 +67,14 @@ export class UsersController {
     @Get()
     @Public()
     @ApiPaginatedResponse(UserDto)
-    async findAll(@PageQuery() page: PageDto) {
-        const [items, count] = await this.service.findAll(page)
+    async findAll(@PageQuery() page: Pagination) {
+        const result = await this.service.findAll(page)
 
-        const results = new Array<UserDto>()
+        const dtoArray = new Array<UserDto>()
 
-        items.map((item) => results.push(UserDto.from(item)))
+        result.items.map((item) => dtoArray.push(UserDto.from(item)))
 
-        return {
-            total: count,
-            limit: page.limit,
-            offset: page.offset,
-            results
-        }
+        return { ...result, items: dtoArray }
     }
 
     @Get(':id')

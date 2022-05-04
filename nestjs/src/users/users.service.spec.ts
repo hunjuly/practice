@@ -56,13 +56,13 @@ describe('UsersService', () => {
     })
 
     it('find all users ', async () => {
-        const [items, count] = await service.findAll({ offset: 0, limit: 10 })
+        const result = await service.findAll({ offset: 0, limit: 10 })
         const expected1 = expect.objectContaining(userArray[0])
         const expected2 = expect.objectContaining(userArray[1])
 
-        expect(count).toEqual(2)
-        expect(items[0]).toEqual(expected1)
-        expect(items[1]).toEqual(expected2)
+        expect(result.total).toEqual(2)
+        expect(result.items[0]).toEqual(expected1)
+        expect(result.items[1]).toEqual(expected2)
         expect(repository.findAndCount).toHaveBeenCalled()
     })
 

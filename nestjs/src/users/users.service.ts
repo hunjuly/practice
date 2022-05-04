@@ -5,7 +5,7 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './entities/user.entity'
 import { AuthService } from 'src/auth/auth.service'
-import { PageDto } from 'src/common/pagination'
+import { Pagination } from 'src/common/pagination'
 
 @Injectable()
 export class UsersService {
@@ -42,14 +42,16 @@ export class UsersService {
         return this.repository.count()
     }
 
-    async findAll(page: PageDto) {
-        return this.repository.findAndCount({
+    async findAll(page: Pagination) {
+        const [items, total] = await this.repository.findAndCount({
             skip: page.offset,
             take: page.limit,
             order: {
                 id: 'DESC'
             }
         })
+
+        return { ...page, items, total }
     }
 
     async findByEmail(email: string) {

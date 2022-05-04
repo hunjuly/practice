@@ -2,7 +2,7 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 import { applyDecorators, Type } from '@nestjs/common'
 import { ApiOkResponse, ApiProperty, ApiQuery, getSchemaPath } from '@nestjs/swagger'
 
-export class PaginatedDto<TData> {
+export class PaginatedResponse<TData> {
     @ApiProperty()
     total: number
 
@@ -12,7 +12,7 @@ export class PaginatedDto<TData> {
     @ApiProperty()
     offset: number
 
-    results: TData[]
+    items: TData[]
 }
 
 export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) => {
@@ -21,10 +21,10 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) =>
             schema: {
                 title: `PaginatedResponseOf${model.name}`,
                 allOf: [
-                    { $ref: getSchemaPath(PaginatedDto) },
+                    { $ref: getSchemaPath(PaginatedResponse) },
                     {
                         properties: {
-                            results: {
+                            items: {
                                 type: 'array',
                                 items: { $ref: getSchemaPath(model) }
                             }
@@ -36,7 +36,7 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) =>
     )
 }
 
-export class PageDto {
+export class Pagination {
     limit: number
     offset: number
 }
@@ -44,7 +44,7 @@ export class PageDto {
 const DEFAULT_PAGE_SIZE = 100
 
 export const PageQuery = createParamDecorator(
-    (data: unknown, context: ExecutionContext): PageDto => {
+    (data: unknown, context: ExecutionContext): Pagination => {
         const request = context.switchToHttp().getRequest()
 
         return {

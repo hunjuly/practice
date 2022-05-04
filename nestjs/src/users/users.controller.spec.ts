@@ -21,7 +21,12 @@ describe('UsersController', () => {
                     provide: UsersService,
                     useValue: {
                         create: jest.fn().mockResolvedValue(oneUser),
-                        findAll: jest.fn().mockResolvedValue([userArray, 2]),
+                        findAll: jest.fn().mockResolvedValue({
+                            offset: 0,
+                            limit: 10,
+                            items: userArray,
+                            total: 2
+                        }),
                         get: jest.fn().mockResolvedValue(oneUser),
                         remove: jest.fn(),
                         count: jest.fn().mockResolvedValue(99)
@@ -56,8 +61,8 @@ describe('UsersController', () => {
         const expected1 = expect.objectContaining(userArray[0])
         const expected2 = expect.objectContaining(userArray[1])
 
-        expect(actual.results[0]).toEqual(expected1)
-        expect(actual.results[1]).toEqual(expected2)
+        expect(actual.items[0]).toEqual(expected1)
+        expect(actual.items[1]).toEqual(expected2)
         expect(service.findAll).toHaveBeenCalled()
     })
 
