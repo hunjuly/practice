@@ -11,28 +11,15 @@ import {
     Redirect,
     ParseUUIDPipe
 } from '@nestjs/common'
-import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiProperty, OmitType } from '@nestjs/swagger'
+import { ApiBody, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger'
 import { ApiPaginatedResponse, Pagination, PageQuery } from 'src/common/pagination'
 import { Public } from 'src/auth/public'
 import { LocalAuthGuard } from 'src/auth/local-auth.guard'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { User } from './entities/user.entity'
 import { LoginUserDto } from './dto/login-user.dto'
-
-class UserDto extends OmitType(User, ['auths', 'deleteDate'] as const) {
-    @ApiProperty()
-    url: string
-
-    static from(user: User) {
-        const { auths, deleteDate, ...value } = user
-
-        const url = `/users/${value.id}`
-
-        return { ...value, url }
-    }
-}
+import { ResponseUserDto } from './dto/response-user.dto'
 
 @Controller('users')
 export class UsersController {
@@ -43,11 +30,11 @@ export class UsersController {
      */
     @Post()
     @Public()
-    @ApiCreatedResponse({ type: UserDto })
+    @ApiCreatedResponse({ type: ResponseUserDto })
     async create(@Body() createUserDto: CreateUserDto) {
         const item = await this.service.create(createUserDto)
 
-        return UserDto.from(item)
+        return ResponseUserDto.from(item)
     }
 
     @Post('login')
@@ -66,23 +53,23 @@ export class UsersController {
 
     @Get()
     @Public()
-    @ApiPaginatedResponse(UserDto)
+    @ApiPaginatedResponse(ResponseUserDto)
     async findAll(@PageQuery() page: Pagination) {
         const result = await this.service.findAll(page)
 
-        const dtoArray = new Array<UserDto>()
+        const dtoArray = new Array<ResponseUserDto>()
 
-        result.items.map((item) => dtoArray.push(UserDto.from(item)))
+        result.items.map((item) => dtoArray.push(ResponseUserDto.from(item)))
 
         return { ...result, items: dtoArray }
     }
 
     @Get(':id')
-    @ApiOkResponse({ type: UserDto })
+    @ApiOkResponse({ type: ResponseUserDto })
     async findOne(@Param('id', ParseUUIDPipe) id: string) {
         const item = await this.service.get(id)
 
-        return UserDto.from(item)
+        return ResponseUserDto.from(item)
     }
 
     @Patch(':id')
