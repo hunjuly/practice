@@ -25,7 +25,7 @@
             "command": "sh",
             "args": [
                 "scripts/bootup_infra.sh",
-                "${input:InfraTask}_mode"
+                "${input:InfraTask}"
             ]
         }
     ],

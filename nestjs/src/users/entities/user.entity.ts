@@ -1,7 +1,6 @@
 import {
     Entity,
     Column,
-    PrimaryGeneratedColumn,
     OneToMany,
     DeleteDateColumn,
     CreateDateColumn,
@@ -9,12 +8,10 @@ import {
     VersionColumn
 } from 'typeorm'
 import { Authentication } from 'src/auth/entities/authentication.entity'
+import { EntityBase } from 'src/common/entity'
 
 @Entity()
-export class User {
-    @PrimaryGeneratedColumn('uuid')
-    id: string
-
+export class User extends EntityBase {
     @Column()
     email: string
 

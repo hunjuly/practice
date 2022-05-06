@@ -111,4 +111,11 @@ REDIS_CONTAINER="$(basename $WORKSPACE_ROOT).redis"
 set -e
 cd "$(dirname "$0")"
 
-$1
+if [ "$1" = "memory" ]; then
+    memory_mode
+elif [ "$1" = 'docker' ]; then
+    docker_mode
+else
+    echo 'Usage:  sh bootup_infra.sh [memory, docker]'
+    exit 1
+fi
