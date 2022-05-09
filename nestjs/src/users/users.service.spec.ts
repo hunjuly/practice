@@ -1,82 +1,11 @@
 import { Test } from '@nestjs/testing'
-import { getRepositoryToken } from '@nestjs/typeorm'
 import { User } from './entities/user.entity'
 import { UsersService } from './users.service'
-import { FilesService } from 'src/files/files.service'
-import { Repository } from 'typeorm'
 import { AuthService } from 'src/auth/auth.service'
-
-const userArray = [
-    { id: 'uuid#1', email: 'user1@test.com' },
-    { id: 'uuid#2', email: 'user2@test.com' }
-]
-const deleteResult = { affected: 1 }
-const oneUser = { id: 'uuid#1', email: 'user1@test.com', remove: jest.fn().mockResolvedValue(deleteResult) }
-
-jest.mock('./entities/user.entity')
-
-const mockPlaySoundFile = jest.fn()
-
-jest.mock('./entities/user.entity', () => {
-    return {
-        __esModule: true,
-        User: jest.fn().mockImplementation(() => {
-            return { findOne: mockPlaySoundFile, findAll: mockPlaySoundFile }
-        })
-    }
-})
-//     findOne: jest.fn().mockResolvedValue(oneUser),
-//     // findOne: () => oneUser,
-//     findAll: () => {
-//         return { items: userArray, total: 2 }
-//     },
-
-// const userMock = jest.fn(() => {
-//     return {
-//         get: jest.fn(() => oneUser),
-//         // add: jest.fn().mockResolvedValue(oneUser),
-//         findOne: jest.fn().mockResolvedValue(oneUser),
-//         // findOne: () => oneUser,
-//         findAll: () => {
-//             return { items: userArray, total: 2 }
-//         },
-//         findByEmail: () => oneUser
-
-//         // update: jest.fn().mockResolvedValue(deleteResult)
-//     }
-// })
-
-// jest.mock('./entities/user.entity', () => {
-//     const originalModule = jest.requireActual('./entities/user.entity')
-
-//     const deleteResult = { affected: 1 }
-//     // const oneUser = {
-//     //     id: 'uuid#1',
-//     //     email: 'user1@test.com',
-//     //     remove: jest.fn().mockResolvedValue(deleteResult)
-//     // }
-//     // const UserMock = jest.fn().mockResolvedValue({
-//     //     get: jest.fn(() => oneUser),
-//     //     // add: jest.fn().mockResolvedValue(oneUser),
-//     //     findOne: jest.fn().mockResolvedValue(oneUser),
-//     //     // findOne: () => oneUser,
-//     //     findAll: () => {
-//     //         return { items: userArray, total: 2 }
-//     //     },
-//     //     findByEmail: () => oneUser
-//     //     // update: jest.fn().mockResolvedValue(deleteResult)
-//     // })
-
-//     return {
-//         __esModule: true,
-//         ...originalModule,
-//         User: userMock
-//     }
-// })
+import { CreateUserDto } from './dto/create-user.dto'
 
 describe('UsersService', () => {
     let service: UsersService
-    // let repository: Repository<User>
     let authService: AuthService
 
     beforeEach(async () => {
@@ -86,13 +15,8 @@ describe('UsersService', () => {
                 {
                     provide: AuthService,
                     useValue: {
+                        createAccount: jest.fn(),
                         removeAccount: jest.fn()
-                    }
-                },
-                {
-                    provide: FilesService,
-                    useValue: {
-                        findAll: jest.fn().mockResolvedValue(userArray)
                     }
                 }
             ]
@@ -102,33 +26,60 @@ describe('UsersService', () => {
         authService = module.get(AuthService)
     })
 
+    afterEach(jest.resetAllMocks)
+
     it('should be defined', () => {
         expect(service).toBeDefined()
     })
 
-    it('find all users ', async () => {
-        const result = await service.findAll({ offset: 0, limit: 10 })
-        const expected1 = expect.objectContaining(userArray[0])
-        const expected2 = expect.objectContaining(userArray[1])
+    it('create a user', async () => {
+        const user = { id: 'uuid#1' } as User
+        const dto = { password: 'pass#001' } as CreateUserDto
 
-        expect(result.total).toEqual(2)
-        expect(result.items[0]).toEqual(expected1)
-        expect(result.items[1]).toEqual(expected2)
-        // expect(repository.findAndCount).toHaveBeenCalled()
+        const spy = jest.spyOn(User, 'add').mockResolvedValue(user)
+
+        const actual = await service.create(dto)
+
+        expect(actual).toEqual(user)
+        expect(authService.createAccount).toHaveBeenCalledWith(user, 'pass#001')
+        expect(spy).toHaveBeenCalledWith(dto)
+    })
+
+    it('find all users ', async () => {
+        const users = [{ id: 'uuid#1' }, { id: 'uuid#2' }] as User[]
+        const pagination = { offset: 0, limit: 10 }
+
+        const spy = jest.spyOn(User, 'findAll').mockResolvedValue({ items: users, total: 2 })
+
+        const actual = await service.findAll(pagination)
+
+        expect(actual.total).toEqual(2)
+        expect(actual.items).toEqual(users)
+        expect(spy).toHaveBeenCalledWith(pagination)
     })
 
     it('find a user', async () => {
-        const actual = await service.get('userId#1')
-        const expected = oneUser
+        const user = { id: 'uuid#1' } as User
 
-        expect(actual).toEqual(expected)
-        expect(User.findOne).toHaveBeenCalledWith('userId#1')
+        const spy = jest.spyOn(User, 'findOne').mockResolvedValue(user)
+
+        const actual = await service.get('userId#1')
+
+        expect(actual).toEqual(user)
+        expect(spy).toHaveBeenCalledWith('userId#1')
     })
 
     it('remove the user', async () => {
-        const actual = await service.remove('userId#2')
+        const user = {
+            remove: function () {}
+        } as User
 
-        expect(actual).toBeUndefined()
-        // expect(repository.delete).toHaveBeenCalledWith(oneUser.id)
+        const spyFind = jest.spyOn(User, 'findOne').mockResolvedValue(user)
+        const spyRemove = jest.spyOn(user, 'remove')
+
+        await service.remove('userId#2')
+
+        expect(spyFind).toHaveBeenCalledWith('userId#2')
+        expect(spyRemove).toHaveBeenCalled()
     })
 })

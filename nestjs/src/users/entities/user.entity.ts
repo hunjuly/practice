@@ -46,7 +46,7 @@ export class User extends BaseEntity {
         return User.findOne({ where: { email } })
     }
 
-    static async findAll(page: Pagination) {
+    static async findAll(page: Pagination): Promise<{ items: User[]; total: number }> {
         const [items, total] = await User.findAndCount({
             skip: page.offset,
             take: page.limit,
