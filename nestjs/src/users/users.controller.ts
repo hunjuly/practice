@@ -59,11 +59,7 @@ export class UsersController {
 
         const dtoArray = new Array<ResponseUserDto>()
 
-        result.items.map((item) => {
-            const dto = ResponseUserDto.from(item)
-
-            dtoArray.push(dto)
-        })
+        result.items.map((item) => dtoArray.push(ResponseUserDto.from(item)))
 
         return { ...result, items: dtoArray }
     }

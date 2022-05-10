@@ -2,8 +2,16 @@ import { Test } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { User } from './entities/user.entity'
 import { UsersService } from './users.service'
-import { DeleteResult, Repository } from 'typeorm'
+import { FilesService } from 'src/files/files.service'
+import { Repository } from 'typeorm'
 import { AuthService } from 'src/auth/auth.service'
+
+const userArray = [
+    { id: 'uuid#1', email: 'user1@test.com' },
+    { id: 'uuid#2', email: 'user2@test.com' }
+]
+const oneUser = { id: 'uuid#1', email: 'user1@test.com' }
+const deleteResult = { affected: 1 }
 
 describe('UsersService', () => {
     let service: UsersService
@@ -17,17 +25,22 @@ describe('UsersService', () => {
                 {
                     provide: AuthService,
                     useValue: {
-                        createAccount: jest.fn(),
                         removeAccount: jest.fn()
+                    }
+                },
+                {
+                    provide: FilesService,
+                    useValue: {
+                        findAll: jest.fn().mockResolvedValue(userArray)
                     }
                 },
                 {
                     provide: getRepositoryToken(User),
                     useValue: {
-                        findOne: jest.fn(),
-                        findAndCount: jest.fn(),
-                        delete: jest.fn(),
-                        save: jest.fn()
+                        findOne: jest.fn().mockResolvedValue(oneUser),
+                        findAndCount: jest.fn().mockResolvedValue([userArray, 2]),
+                        save: jest.fn().mockResolvedValue(oneUser),
+                        delete: jest.fn().mockResolvedValue(deleteResult)
                     }
                 }
             ]
@@ -42,52 +55,29 @@ describe('UsersService', () => {
         expect(service).toBeDefined()
     })
 
-    it('create a user', async () => {
-        const dto = { email: 'newuser@test.com', password: 'pass#001' }
-        const user = { id: 'uuid#1' } as User
-
-        jest.spyOn(repository, 'findOne').mockResolvedValue(undefined)
-        jest.spyOn(repository, 'save').mockResolvedValue(user)
-
-        const actual = await service.create(dto)
-
-        expect(actual).toEqual(user)
-        expect(repository.save).toHaveBeenCalledWith({ email: 'newuser@test.com' })
-        expect(authService.createAccount).toHaveBeenCalledWith(user, 'pass#001')
-    })
-
     it('find all users ', async () => {
-        const users = [{ id: 'uuid#1' }, { id: 'uuid#2' }] as User[]
+        const result = await service.findAll({ offset: 0, limit: 10 })
+        const expected1 = expect.objectContaining(userArray[0])
+        const expected2 = expect.objectContaining(userArray[1])
 
-        jest.spyOn(repository, 'findAndCount').mockResolvedValue([users, 2])
-
-        const actual = await service.findAll({ offset: 0, limit: 10 })
-
-        expect(actual.total).toEqual(2)
-        expect(actual.items).toEqual(users)
+        expect(result.total).toEqual(2)
+        expect(result.items[0]).toEqual(expected1)
+        expect(result.items[1]).toEqual(expected2)
         expect(repository.findAndCount).toHaveBeenCalled()
     })
 
     it('find a user', async () => {
-        const user = { id: 'uuid#1' } as User
-
-        jest.spyOn(repository, 'findOne').mockResolvedValue(user)
-
         const actual = await service.get('userId#1')
+        const expected = oneUser
 
-        expect(actual).toEqual(user)
+        expect(actual).toEqual(expected)
         expect(repository.findOne).toHaveBeenCalledWith('userId#1')
     })
 
     it('remove the user', async () => {
-        const user = { id: 'uuid#1' } as User
-        const deleteResult = { affected: 1 } as DeleteResult
+        const actual = await service.remove('userId#2')
 
-        jest.spyOn(repository, 'findOne').mockResolvedValue(user)
-        jest.spyOn(repository, 'delete').mockResolvedValue(deleteResult)
-
-        await service.remove('userId#2')
-
-        expect(repository.delete).toHaveBeenCalledWith(user.id)
+        expect(actual).toBeUndefined()
+        expect(repository.delete).toHaveBeenCalledWith(oneUser.id)
     })
 })
