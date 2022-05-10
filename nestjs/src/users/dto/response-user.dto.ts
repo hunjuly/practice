@@ -1,12 +1,14 @@
-import { ApiProperty, OmitType } from '@nestjs/swagger'
+import { ApiProperty, PickType } from '@nestjs/swagger'
 import { User } from '../entities/user.entity'
 
-export class ResponseUserDto extends OmitType(User, ['auths', 'deleteDate'] as const) {
+const BaseType = PickType(User, ['id', 'email', 'role', 'createDate', 'version'])
+
+export class ResponseUserDto extends BaseType {
     @ApiProperty()
     url: string
 
     static from(user: User) {
-        const { auths, deleteDate, ...value } = user
+        const { auths, ...value } = user
 
         const url = `/users/${value.id}`
 

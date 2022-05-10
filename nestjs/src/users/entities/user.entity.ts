@@ -1,17 +1,12 @@
-import {
-    Entity,
-    Column,
-    OneToMany,
-    DeleteDateColumn,
-    CreateDateColumn,
-    UpdateDateColumn,
-    VersionColumn
-} from 'typeorm'
+import { Entity, Column, OneToMany, CreateDateColumn, UpdateDateColumn, VersionColumn } from 'typeorm'
 import { Authentication } from 'src/auth/entities/authentication.entity'
-import { EntityBase } from 'src/common/entity'
+import { BaseEntity } from 'src/common/base-entity-ext'
+import { ConflictException } from '@nestjs/common'
+import { CreateUserDto } from '../dto/create-user.dto'
+import { Pagination } from 'src/common/pagination'
 
 @Entity()
-export class User extends EntityBase {
+export class User extends BaseEntity {
     @Column()
     email: string
 
@@ -30,10 +25,36 @@ export class User extends EntityBase {
     @UpdateDateColumn()
     updateDate: Date
 
-    // { useSoftDelete: true });
-    @DeleteDateColumn()
-    deleteDate: Date
-
     @VersionColumn()
     version: number
+
+    static async add(dto: CreateUserDto) {
+        const existUser = await this.findByEmail(dto.email)
+
+        if (existUser) throw new ConflictException()
+
+        const user = User.create(dto)
+
+        await user.save()
+
+        return user
+    }
+
+    static async findByEmail(email: string) {
+        // 같은 코드다. 연습이다.
+        // return this.createQueryBuilder('user').where('user.email = :email', { email }).getOne()
+        return User.findOne({ where: { email } })
+    }
+
+    static async findAll(page: Pagination): Promise<{ items: User[]; total: number }> {
+        const [items, total] = await User.findAndCount({
+            skip: page.offset,
+            take: page.limit,
+            order: {
+                createDate: 'DESC'
+            }
+        })
+
+        return { items, total }
+    }
 }

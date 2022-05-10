@@ -1,6 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './entities/user.entity'
@@ -9,29 +7,18 @@ import { Pagination } from 'src/common/pagination'
 
 @Injectable()
 export class UsersService {
-    constructor(
-        @InjectRepository(User)
-        private repository: Repository<User>,
-        private readonly authService: AuthService
-    ) {}
+    constructor(private readonly authService: AuthService) {}
 
-    async create(createUserDto: CreateUserDto) {
-        const res = await this.repository.findOne({ where: { email: createUserDto.email } })
+    async create(dto: CreateUserDto) {
+        const user = await User.add(dto)
 
-        if (res) throw new ConflictException()
-
-        const value = new User()
-        value.email = createUserDto.email
-
-        const user = await this.repository.save(value)
-
-        await this.authService.createAccount(user, createUserDto.password)
+        await this.authService.createAccount(user, dto.password)
 
         return user
     }
 
     async get(userId: string) {
-        const res = await this.repository.findOne(userId)
+        const res = await User.findOne(userId)
 
         if (res === undefined) throw new NotFoundException()
 
@@ -39,27 +26,21 @@ export class UsersService {
     }
 
     async count() {
-        return this.repository.count()
+        return User.count()
     }
 
     async findAll(page: Pagination) {
-        const [items, total] = await this.repository.findAndCount({
-            skip: page.offset,
-            take: page.limit,
-            order: {
-                id: 'DESC'
-            }
-        })
+        const { items, total } = await User.findAll(page)
 
         return { ...page, items, total }
     }
 
     async findByEmail(email: string) {
-        const res = await this.repository.findOne({ where: { email } })
+        const user = await User.findByEmail(email)
 
-        if (res === undefined) throw new NotFoundException()
+        if (user === undefined) throw new NotFoundException()
 
-        return res
+        return user
     }
 
     async remove(userId: string) {
@@ -67,13 +48,11 @@ export class UsersService {
 
         await this.authService.removeAccount(user)
 
-        const res = await this.repository.delete(user.id)
-
-        if (res.affected !== 1) throw new NotFoundException()
+        await user.remove()
     }
 
-    async update(userId: string, updateUserDto: UpdateUserDto) {
-        const res = await this.repository.update(userId, updateUserDto)
+    async update(userId: string, dto: UpdateUserDto) {
+        const res = await User.update(userId, dto)
 
         if (res.affected !== 1) throw new NotFoundException()
     }
