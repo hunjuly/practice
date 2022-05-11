@@ -5,13 +5,18 @@ import {
     DeleteDateColumn,
     CreateDateColumn,
     UpdateDateColumn,
-    VersionColumn
+    VersionColumn,
+    PrimaryGeneratedColumn
 } from 'typeorm'
 import { Authentication } from 'src/auth/entities/authentication.entity'
 import { EntityBase } from 'src/common/entity'
 
 @Entity()
-export class User extends EntityBase {
+export class User {
+    // extends EntityBase {
+    @PrimaryGeneratedColumn('uuid')
+    id: string
+
     @Column()
     email: string
 
@@ -29,10 +34,6 @@ export class User extends EntityBase {
 
     @UpdateDateColumn()
     updateDate: Date
-
-    // { useSoftDelete: true });
-    @DeleteDateColumn()
-    deleteDate: Date
 
     @VersionColumn()
     version: number

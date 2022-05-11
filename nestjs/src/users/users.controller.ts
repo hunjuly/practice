@@ -34,7 +34,7 @@ export class UsersController {
     async create(@Body() createUserDto: CreateUserDto) {
         const item = await this.service.create(createUserDto)
 
-        return ResponseUserDto.from(item)
+        return ResponseUserDto.create(item)
     }
 
     @Post('login')
@@ -59,7 +59,7 @@ export class UsersController {
 
         const dtoArray = new Array<ResponseUserDto>()
 
-        result.items.map((item) => dtoArray.push(ResponseUserDto.from(item)))
+        result.items.map((item) => dtoArray.push(ResponseUserDto.create(item)))
 
         return { ...result, items: dtoArray }
     }
@@ -69,7 +69,7 @@ export class UsersController {
     async findOne(@Param('id', ParseUUIDPipe) id: string) {
         const item = await this.service.get(id)
 
-        return ResponseUserDto.from(item)
+        return ResponseUserDto.create(item)
     }
 
     @Patch(':id')
