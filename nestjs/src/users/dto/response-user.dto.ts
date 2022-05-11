@@ -1,4 +1,3 @@
-import { Type } from '@nestjs/common'
 import { ApiProperty, PickType } from '@nestjs/swagger'
 import { User } from '../entities/user.entity'
 
@@ -11,13 +10,11 @@ export class ResponseUserDto extends PickType(User, keys) {
     static create(user: User) {
         const url = `/users/${user.id}`
 
-        const obj = {}
+        const obj = { url }
 
         keys.map((key) => {
             obj[key] = user[key]
         })
-
-        obj[url] = url
 
         return obj as ResponseUserDto
     }

@@ -2,7 +2,7 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 import { applyDecorators, Type } from '@nestjs/common'
 import { ApiOkResponse, ApiProperty, ApiQuery, getSchemaPath } from '@nestjs/swagger'
 
-export class PaginatedResponse<TData> {
+export class PaginatedResponse {
     @ApiProperty()
     total: number
 
@@ -12,7 +12,8 @@ export class PaginatedResponse<TData> {
     @ApiProperty()
     offset: number
 
-    items: TData[]
+    @ApiProperty()
+    items: any[]
 }
 
 export const ApiPaginatedResponse = <TModel extends Type<any>>(model: TModel) => {
