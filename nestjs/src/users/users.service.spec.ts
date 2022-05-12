@@ -24,7 +24,7 @@ describe('UsersService', () => {
                 {
                     provide: UsersRepository,
                     useValue: {
-                        create: jest.fn(),
+                        add: jest.fn(),
                         findAll: jest.fn(),
                         get: jest.fn(),
                         remove: jest.fn()
@@ -46,12 +46,12 @@ describe('UsersService', () => {
         const dto = { email: 'newuser@test.com', password: 'pass#001' }
         const user = { id: 'uuid#1' } as User
 
-        jest.spyOn(repository, 'create').mockResolvedValue(user)
+        jest.spyOn(repository, 'add').mockResolvedValue(user)
 
         const actual = await service.create(dto)
 
         expect(actual).toEqual(user)
-        expect(repository.create).toHaveBeenCalledWith('newuser@test.com')
+        expect(repository.add).toHaveBeenCalledWith({ email: 'newuser@test.com' })
         expect(authService.createAccount).toHaveBeenCalledWith(user, 'pass#001')
     })
 

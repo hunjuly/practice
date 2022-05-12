@@ -6,20 +6,14 @@ import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './entities/user.entity'
 
 @Injectable()
-export class UsersRepository {
+export class AuthRepository {
     constructor(
-        @InjectRepository(User)
-        private repository: Repository<User>
+        @InjectRepository(Authentication)
+        private repository: Repository<Authentication>
     ) {}
 
-    async add(candidate: User) {
-        const res = await this.repository.findOne({ where: { email: candidate.email } })
-
-        if (res) throw new ConflictException()
-
-        const user = await this.repository.save(candidate)
-
-        return user
+    async add(auth: Authentication) {
+        return this.repository.save(auth)
     }
 
     async get(userId: string) {
@@ -46,7 +40,7 @@ export class UsersRepository {
         return { ...page, items, total }
     }
 
-    async findByEmail(email: string) {
+    async findByUser(email: string) {
         const res = await this.repository.findOne({ where: { email } })
 
         if (res === undefined) throw new NotFoundException()
@@ -54,7 +48,9 @@ export class UsersRepository {
         return res
     }
 
-    async remove(user: User) {
+    async removeByUser(user: User) {
+        const auth = await this.repository.findByUser({ where: { user } })
+
         const res = await this.repository.delete(user.id)
 
         if (res.affected !== 1) throw new NotFoundException()

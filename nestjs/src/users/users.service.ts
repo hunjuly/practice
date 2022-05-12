@@ -4,13 +4,17 @@ import { UpdateUserDto } from './dto/update-user.dto'
 import { AuthService } from 'src/auth/auth.service'
 import { Pagination } from 'src/common/pagination'
 import { UsersRepository } from './users.repository'
+import { User } from './entities/user.entity'
 
 @Injectable()
 export class UsersService {
     constructor(private readonly repository: UsersRepository, private readonly authService: AuthService) {}
 
     async create(dto: CreateUserDto) {
-        const user = await this.repository.create(dto.email)
+        const candidate = new User()
+        candidate.email = dto.email
+
+        const user = await this.repository.add(candidate)
 
         await this.authService.createAccount(user, dto.password)
 

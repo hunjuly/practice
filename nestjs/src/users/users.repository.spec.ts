@@ -34,13 +34,13 @@ describe('UsersRepository', () => {
     })
 
     it('create a user', async () => {
-        const dto = { email: 'newuser@test.com', password: 'pass#001' }
+        const candidate = { email: 'newuser@test.com' } as User
         const user = { id: 'uuid#1' } as User
 
         jest.spyOn(typeorm, 'findOne').mockResolvedValue(undefined)
         jest.spyOn(typeorm, 'save').mockResolvedValue(user)
 
-        const actual = await repository.create(dto.email)
+        const actual = await repository.add(candidate)
 
         expect(actual).toEqual(user)
         expect(typeorm.save).toHaveBeenCalledWith({ email: 'newuser@test.com' })
