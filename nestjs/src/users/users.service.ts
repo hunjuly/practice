@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { AuthService } from 'src/auth/auth.service'
@@ -11,38 +11,48 @@ export class UsersService {
     constructor(private readonly repository: UsersRepository, private readonly authService: AuthService) {}
 
     async create(dto: CreateUserDto) {
+        const exist = await this.repository.has({ email: dto.email })
+
+        if (exist) throw new ConflictException()
+
         const candidate = new User()
         candidate.email = dto.email
 
         const user = await this.repository.add(candidate)
 
-        await this.authService.createAccount(user, dto.password)
+        await this.authService.add(user, dto.password)
 
         return user
     }
 
     async get(userId: string) {
-        return this.repository.get(userId)
-    }
+        const user = await this.repository.find({ id: userId })
 
-    async count() {
-        return this.repository.count()
-    }
+        if (user === undefined) throw new NotFoundException()
 
-    async findAll(page: Pagination) {
-        return this.repository.findAll(page)
-    }
-
-    async findByEmail(email: string) {
-        return this.repository.findByEmail(email)
+        return user
     }
 
     async remove(userId: string) {
-        const user = await this.repository.get(userId)
+        const user = await this.repository.find({ id: userId })
 
-        await this.authService.removeAccount(user)
+        if (user === undefined) throw new NotFoundException()
 
-        await this.repository.remove(user)
+        await this.authService.remove(user.id)
+
+        await this.repository.remove(user.id)
+    }
+
+    async findAll(page: Pagination) {
+        return this.repository.findPage(page)
+    }
+
+    async findByEmail(email: string) {
+        const user = await this.repository.find({ email })
+
+        if (user === undefined) throw new NotFoundException()
+
+        return user
     }
 
     async update(userId: string, dto: UpdateUserDto) {
