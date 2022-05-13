@@ -5,24 +5,27 @@ import { AuthService } from 'src/auth/auth.service'
 import { Pagination } from 'src/common/pagination'
 import { UsersRepository } from './users.repository'
 import { User } from './entities/user.entity'
+import { CreateUserService } from './create.user.service'
 
 @Injectable()
 export class UsersService {
     constructor(private readonly repository: UsersRepository, private readonly authService: AuthService) {}
 
     async create(dto: CreateUserDto) {
-        const exist = await this.repository.has({ email: dto.email })
+        try {
+            const service = new CreateUserService(this.repository)
 
-        if (exist) throw new ConflictException()
+            const user = await service.createUser(dto)
 
-        const candidate = new User()
-        candidate.email = dto.email
+            // user의 id만 넘겨준다. 관계를 끊어라
+            // user aggregate root에 auth는 포함되지 않는다.
+            await this.authService.add(user, dto.password)
 
-        const user = await this.repository.add(candidate)
-
-        await this.authService.add(user, dto.password)
-
-        return user
+            return user
+        } catch (error) {
+            // AlreadyExistsUser를 어떻게 catch하는가?
+            throw new ConflictException()
+        }
     }
 
     async get(userId: string) {
@@ -34,6 +37,7 @@ export class UsersService {
     }
 
     async remove(userId: string) {
+        // find 말고 has 사용한다.
         const user = await this.repository.find({ id: userId })
 
         if (user === undefined) throw new NotFoundException()
