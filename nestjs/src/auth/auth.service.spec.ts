@@ -3,31 +3,32 @@ import { getRepositoryToken } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import * as bcrypt from 'bcrypt'
 import { AuthService } from './auth.service'
-import { Authentication } from './entities/authentication.entity'
-import { User } from 'src/users/entities/user.entity'
+import { Authentication } from './domain/authentication.entity'
+import { User } from 'src/users/domain/user.entity'
+import { AuthRepository } from './auth.repository'
 
 const oneAuth = { userId: 'uuid#1', password: '$2b$07$Br5.dao1K06fUHnltEtKr.boGyOrrulv3wBnn3J0alK/yZNGoy.PK' }
 
 describe('AuthService', () => {
     let service: AuthService
-    let repository: Repository<Authentication>
+    let repository: AuthRepository
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
             providers: [
                 AuthService,
                 {
-                    provide: getRepositoryToken(Authentication),
+                    provide: AuthRepository,
                     useValue: {
-                        findOne: jest.fn().mockResolvedValue(oneAuth),
-                        save: jest.fn().mockResolvedValue(oneAuth)
+                        get: jest.fn().mockResolvedValue(oneAuth),
+                        add: jest.fn().mockResolvedValue(oneAuth)
                     }
                 }
             ]
         }).compile()
 
         service = module.get(AuthService)
-        repository = module.get(getRepositoryToken(Authentication))
+        repository = module.get(AuthRepository)
     })
 
     it('compare hash with salt ', async () => {
@@ -48,10 +49,11 @@ describe('AuthService', () => {
         const user = new User()
         user.id = 'userId#1'
 
-        await service.createAccount(user, 'testpass')
+        await service.add(user.id, 'testpass')
 
-        expect(repository.save).toHaveBeenCalledWith({
-            user,
+        expect(repository.add).toHaveBeenCalledWith({
+            id: user.id + '_local',
+            userId: user.id,
             password: expect.not.stringMatching('testpass')
         })
     })
@@ -60,11 +62,9 @@ describe('AuthService', () => {
         const user = new User()
         user.id = 'userId#1'
 
-        const actual = await service.validateUser(user, 'testpass')
+        const actual = await service.validate(user.id, 'testpass')
 
         expect(actual).toBeTruthy()
-
-        const expected = { where: { user } }
-        expect(repository.findOne).toHaveBeenCalledWith(expected)
+        expect(repository.get).toHaveBeenCalledWith(user.id + '_local')
     })
 })

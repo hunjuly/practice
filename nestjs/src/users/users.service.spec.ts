@@ -1,9 +1,8 @@
 import { Test } from '@nestjs/testing'
-import { User } from './entities/user.entity'
+import { User } from './domain/user.entity'
 import { UsersService } from './users.service'
 import { AuthService } from 'src/auth/auth.service'
 import { UsersRepository } from './users.repository'
-import { getRepositoryToken } from '@nestjs/typeorm'
 
 describe('UsersService', () => {
     let service: UsersService
@@ -17,16 +16,17 @@ describe('UsersService', () => {
                 {
                     provide: AuthService,
                     useValue: {
-                        createAccount: jest.fn(),
-                        removeAccount: jest.fn()
+                        add: jest.fn(),
+                        removeByUser: jest.fn()
                     }
                 },
                 {
                     provide: UsersRepository,
                     useValue: {
-                        add: jest.fn(),
+                        create: jest.fn(),
                         findAll: jest.fn(),
-                        get: jest.fn(),
+                        findId: jest.fn(),
+                        findEmail: jest.fn(),
                         remove: jest.fn()
                     }
                 }
@@ -46,13 +46,13 @@ describe('UsersService', () => {
         const dto = { email: 'newuser@test.com', password: 'pass#001' }
         const user = { id: 'uuid#1' } as User
 
-        jest.spyOn(repository, 'add').mockResolvedValue(user)
+        jest.spyOn(repository, 'create').mockResolvedValue(user)
 
         const actual = await service.create(dto)
 
         expect(actual).toEqual(user)
-        expect(repository.add).toHaveBeenCalledWith({ email: 'newuser@test.com' })
-        expect(authService.createAccount).toHaveBeenCalledWith(user, 'pass#001')
+        expect(repository.create).toHaveBeenCalledWith({ email: 'newuser@test.com' })
+        expect(authService.add).toHaveBeenCalledWith(user.id, 'pass#001')
     })
 
     it('find all users ', async () => {
@@ -75,23 +75,23 @@ describe('UsersService', () => {
     it('find a user', async () => {
         const user = { id: 'uuid#1' } as User
 
-        jest.spyOn(repository, 'get').mockResolvedValue(user)
+        jest.spyOn(repository, 'findId').mockResolvedValue(user)
 
-        const actual = await service.get('userId#1')
+        const actual = await service.findId('userId#1')
 
         expect(actual).toEqual(user)
-        expect(repository.get).toHaveBeenCalledWith('userId#1')
+        expect(repository.findId).toHaveBeenCalledWith('userId#1')
     })
 
     it('remove the user', async () => {
         const user = { id: 'uuid#1' } as User
 
-        jest.spyOn(repository, 'get').mockResolvedValue(user)
-        jest.spyOn(repository, 'remove').mockResolvedValue()
+        jest.spyOn(repository, 'findId').mockResolvedValue(user)
+        jest.spyOn(repository, 'remove').mockResolvedValue(true)
 
         await service.remove('userId#2')
 
-        expect(repository.remove).toHaveBeenCalledWith(user)
-        expect(authService.removeAccount).toHaveBeenCalledWith(user)
+        expect(repository.remove).toHaveBeenCalledWith('userId#2')
+        expect(authService.removeByUser).toHaveBeenCalledWith('userId#2')
     })
 })

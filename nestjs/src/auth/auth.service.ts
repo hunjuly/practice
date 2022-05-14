@@ -34,7 +34,7 @@ export class AuthService {
     }
 
     async removeByUser(userId: string) {
-        const count = await this.repository.removeByUser(userId)
+        const count = await this.repository.removeByUser(userId + '_local')
 
         if (count === 0) {
             throw new NotFoundException()

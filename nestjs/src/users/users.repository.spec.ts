@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
-import { User } from './entities/user.entity'
+import { User } from './domain/user.entity'
 import { DeleteResult, Repository } from 'typeorm'
 import { UsersRepository } from './users.repository'
 
@@ -40,7 +40,7 @@ describe('UsersRepository', () => {
         jest.spyOn(typeorm, 'findOne').mockResolvedValue(undefined)
         jest.spyOn(typeorm, 'save').mockResolvedValue(user)
 
-        const actual = await repository.add(candidate)
+        const actual = await repository.create(candidate)
 
         expect(actual).toEqual(user)
         expect(typeorm.save).toHaveBeenCalledWith({ email: 'newuser@test.com' })
@@ -63,7 +63,7 @@ describe('UsersRepository', () => {
 
         jest.spyOn(typeorm, 'findOne').mockResolvedValue(user)
 
-        const actual = await repository.get('userId#1')
+        const actual = await repository.findId('userId#1')
 
         expect(actual).toEqual(user)
         expect(typeorm.findOne).toHaveBeenCalledWith('userId#1')
@@ -76,7 +76,7 @@ describe('UsersRepository', () => {
         jest.spyOn(typeorm, 'findOne').mockResolvedValue(user)
         jest.spyOn(typeorm, 'delete').mockResolvedValue(deleteResult)
 
-        await repository.remove(user)
+        await repository.remove(user.id)
 
         expect(typeorm.delete).toHaveBeenCalledWith(user.id)
     })

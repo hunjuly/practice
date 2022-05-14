@@ -27,7 +27,7 @@ describe('UsersController', () => {
                             items: userArray,
                             total: 2
                         }),
-                        get: jest.fn().mockResolvedValue(oneUser),
+                        findId: jest.fn().mockResolvedValue(oneUser),
                         remove: jest.fn(),
                         count: jest.fn().mockResolvedValue(99)
                     }
@@ -71,7 +71,7 @@ describe('UsersController', () => {
         const expected = expect.objectContaining(oneUser)
 
         expect(actual).toEqual(expected)
-        expect(service.get).toHaveBeenCalledWith('userId#1')
+        expect(service.findId).toHaveBeenCalledWith('userId#1')
     })
 
     it('remove the user', async () => {

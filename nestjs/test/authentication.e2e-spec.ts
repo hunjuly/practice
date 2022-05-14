@@ -43,7 +43,7 @@ async function createUser() {
 
 async function login() {
     // curl http://localhost:3000/users/login -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" -v
-    const res = await post(app, '/users/login', { email: 'test@mail.com', password: 'testpass' })
+    const res = await post(app, '/auth/login', { email: 'test@mail.com', password: 'testpass' })
 
     expect(res.statusCode).toEqual(302)
 
@@ -62,7 +62,7 @@ async function getUser(userId: string, cookie: string) {
 
 async function logout(cookie: string) {
     // curl -X delete http://localhost:3000/users/logout --cookie "connect.sid=s%3AW263OQ3h8lMvJrqGc;"
-    const res = await del(app, '/users/logout', [{ cookie: cookie }])
+    const res = await del(app, '/auth/logout', [{ cookie: cookie }])
 
     expect(res.statusCode).toEqual(200)
 }
