@@ -1,25 +1,11 @@
-import {
-    Controller,
-    Request,
-    Get,
-    Post,
-    Body,
-    Patch,
-    Param,
-    Delete,
-    UseGuards,
-    Redirect,
-    ParseUUIDPipe
-} from '@nestjs/common'
-import { ApiBody, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger'
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common'
+import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger'
 import { ApiPaginatedResponse, Pagination, PageQuery } from 'src/common/pagination'
 import { Public } from 'src/auth/public'
-import { LocalAuthGuard } from 'src/auth/local-auth.guard'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { LoginUserDto } from './dto/login-user.dto'
-import { ResponseUserDto } from './dto/response-user.dto'
+import { ResponseUserDto as UserDto } from './dto/user.dto'
 
 @Controller('users')
 export class UsersController {
@@ -30,55 +16,46 @@ export class UsersController {
      */
     @Post()
     @Public()
-    @ApiCreatedResponse({ type: ResponseUserDto })
-    async create(@Body() createUserDto: CreateUserDto) {
-        const item = await this.service.create(createUserDto)
+    @ApiCreatedResponse({ type: UserDto })
+    async create(@Body() dto: CreateUserDto) {
+        const user = await this.service.create(dto)
 
-        return ResponseUserDto.create(item)
-    }
-
-    @Post('login')
-    @Public()
-    @UseGuards(LocalAuthGuard)
-    @Redirect('/users', 302)
-    @ApiBody({ type: LoginUserDto })
-    login(@Request() req) {
-        return { url: `/users/${req.user.id}`, statusCode: 302 }
-    }
-
-    @Delete('logout')
-    async logout(@Request() req) {
-        await req.logOut()
+        return UserDto.create(user)
     }
 
     @Get()
     @Public()
-    @ApiPaginatedResponse(ResponseUserDto)
+    @ApiPaginatedResponse(UserDto)
     async findAll(@PageQuery() page: Pagination) {
-        const result = await this.service.findAll(page)
+        const found = await this.service.findAll(page)
 
-        const dtoArray = new Array<ResponseUserDto>()
+        // TODO 나중에 고쳐야지
+        const dtos: UserDto[] = []
 
-        result.items.map((item) => dtoArray.push(ResponseUserDto.create(item)))
+        found.items.map((user) => {
+            const dto = UserDto.create(user)
 
-        return { ...result, items: dtoArray }
+            dtos.push(dto)
+        })
+
+        return { ...found, items: dtos }
     }
 
     @Get(':id')
-    @ApiOkResponse({ type: ResponseUserDto })
+    @ApiOkResponse({ type: UserDto })
     async findOne(@Param('id', ParseUUIDPipe) id: string) {
-        const item = await this.service.get(id)
+        const user = await this.service.findId(id)
 
-        return ResponseUserDto.create(item)
+        return UserDto.create(user)
     }
 
     @Patch(':id')
-    update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
-        return this.service.update(id, updateUserDto)
+    async update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateUserDto) {
+        await this.service.update(id, dto)
     }
 
     @Delete(':id')
-    remove(@Param('id', ParseUUIDPipe) id: string) {
-        return this.service.remove(id)
+    async remove(@Param('id', ParseUUIDPipe) id: string) {
+        await this.service.remove(id)
     }
 }

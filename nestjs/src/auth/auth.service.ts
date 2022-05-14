@@ -1,9 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import * as bcrypt from 'bcrypt'
-import { Authentication } from './entities/authentication.entity'
+import { Authentication } from './domain/authentication.entity'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
-import { User } from 'src/users/entities/user.entity'
+import { AuthRepository } from './auth.repository'
 
 /* user? userId?
 user 측면
@@ -15,38 +14,40 @@ MSA에서 user 전체를 던지지는 않는다.
 꼭 필요한 정보만 -> 의존성 최소화
 user 정보가 필요하면 usersService에 쿼리하면 된다.
 usersService가 아닌 다른 서비스에서 삭제 할 수 있다.
+auth는 user aggregate에 포함하지 않는다.
 */
 @Injectable()
 export class AuthService {
-    constructor(
-        @InjectRepository(Authentication)
-        private repository: Repository<Authentication>
-    ) {}
+    constructor(private repository: AuthRepository) {}
 
-    // 여기서는 user를 받는게 맞다. 생성할 때 user를 참조한다.
-    async add(user: User, password: string) {
+    async add(userId: string, password: string) {
         // 7을 선택한 이유는 없다. 적당히 골랐다.
         const saltOrRounds = 7
         const hashed = await bcrypt.hash(password, saltOrRounds)
 
         const auth = new Authentication()
-        auth.user = user
+        auth.id = userId + '_local'
+        auth.userId = userId
         auth.password = hashed
 
-        await this.repository.save(auth)
+        await this.repository.add(auth)
     }
 
-    async remove(userId: string) {
-        await this.repository.removeByUser(user)
+    async removeByUser(userId: string) {
+        const count = await this.repository.removeByUser(userId)
+
+        if (count === 0) {
+            throw new NotFoundException()
+        }
     }
 
     async validate(userId: string, password: string) {
-        const auth = await this.repository.findByUser({ where: { user } })
+        const auth = await this.repository.get(userId + '_local')
 
-        if (auth) {
-            return await bcrypt.compare(password, auth.password)
+        if (auth === undefined) {
+            throw new NotFoundException()
         }
 
-        return false
+        return bcrypt.compare(password, auth.password)
     }
 }

@@ -1,70 +1,53 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Pagination } from 'src/common/pagination'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { User } from './entities/user.entity'
-
-type Query = {
-    id?: string
-    email?: string
-}
+import { User } from './domain/user.entity'
+import { IUsersRepository } from './domain/interfaces'
 
 @Injectable()
-export class UsersRepository {
+export class UsersRepository implements IUsersRepository {
     constructor(
         @InjectRepository(User)
         private repository: Repository<User>
     ) {}
 
-    async has(query: Query) {
-        return undefined !== (await this.repository.findOne({ where: query }))
+    async findEmail(email: string) {
+        return this.repository.findOne({ where: { email } })
     }
 
-    async find(query: Query) {
-        return this.repository.findOne({ where: query })
+    async create(candidate: User) {
+        const newUser = await this.repository.save(candidate)
+
+        return newUser
     }
 
-    async findPage(page: Pagination, query?: Query) {
+    async findId(userId: string) {
+        return this.repository.findOne(userId)
+    }
+
+    async findAll(page: Pagination) {
         const [items, total] = await this.repository.findAndCount({
             skip: page.offset,
             take: page.limit,
             order: {
                 id: 'DESC'
-            },
-            where: query
+            }
         })
 
-        return { ...page, items, total }
-    }
-
-    // async hasEmail(email: string) {
-    //     return undefined !== (await this.repository.findOne({ where: { email } }))
-    // }
-
-    // async findByEmail(email: string) {
-    //     return this.repository.findOne({ where: { email } })
-    // }
-
-    // async findById(userId: string) {
-    //     return this.repository.findOne(userId)
-    // }
-
-    async add(candidate: User) {
-        const user = await this.repository.save(candidate)
-
-        return user
+        return { ...page, total, items }
     }
 
     async remove(userId: string) {
         const res = await this.repository.delete(userId)
 
-        if (res.affected !== 1) throw new NotFoundException()
+        return res.affected === 1
     }
 
     async update(userId: string, dto: UpdateUserDto) {
         const res = await this.repository.update(userId, dto)
 
-        if (res.affected !== 1) throw new NotFoundException()
+        return res.affected === 1
     }
 }

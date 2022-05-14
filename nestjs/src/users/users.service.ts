@@ -4,8 +4,8 @@ import { UpdateUserDto } from './dto/update-user.dto'
 import { AuthService } from 'src/auth/auth.service'
 import { Pagination } from 'src/common/pagination'
 import { UsersRepository } from './users.repository'
-import { User } from './entities/user.entity'
-import { CreateUserService } from './create.user.service'
+import { UserCreatingService } from './domain/user.creating.service'
+import { AlreadyExistsException } from './domain/exceptions'
 
 @Injectable()
 export class UsersService {
@@ -13,53 +13,62 @@ export class UsersService {
 
     async create(dto: CreateUserDto) {
         try {
-            const service = new CreateUserService(this.repository)
+            const service = new UserCreatingService(this.repository)
 
-            const user = await service.createUser(dto)
+            const user = await service.create(dto)
 
-            // user의 id만 넘겨준다. 관계를 끊어라
-            // user aggregate root에 auth는 포함되지 않는다.
-            await this.authService.add(user, dto.password)
+            await this.authService.add(user.id, dto.password)
 
             return user
         } catch (error) {
-            // AlreadyExistsUser를 어떻게 catch하는가?
-            throw new ConflictException()
+            // TODO 나중에 고쳐야지
+            if (error instanceof AlreadyExistsException) {
+                throw new ConflictException()
+            } else {
+                throw error
+            }
         }
     }
 
-    async get(userId: string) {
-        const user = await this.repository.find({ id: userId })
+    async findId(userId: string) {
+        const user = await this.repository.findId(userId)
 
-        if (user === undefined) throw new NotFoundException()
+        if (user === undefined) {
+            throw new NotFoundException()
+        }
 
         return user
     }
 
-    async remove(userId: string) {
-        // find 말고 has 사용한다.
-        const user = await this.repository.find({ id: userId })
+    async findEmail(email: string) {
+        const user = await this.repository.findEmail(email)
 
-        if (user === undefined) throw new NotFoundException()
+        if (user === undefined) {
+            throw new NotFoundException()
+        }
 
-        await this.authService.remove(user.id)
-
-        await this.repository.remove(user.id)
+        return user
     }
 
     async findAll(page: Pagination) {
-        return this.repository.findPage(page)
+        return this.repository.findAll(page)
     }
 
-    async findByEmail(email: string) {
-        const user = await this.repository.find({ email })
+    async remove(userId: string) {
+        const success = await this.repository.remove(userId)
 
-        if (user === undefined) throw new NotFoundException()
+        if (!success) {
+            throw new NotFoundException()
+        }
 
-        return user
+        await this.authService.removeByUser(userId)
     }
 
     async update(userId: string, dto: UpdateUserDto) {
-        await this.repository.update(userId, dto)
+        const success = await this.repository.update(userId, dto)
+
+        if (!success) {
+            throw new NotFoundException()
+        }
     }
 }
