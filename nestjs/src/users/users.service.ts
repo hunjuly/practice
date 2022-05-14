@@ -1,33 +1,23 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { AuthService } from 'src/auth/auth.service'
 import { Pagination } from 'src/common/pagination'
 import { UsersRepository } from './users.repository'
 import { UserCreatingService } from './domain/user.creating.service'
-import { AlreadyExistsException } from './domain/exceptions'
 
 @Injectable()
 export class UsersService {
     constructor(private readonly repository: UsersRepository, private readonly authService: AuthService) {}
 
     async create(dto: CreateUserDto) {
-        try {
-            const service = new UserCreatingService(this.repository)
+        const service = new UserCreatingService(this.repository)
 
-            const user = await service.create(dto)
+        const user = await service.create(dto)
 
-            await this.authService.add(user.id, dto.password)
+        await this.authService.add(user.id, dto.password)
 
-            return user
-        } catch (error) {
-            // TODO 나중에 고쳐야지
-            if (error instanceof AlreadyExistsException) {
-                throw new ConflictException()
-            } else {
-                throw error
-            }
-        }
+        return user
     }
 
     async findId(userId: string) {

@@ -35,3 +35,15 @@ export class utils {
         return chunk.toString()
     }
 }
+
+export function entityToDto<S, O>(items: S[], create: (s: S) => O) {
+    const dtos: O[] = []
+
+    items.map((item) => {
+        const dto = create(item)
+
+        dtos.push(dto)
+    })
+
+    return dtos
+}

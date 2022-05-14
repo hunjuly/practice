@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, UseFilters } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger'
 import { ApiPaginatedResponse, Pagination, PageQuery } from 'src/common/pagination'
 import { Public } from 'src/auth/public'
@@ -6,8 +6,11 @@ import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { ResponseUserDto as UserDto } from './dto/user.dto'
+import { entityToDto } from 'src/common'
+import { AlreadyExistsExceptionFilter } from './users.controller.filters'
 
 @Controller('users')
+@UseFilters(AlreadyExistsExceptionFilter)
 export class UsersController {
     constructor(private readonly service: UsersService) {}
 
@@ -29,16 +32,9 @@ export class UsersController {
     async findAll(@PageQuery() page: Pagination) {
         const found = await this.service.findAll(page)
 
-        // TODO 나중에 고쳐야지
-        const dtos: UserDto[] = []
+        const items = entityToDto(found.items, UserDto.create)
 
-        found.items.map((user) => {
-            const dto = UserDto.create(user)
-
-            dtos.push(dto)
-        })
-
-        return { ...found, items: dtos }
+        return { ...found, items }
     }
 
     @Get(':id')
