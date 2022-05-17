@@ -5,6 +5,7 @@ import { AuthService } from 'src/auth/auth.service'
 import { Pagination } from 'src/common/pagination'
 import { UsersRepository } from './users.repository'
 import { UserCreatingService } from './domain/user.creating.service'
+import { UserQuery } from './domain/interfaces'
 
 @Injectable()
 export class UsersService {
@@ -20,8 +21,8 @@ export class UsersService {
         return user
     }
 
-    async findId(userId: string) {
-        const user = await this.repository.findId(userId)
+    async get(userId: string) {
+        const user = await this.repository.get(userId)
 
         if (user === undefined) {
             throw new NotFoundException()
@@ -30,8 +31,8 @@ export class UsersService {
         return user
     }
 
-    async findEmail(email: string) {
-        const user = await this.repository.findEmail(email)
+    async findOne(query: UserQuery) {
+        const user = await this.repository.findOne(query)
 
         if (user === undefined) {
             throw new NotFoundException()

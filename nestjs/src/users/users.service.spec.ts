@@ -4,6 +4,9 @@ import { UsersService } from './users.service'
 import { AuthService } from 'src/auth/auth.service'
 import { UsersRepository } from './users.repository'
 
+jest.mock('src/auth/auth.service')
+jest.mock('./users.repository')
+
 describe('UsersService', () => {
     let service: UsersService
     let repository: UsersRepository
@@ -11,26 +14,7 @@ describe('UsersService', () => {
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
-            providers: [
-                UsersService,
-                {
-                    provide: AuthService,
-                    useValue: {
-                        add: jest.fn(),
-                        removeByUser: jest.fn()
-                    }
-                },
-                {
-                    provide: UsersRepository,
-                    useValue: {
-                        create: jest.fn(),
-                        findAll: jest.fn(),
-                        findId: jest.fn(),
-                        findEmail: jest.fn(),
-                        remove: jest.fn()
-                    }
-                }
-            ]
+            providers: [UsersService, AuthService, UsersRepository]
         }).compile()
 
         service = module.get(UsersService)
@@ -75,18 +59,18 @@ describe('UsersService', () => {
     it('find a user', async () => {
         const user = { id: 'uuid#1' } as User
 
-        jest.spyOn(repository, 'findId').mockResolvedValue(user)
+        jest.spyOn(repository, 'get').mockResolvedValue(user)
 
-        const actual = await service.findId('userId#1')
+        const actual = await service.get('userId#1')
 
         expect(actual).toEqual(user)
-        expect(repository.findId).toHaveBeenCalledWith('userId#1')
+        expect(repository.get).toHaveBeenCalledWith('userId#1')
     })
 
     it('remove the user', async () => {
         const user = { id: 'uuid#1' } as User
 
-        jest.spyOn(repository, 'findId').mockResolvedValue(user)
+        jest.spyOn(repository, 'get').mockResolvedValue(user)
         jest.spyOn(repository, 'remove').mockResolvedValue(true)
 
         await service.remove('userId#2')

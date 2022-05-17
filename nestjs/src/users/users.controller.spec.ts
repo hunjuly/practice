@@ -1,13 +1,9 @@
 import { Test } from '@nestjs/testing'
+import { User } from './domain/user.entity'
 import { UsersController } from './users.controller'
 import { UsersService } from './users.service'
 
-const userArray = [
-    { id: 'uuid#1', email: 'user1@test.com' },
-    { id: 'uuid#2', email: 'user2@test.com' }
-]
-
-const oneUser = { id: 'uuid#1', email: 'user1@test.com' }
+jest.mock('./users.service')
 
 describe('UsersController', () => {
     let controller: UsersController
@@ -16,23 +12,7 @@ describe('UsersController', () => {
     beforeEach(async () => {
         const module = await Test.createTestingModule({
             controllers: [UsersController],
-            providers: [
-                {
-                    provide: UsersService,
-                    useValue: {
-                        create: jest.fn().mockResolvedValue(oneUser),
-                        findAll: jest.fn().mockResolvedValue({
-                            offset: 0,
-                            limit: 10,
-                            items: userArray,
-                            total: 2
-                        }),
-                        findId: jest.fn().mockResolvedValue(oneUser),
-                        remove: jest.fn(),
-                        count: jest.fn().mockResolvedValue(99)
-                    }
-                }
-            ]
+            providers: [UsersService]
         }).compile()
 
         controller = module.get(UsersController)
@@ -44,6 +24,10 @@ describe('UsersController', () => {
     })
 
     it('create a user', async () => {
+        const oneUser = { id: 'uuid#1', email: 'user1@test.com' } as User
+
+        jest.spyOn(service, 'create').mockResolvedValue(oneUser)
+
         const dto = {
             email: 'user1@test.com',
             password: 'pass#001'
@@ -57,6 +41,18 @@ describe('UsersController', () => {
     })
 
     it('find all users ', async () => {
+        const userArray = [
+            { id: 'uuid#1', email: 'user1@test.com' },
+            { id: 'uuid#2', email: 'user2@test.com' }
+        ] as User[]
+
+        jest.spyOn(service, 'findAll').mockResolvedValue({
+            offset: 0,
+            limit: 10,
+            items: userArray,
+            total: 2
+        })
+
         const actual = await controller.findAll({ offset: 0, limit: 10 })
         const expected1 = expect.objectContaining(userArray[0])
         const expected2 = expect.objectContaining(userArray[1])
@@ -67,11 +63,15 @@ describe('UsersController', () => {
     })
 
     it('find a user', async () => {
+        const oneUser = { id: 'uuid#1', email: 'user1@test.com' } as User
+
+        jest.spyOn(service, 'get').mockResolvedValue(oneUser)
+
         const actual = await controller.findOne('userId#1')
         const expected = expect.objectContaining(oneUser)
 
         expect(actual).toEqual(expected)
-        expect(service.findId).toHaveBeenCalledWith('userId#1')
+        expect(service.get).toHaveBeenCalledWith('userId#1')
     })
 
     it('remove the user', async () => {

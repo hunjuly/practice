@@ -63,7 +63,7 @@ describe('UsersRepository', () => {
 
         jest.spyOn(typeorm, 'findOne').mockResolvedValue(user)
 
-        const actual = await repository.findId('userId#1')
+        const actual = await repository.get('userId#1')
 
         expect(actual).toEqual(user)
         expect(typeorm.findOne).toHaveBeenCalledWith('userId#1')

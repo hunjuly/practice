@@ -44,6 +44,8 @@ export class Pagination {
 
 const DEFAULT_PAGE_SIZE = 100
 
+export const defaultPage = { limit: DEFAULT_PAGE_SIZE, offset: 0 }
+
 export const PageQuery = createParamDecorator(
     (data: unknown, context: ExecutionContext): Pagination => {
         const request = context.switchToHttp().getRequest()

@@ -7,7 +7,7 @@ export class UserCreatingService {
     constructor(private readonly repo: IUsersRepository) {}
 
     async create(dto: CreateUserDto) {
-        const user = await this.repo.findEmail(dto.email)
+        const user = await this.repo.findOne({ email: dto.email })
 
         if (user) throw new AlreadyExistsException()
 

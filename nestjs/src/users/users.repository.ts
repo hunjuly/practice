@@ -4,7 +4,7 @@ import { Repository } from 'typeorm'
 import { Pagination } from 'src/common/pagination'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { User } from './domain/user.entity'
-import { IUsersRepository } from './domain/interfaces'
+import { IUsersRepository, UserQuery } from './domain/interfaces'
 
 @Injectable()
 export class UsersRepository implements IUsersRepository {
@@ -13,18 +13,12 @@ export class UsersRepository implements IUsersRepository {
         private repository: Repository<User>
     ) {}
 
-    async findEmail(email: string) {
-        return this.repository.findOne({ where: { email } })
-    }
-
-    async create(candidate: User) {
-        const newUser = await this.repository.save(candidate)
-
-        return newUser
-    }
-
-    async findId(userId: string) {
+    async get(userId: string) {
         return this.repository.findOne(userId)
+    }
+
+    async findOne(where: UserQuery) {
+        return this.repository.findOne({ where })
     }
 
     async findAll(page: Pagination) {
@@ -37,6 +31,12 @@ export class UsersRepository implements IUsersRepository {
         })
 
         return { ...page, total, items }
+    }
+
+    async create(candidate: User) {
+        const newUser = await this.repository.save(candidate)
+
+        return newUser
     }
 
     async remove(userId: string) {

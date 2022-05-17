@@ -40,7 +40,7 @@ export class UsersController {
     @Get(':id')
     @ApiOkResponse({ type: UserDto })
     async findOne(@Param('id', ParseUUIDPipe) id: string) {
-        const user = await this.service.findId(id)
+        const user = await this.service.get(id)
 
         return UserDto.create(user)
     }
