@@ -4,6 +4,9 @@
             "path": "nextjs"
         },
         {
+            "path": "example"
+        },
+        {
             "path": "nestjs"
         },
         {
