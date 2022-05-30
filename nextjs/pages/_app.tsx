@@ -4,8 +4,10 @@ import { AppProps } from 'next/app'
 import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import { CacheProvider, EmotionCache } from '@emotion/react'
-import theme from '../src/theme'
-import createEmotionCache from '../src/createEmotionCache'
+import theme from 'src/theme'
+import createEmotionCache from 'src/createEmotionCache'
+import { SWRConfig } from 'swr'
+import fetchJson from 'lib/fetchJson'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
@@ -25,7 +27,16 @@ export default function MyApp(props: MyAppProps) {
             </Head>
             <ThemeProvider theme={theme}>
                 <CssBaseline />
-                <Component {...pageProps} />
+                <SWRConfig
+                    value={{
+                        fetcher: fetchJson,
+                        onError: (err) => {
+                            console.error(err)
+                        }
+                    }}
+                >
+                    <Component {...pageProps} />
+                </SWRConfig>
             </ThemeProvider>
         </CacheProvider>
     )

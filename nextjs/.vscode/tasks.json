@@ -1,0 +1,55 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "test",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "${input:TestTask}"
+            ]
+        },
+        {
+            "label": "run",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "start:debug"
+            ]
+        },
+        {
+            "label": "infra",
+            "type": "shell",
+            "command": "sh",
+            "args": [
+                "scripts/bootup_infra.sh",
+                "${input:InfraTask}"
+            ]
+        }
+    ],
+    "inputs": [
+        {
+            "type": "pickString",
+            "id": "TestTask",
+            "description": "",
+            "options": [
+                "test:unit",
+                "test:e2e",
+                "test:e2e:debug"
+            ],
+            "default": "test:e2e"
+        },
+        {
+            "type": "pickString",
+            "id": "InfraTask",
+            "description": "",
+            "options": [
+                "memory",
+                "docker"
+            ],
+            "default": "memory"
+        }
+    ]
+}

@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        // 이 옵션은 command를 백그라운드에서 실행하고 디버거를 런치한다.
+        // 그러나 Launch, Attach 두 개로 나누면 선택하기 번거롭다.
+        // npm run start:debug만을 위해서 Launch를 두는 것은 손해가 더 크다.
+        // {
+        //     "name": "Launch",
+        //     "request": "launch",
+        //     "command": "npm run start:debug",
+        //     "type": "node-terminal"
+        // },
+        {
+            "name": "Attach",
+            "port": 9229,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node",
+            "restart": true
+        }
+    ]
+}
