@@ -1,4 +1,5 @@
 import { withIronSessionApiRoute } from 'iron-session/next'
+import fetchJson from 'lib/fetchJson'
 import { sessionOptions } from 'lib/session'
 import { NextApiRequest, NextApiResponse } from 'next'
 
@@ -11,9 +12,19 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
     // const { email, password } = body
 
     try {
-        const {
-            data: { login, avatar_url }
-        } = { data: { login: 'login#1', avatar_url: 'http://avatar/url' } }
+        const data = await fetchJson('http://localhost:4000/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        })
+
+        // const {
+        //     data: { login, avatar_url }
+        // } = data
+        const login = 'lgoin'
+        const avatar_url = 'url'
+
+        console.log('-------- JSON.stringify(data)', JSON.stringify(data))
 
         const user = { isLoggedIn: true, login, avatarUrl: avatar_url } as User
 
