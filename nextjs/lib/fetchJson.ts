@@ -1,7 +1,11 @@
+type JSON = unknown
+
+type ResponseType = { data: JSON; headers: Headers }
+
 export default async function fetchJson<JSON = unknown>(
     input: RequestInfo,
     init?: RequestInit
-): Promise<JSON> {
+): Promise<ResponseType> {
     const response = await fetch(input, init)
 
     // if the server replies, there's always some data in json
@@ -11,7 +15,7 @@ export default async function fetchJson<JSON = unknown>(
     // response.ok is true when res.status is 2xx
     // https://developer.mozilla.org/en-US/docs/Web/API/Response/ok
     if (response.ok) {
-        return data
+        return { data, headers: response.headers }
     }
 
     throw new FetchError({

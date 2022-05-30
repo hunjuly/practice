@@ -36,8 +36,14 @@ export default function SignUp() {
         }
 
         try {
+            await fetchJson('/api/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            })
+
             mutateUser(
-                await fetchJson('/api/signup', {
+                await fetchJson('/api/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)

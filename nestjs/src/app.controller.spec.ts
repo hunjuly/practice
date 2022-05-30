@@ -21,7 +21,7 @@ describe('AppController', () => {
 
         const actual = controller.getHello()
 
-        expect(actual).toBe('Hello World!')
+        expect(actual).toEqual({ message: 'Hello World!' })
         expect(spy).toBeCalled()
     })
 })
