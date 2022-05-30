@@ -11,10 +11,11 @@ export class AuthController {
     @Post('login')
     @Public()
     @UseGuards(LocalAuthGuard)
-    @Redirect('/users', 302)
+    // @Redirect('/users', 302)
     @ApiBody({ type: LoginUserDto })
-    login(@Request() req) {
-        return { url: `/users/${req.user.id}`, statusCode: 302 }
+    login() {
+        // login(@Request() req) {
+        // return { url: `/users/${req.user.id}`, statusCode: 302 }
     }
 
     @Delete('logout')

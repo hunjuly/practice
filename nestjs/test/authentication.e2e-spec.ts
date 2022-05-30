@@ -45,7 +45,7 @@ async function login() {
     // curl http://localhost:4000/users/login -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" -v
     const res = await post(app, '/auth/login', { email: 'test@mail.com', password: 'testpass' })
 
-    expect(res.statusCode).toEqual(302)
+    expect(res.statusCode).toEqual(201)
 
     // < Set-Cookie: connect.sid=s%3AQu2pnp84rzMhMik5w1w8ijslwStFT1Ow0; Path=/; HttpOnly
     const cookies = res.headers['set-cookie'][0].split(';')
