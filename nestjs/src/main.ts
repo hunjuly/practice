@@ -33,7 +33,7 @@ async function bootstrap() {
 
     setApiDocument(app)
 
-    await app.listen(3000)
+    await app.listen(4000)
 
     Logger.log(`Application running on port ${await app.getUrl()}`)
 }

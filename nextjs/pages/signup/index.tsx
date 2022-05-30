@@ -12,15 +12,44 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import Copyright from 'components/Copyright'
+import useUser from 'lib/useUser'
+import fetchJson, { FetchError } from 'lib/fetchJson'
+import { useRouter } from 'next/router'
 
 export default function SignUp() {
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const { mutateUser } = useUser({ redirectTo: '/dashboard', redirectIfFound: true })
+
+    const [errorMsg, setErrorMsg] = React.useState('')
+
+    const router = useRouter()
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+
         const data = new FormData(event.currentTarget)
-        console.log({
+
+        const body = {
+            firstName: data.get('firstName'),
+            lastName: data.get('lastName'),
             email: data.get('email'),
             password: data.get('password')
-        })
+        }
+
+        try {
+            mutateUser(
+                await fetchJson('/api/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                })
+            )
+        } catch (error: unknown) {
+            if (error instanceof FetchError) {
+                setErrorMsg(error.data.message)
+            } else {
+                console.error('An unexpected error happened:', error)
+            }
+        }
     }
 
     return (

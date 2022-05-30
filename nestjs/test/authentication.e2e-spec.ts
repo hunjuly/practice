@@ -33,7 +33,7 @@ it('authentication (e2e)', async () => {
 })
 
 async function createUser() {
-    // curl http://localhost:3000/users -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" | jq
+    // curl http://localhost:4000/users -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" | jq
     const res = await post(app, '/users', { email: 'test@mail.com', password: 'testpass' })
 
     expect(res.statusCode).toEqual(201)
@@ -42,7 +42,7 @@ async function createUser() {
 }
 
 async function login() {
-    // curl http://localhost:3000/users/login -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" -v
+    // curl http://localhost:4000/users/login -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" -v
     const res = await post(app, '/auth/login', { email: 'test@mail.com', password: 'testpass' })
 
     expect(res.statusCode).toEqual(302)
@@ -54,14 +54,14 @@ async function login() {
 }
 
 async function getUser(userId: string, cookie: string) {
-    // curl http://localhost:3000/users --cookie "connect.sid=s%3AW263OQ3h8lMvJrqGc;"
+    // curl http://localhost:4000/users --cookie "connect.sid=s%3AW263OQ3h8lMvJrqGc;"
     const res = await get(app, `/users/${userId}`, [{ cookie: cookie }])
 
     return res
 }
 
 async function logout(cookie: string) {
-    // curl -X delete http://localhost:3000/users/logout --cookie "connect.sid=s%3AW263OQ3h8lMvJrqGc;"
+    // curl -X delete http://localhost:4000/users/logout --cookie "connect.sid=s%3AW263OQ3h8lMvJrqGc;"
     const res = await del(app, '/auth/logout', [{ cookie: cookie }])
 
     expect(res.statusCode).toEqual(200)

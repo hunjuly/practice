@@ -22,7 +22,7 @@ describe('File Upload(e2e)', () => {
             .field('fieldName', 'test')
     }
 
-    // curl -i -X POST -H "Content-Type: multipart/form-data" -F "marketfile=@package.json" -F "fieldName=abcd" "http://localhost:3000/files/upload/"
+    // curl -i -X POST -H "Content-Type: multipart/form-data" -F "marketfile=@package.json" -F "fieldName=abcd" "http://localhost:4000/files/upload/"
     it('/files (POST)', async () => {
         const res = await uploadFile()
 
@@ -54,7 +54,7 @@ describe('File Upload(e2e)', () => {
         expect(res.body).toEqual(expected)
     })
 
-    // curl "http://localhost:3000/files/"
+    // curl "http://localhost:4000/files/"
     it('/files (GET)', async () => {
         await uploadFile()
         await uploadFile()

@@ -23,12 +23,12 @@ export default function SignIn() {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        const body = new FormData(event.currentTarget)
+        const data = new FormData(event.currentTarget)
 
-        console.log({
-            email: body.get('email'),
-            password: body.get('password')
-        })
+        const body = {
+            email: data.get('email'),
+            password: data.get('password')
+        }
 
         try {
             mutateUser(

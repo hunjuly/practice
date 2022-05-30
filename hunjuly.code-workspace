@@ -4,10 +4,10 @@
             "path": "nextjs"
         },
         {
-            "path": "example"
+            "path": "nestjs"
         },
         {
-            "path": "nestjs"
+            "path": "example"
         },
         {
             "path": "archive"
