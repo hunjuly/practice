@@ -19,5 +19,7 @@ export class AuthController {
     @Delete('logout')
     async logout(@Request() req) {
         await req.logOut()
+
+        return {}
     }
 }

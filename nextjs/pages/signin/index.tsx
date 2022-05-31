@@ -13,8 +13,8 @@ import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import Copyright from 'components/Copyright'
 import useUser from 'lib/useUser'
-import fetchJson, { FetchError } from 'lib/fetchJson'
-import { User } from 'pages/api/user'
+import { post } from 'lib/request'
+import { FetchError } from 'lib/types'
 
 export default function SignIn() {
     const { mutateUser } = useUser({ redirectTo: '/dashboard', redirectIfFound: true })
@@ -32,13 +32,7 @@ export default function SignIn() {
         }
 
         try {
-            const { data } = await fetchJson('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            })
-
-            mutateUser(data as User)
+            mutateUser(await post('/api/login', body))
         } catch (error: unknown) {
             if (error instanceof FetchError) {
                 setErrorMsg(error.data.message)

@@ -13,16 +13,13 @@ import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import Copyright from 'components/Copyright'
 import useUser from 'lib/useUser'
-import fetchJson, { FetchError } from 'lib/fetchJson'
-import { useRouter } from 'next/router'
-import { User } from 'pages/api/user'
+import { post } from 'lib/request'
+import { FetchError } from 'lib/types'
 
 export default function SignUp() {
     const { mutateUser } = useUser({ redirectTo: '/dashboard', redirectIfFound: true })
 
     const [errorMsg, setErrorMsg] = React.useState('')
-
-    const router = useRouter()
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -37,19 +34,9 @@ export default function SignUp() {
         }
 
         try {
-            await fetchJson('/api/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            })
+            await post('/api/signup', body)
 
-            const { data } = await fetchJson('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            })
-
-            mutateUser(data as User)
+            mutateUser(await post('/api/login', body))
         } catch (error: unknown) {
             if (error instanceof FetchError) {
                 setErrorMsg(error.data.message)

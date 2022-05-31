@@ -2,15 +2,14 @@ import * as React from 'react'
 import Typography from '@mui/material/Typography'
 import MuiLink from '@mui/material/Link'
 import useUser from 'lib/useUser'
-import fetchJson from 'lib/fetchJson'
+import { delete_ } from 'lib/request'
 import { useRouter } from 'next/router'
-import { Box, Container } from '@mui/material'
-import { User } from 'pages/api/user'
+import { Box } from '@mui/material'
+import { FetchError } from 'lib/types'
 
 export default function Dashboard() {
     const { user, mutateUser } = useUser({ redirectTo: '/signin' })
-
-    const router = useRouter()
+    const [errorMsg, setErrorMsg] = React.useState('')
 
     return (
         <Box
@@ -32,11 +31,16 @@ export default function Dashboard() {
                 onClick={async (e) => {
                     e.preventDefault()
 
-                    const { data } = await fetchJson('/api/logout', { method: 'POST' })
-
-                    mutateUser(data as User, false)
-
-                    router.push('/signin')
+                    try {
+                        mutateUser(await delete_('/api/logout'), false)
+                    } catch (error: unknown) {
+                        console.error('An unexpected error happened:', error)
+                        if (error instanceof FetchError) {
+                            setErrorMsg(error.data.message)
+                        } else {
+                            console.error('An unexpected error happened:', error)
+                        }
+                    }
                 }}
             >
                 Logout

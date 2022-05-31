@@ -7,7 +7,7 @@ import { CacheProvider, EmotionCache } from '@emotion/react'
 import theme from 'src/theme'
 import createEmotionCache from 'src/createEmotionCache'
 import { SWRConfig } from 'swr'
-import fetchJson from 'lib/fetchJson'
+import { request } from 'lib/request'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache()
@@ -29,7 +29,7 @@ export default function MyApp(props: MyAppProps) {
                 <CssBaseline />
                 <SWRConfig
                     value={{
-                        fetcher: fetchJson,
+                        fetcher: request,
                         onError: (err) => {
                             console.error(err)
                         }
