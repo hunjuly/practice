@@ -54,7 +54,7 @@ async function login() {
 }
 
 async function getUser(userId: string, cookie: string) {
-    // curl http://localhost:4000/users --cookie "connect.sid=s%3AW263OQ3h8lMvJrqGc;"
+    // curl http://localhost:4000/users --cookie "connect.sid=s%3AgG58r3EKXC5qaUhqGXyO8040PezYsuoN.OYCMovyhtUQPdBv0da6HvFzmaRoD%2BARpJRXfeGMuks0;"
     const res = await get(app, `/users/${userId}`, [{ cookie: cookie }])
 
     return res

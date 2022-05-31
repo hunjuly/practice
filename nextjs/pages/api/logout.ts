@@ -6,10 +6,11 @@ import { delete_ } from './lib/request'
 export default withIronSessionApiRoute(logoutRoute, sessionOptions)
 
 async function logoutRoute(req: NextApiRequest, res: NextApiResponse) {
-    try {
-        await delete_('/auth/logout')
+    const session = req.session.user
+    req.session.destroy()
 
-        req.session.destroy()
+    try {
+        await delete_('/auth/logout', session?.authCookie)
 
         res.json({
             isLoggedIn: false,

@@ -27,6 +27,7 @@ export class UsersController {
     }
 
     @Get()
+    @Public()
     @ApiPaginatedResponse(UserDto)
     async findAll(@PageQuery() page: Pagination) {
         const found = await this.service.findAll(page)

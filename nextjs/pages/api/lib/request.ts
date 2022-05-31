@@ -29,6 +29,8 @@ export async function post(path: string, body: unknown, authCookie?: string): Pr
 export async function request(path: string, init?: RequestInit): Promise<ResponseType> {
     const backendUrl = process.env.BACKEND_URL as string
 
+    console.log('REQUEST - ', path, init?.body, init?.headers)
+
     if (backendUrl === 'mock') {
         return requestMock(path, init)
     } else {
@@ -39,8 +41,11 @@ export async function request(path: string, init?: RequestInit): Promise<Respons
         const data = await response.json()
 
         if (response.ok) {
+            console.log('RESPONSE OK - ', data, response.headers)
             return { data, headers: response.headers }
         }
+
+        console.log('RESPONSE ERROR- ', response.statusText)
 
         throw new FetchError({ message: response.statusText, response, data })
     }
