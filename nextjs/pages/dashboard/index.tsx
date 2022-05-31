@@ -3,10 +3,14 @@ import Typography from '@mui/material/Typography'
 import MuiLink from '@mui/material/Link'
 import useUser from 'lib/useUser'
 import { delete_ } from 'lib/request'
-import { useRouter } from 'next/router'
 import { Box } from '@mui/material'
 import { FetchError } from 'lib/types'
 
+/*
+0. SSR 구현
+1. Dashboard에 users 표시
+2. Layout 구현
+*/
 export default function Dashboard() {
     const { user, mutateUser } = useUser({ redirectTo: '/signin' })
     const [errorMsg, setErrorMsg] = React.useState('')
