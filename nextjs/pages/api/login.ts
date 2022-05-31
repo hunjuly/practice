@@ -21,11 +21,9 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
 
         const { id, email } = data as { id: string; email: string }
 
-        console.log('-------- JSON.stringify(data)', JSON.stringify(data))
+        const authCookie = headers.get('set-cookie')
 
-        const cookie = headers['set-cookie']
-
-        const user = { isLoggedIn: true, id, email, cookie } as User
+        const user = { isLoggedIn: true, id, email, authCookie: authCookie } as User
 
         req.session.user = user
 

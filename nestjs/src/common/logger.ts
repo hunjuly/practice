@@ -14,7 +14,9 @@ export class LoggingInterceptor implements NestInterceptor {
         const request = context.switchToHttp().getRequest()
         const body = JSON.stringify(request.body)
 
-        const message = `${request.url}, body: ${body}  ${Date.now() - now}ms`
+        const response = context.switchToHttp().getResponse()
+
+        const message = `${request.url}, body: ${body}, status: ${response.statusCode}  ${Date.now() - now}ms`
 
         return next.handle().pipe(tap(() => logger.log(message)))
     }

@@ -5,6 +5,7 @@ import useUser from 'lib/useUser'
 import fetchJson from 'lib/fetchJson'
 import { useRouter } from 'next/router'
 import { Box, Container } from '@mui/material'
+import { User } from 'pages/api/user'
 
 export default function Dashboard() {
     const { user, mutateUser } = useUser({ redirectTo: '/signin' })
@@ -31,7 +32,9 @@ export default function Dashboard() {
                 onClick={async (e) => {
                     e.preventDefault()
 
-                    mutateUser(await fetchJson('/api/logout', { method: 'POST' }), false)
+                    const { data } = await fetchJson('/api/logout', { method: 'POST' })
+
+                    mutateUser(data as User, false)
 
                     router.push('/signin')
                 }}

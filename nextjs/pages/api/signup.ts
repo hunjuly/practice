@@ -11,11 +11,15 @@ async function signupRoute(req: NextApiRequest, res: NextApiResponse) {
     try {
         const body = await req.body
 
-        await fetchJson(backendUrl + '/users', {
+        const responseBody = await fetchJson(backendUrl + '/users', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
         })
+
+        // res.json(responseBody.data)
+
+        res.json({ message: 'done' })
     } catch (error) {
         res.status(500).json({ message: (error as Error).message })
     }

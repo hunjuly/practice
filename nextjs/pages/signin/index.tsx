@@ -14,6 +14,7 @@ import Container from '@mui/material/Container'
 import Copyright from 'components/Copyright'
 import useUser from 'lib/useUser'
 import fetchJson, { FetchError } from 'lib/fetchJson'
+import { User } from 'pages/api/user'
 
 export default function SignIn() {
     const { mutateUser } = useUser({ redirectTo: '/dashboard', redirectIfFound: true })
@@ -31,13 +32,13 @@ export default function SignIn() {
         }
 
         try {
-            mutateUser(
-                await fetchJson('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                })
-            )
+            const { data } = await fetchJson('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            })
+
+            mutateUser(data as User)
         } catch (error: unknown) {
             if (error instanceof FetchError) {
                 setErrorMsg(error.data.message)

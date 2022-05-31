@@ -6,7 +6,7 @@ export type User = {
     isLoggedIn: boolean
     id: string
     email: string
-    cookie: string
+    authCookie: string
 }
 
 export default withIronSessionApiRoute(userRoute, sessionOptions)
@@ -22,7 +22,7 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse<User>) {
             isLoggedIn: false,
             id: '',
             email: '',
-            cookie: ''
+            authCookie: ''
         })
     }
 }
