@@ -18,7 +18,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     const getLayout =
         Component.getLayout ??
         ((page) => {
-            return <div>GLOBAL {page}</div>
+            return <div>GLOBAL LAYOUT {page}</div>
         })
 
     return getLayout(
