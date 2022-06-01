@@ -1,35 +1,28 @@
 import * as React from 'react'
-import Avatar from '@mui/material/Avatar'
-import Button from '@mui/material/Button'
-import CssBaseline from '@mui/material/CssBaseline'
-import TextField from '@mui/material/TextField'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Checkbox from '@mui/material/Checkbox'
-import Link from '@mui/material/Link'
-import Grid from '@mui/material/Grid'
-import Box from '@mui/material/Box'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import Typography from '@mui/material/Typography'
-import Container from '@mui/material/Container'
-import Copyright from 'components/Copyright'
+import type { ReactElement } from 'react'
 import useUser from 'lib/useUser'
 import { post } from 'lib/request'
 import { FetchError } from 'lib/types'
+import Link from 'next/link'
 
 export default function SignIn() {
     const { mutateUser } = useUser({ redirectTo: '/dashboard', redirectIfFound: true })
 
-    const [errorMsg, setErrorMsg] = React.useState('')
+    const [errorMsg, setErrorMsg] = React.useState<string>()
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
+    const [email, setEmail] = React.useState('')
+    const [password, setPassword] = React.useState('')
 
-        const data = new FormData(event.currentTarget)
+    const handleEmailChange = (event: React.FormEvent<HTMLInputElement>) => {
+        setEmail(event.currentTarget.value)
+    }
 
-        const body = {
-            email: data.get('email'),
-            password: data.get('password')
-        }
+    const handlePasswordChange = (event: React.FormEvent<HTMLInputElement>) => {
+        setPassword(event.currentTarget.value)
+    }
+
+    const handleSubmit = async (_event: React.MouseEvent<HTMLInputElement>) => {
+        const body = { email, password }
 
         try {
             mutateUser(await post('/api/login', body))
@@ -43,66 +36,27 @@ export default function SignIn() {
     }
 
     return (
-        <Container component="main" maxWidth="xs">
-            <CssBaseline />
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center'
-                }}
-            >
-                <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                    <LockOutlinedIcon />
-                </Avatar>
-                <Typography component="h1" variant="h5">
-                    Sign in
-                </Typography>
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
-                        autoFocus
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                    />
-                    <FormControlLabel
-                        control={<Checkbox value="remember" color="primary" />}
-                        label="Remember me"
-                    />
-                    <div>{errorMsg}</div>
-                    <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                        Sign In
-                    </Button>
-                    <Grid container>
-                        <Grid item xs>
-                            <Link href="#" variant="body2">
-                                Forgot password?
-                            </Link>
-                        </Grid>
-                        <Grid item>
-                            <Link href="/signup" variant="body2">
-                                {"Don't have an account? Sign Up"}
-                            </Link>
-                        </Grid>
-                    </Grid>
-                </Box>
-            </Box>
-            <Copyright />
-        </Container>
+        <div>
+            <div>
+                Email:
+                <input type="text" value={email} onChange={handleEmailChange} />
+            </div>
+            <div>
+                Password:
+                <input type="text" value={password} onChange={handlePasswordChange} />
+            </div>
+            <div hidden={errorMsg === undefined}>Error: {errorMsg}</div>
+            <input type="button" value={'Submit'} onClick={handleSubmit} />
+            <div>
+                <Link href="/signup">
+                    <a>Don't have an account? Sign Up</a>
+                </Link>
+            </div>
+            <div className="Comment">React의 usetState를 사용해서 사용자의 입력을 처리함</div>
+        </div>
     )
+}
+
+SignIn.getLayout = function getLayout(page: ReactElement) {
+    return page
 }

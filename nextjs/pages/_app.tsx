@@ -1,43 +1,36 @@
-import * as React from 'react'
-import Head from 'next/head'
+import type { ReactElement, ReactNode } from 'react'
+import type { NextPage } from 'next'
 import { AppProps } from 'next/app'
-import { ThemeProvider } from '@mui/material/styles'
-import CssBaseline from '@mui/material/CssBaseline'
-import { CacheProvider, EmotionCache } from '@emotion/react'
-import theme from 'src/theme'
-import createEmotionCache from 'src/createEmotionCache'
 import { SWRConfig } from 'swr'
 import { request } from 'lib/request'
 
-// Client-side cache, shared for the whole session of the user in the browser.
-const clientSideEmotionCache = createEmotionCache()
+import './globals.css'
 
-interface MyAppProps extends AppProps {
-    emotionCache?: EmotionCache
+type NextPageWithLayout = NextPage & {
+    getLayout?: (page: ReactElement) => ReactNode
 }
 
-export default function MyApp(props: MyAppProps) {
-    const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
+type AppPropsWithLayout = AppProps & {
+    Component: NextPageWithLayout
+}
 
-    return (
-        <CacheProvider value={emotionCache}>
-            <Head>
-                <title>hunjuly's practice</title>
-                <meta name="viewport" content="initial-scale=1, width=device-width" />
-            </Head>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <SWRConfig
-                    value={{
-                        fetcher: request,
-                        onError: (err) => {
-                            console.error(err)
-                        }
-                    }}
-                >
-                    <Component {...pageProps} />
-                </SWRConfig>
-            </ThemeProvider>
-        </CacheProvider>
+export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+    const getLayout =
+        Component.getLayout ??
+        ((page) => {
+            return <div>GLOBAL {page}</div>
+        })
+
+    return getLayout(
+        <SWRConfig
+            value={{
+                fetcher: request,
+                onError: (err) => {
+                    console.error(err)
+                }
+            }}
+        >
+            <Component {...pageProps} />
+        </SWRConfig>
     )
 }
