@@ -1,12 +1,11 @@
 import * as React from 'react'
 import type { ReactElement } from 'react'
-import useUser from 'lib/useUser'
+import { useUserSession, UserSession } from 'hooks/useUserSession'
 import { FetchError, post } from 'lib/request'
-import { User } from 'lib/session'
 import Link from 'next/link'
 
 export default function SignUp() {
-    const { mutateUser } = useUser({ redirectTo: '/dashboard', redirectIfFound: true })
+    const { mutateUser } = useUserSession({ redirectTo: '/dashboard', redirectIfFound: true })
 
     const [errorMsg, setErrorMsg] = React.useState('')
 
@@ -27,7 +26,7 @@ export default function SignUp() {
 
             const { data } = await post('/api/login', body)
 
-            mutateUser(data as User)
+            mutateUser(data as UserSession)
         } catch (error: unknown) {
             if (error instanceof FetchError) {
                 setErrorMsg(error.data.message)

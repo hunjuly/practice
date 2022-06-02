@@ -21,7 +21,7 @@ export class AuthRepository {
     }
 
     async get(authId: string) {
-        const user = await this.repository.findOne(authId)
+        const user = await this.repository.findOneBy({ id: authId })
 
         return user
     }

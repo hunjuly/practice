@@ -14,7 +14,7 @@ export class UsersRepository implements IUsersRepository {
     ) {}
 
     async get(userId: string) {
-        return this.repository.findOne(userId)
+        return this.repository.findOneBy({ id: userId })
     }
 
     async findOne(where: UserQuery) {

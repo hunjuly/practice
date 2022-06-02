@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
-import { User, withSessionSsr } from 'lib/session'
+import { withSessionSsr } from 'lib/session'
 import { FetchError, delete_ } from 'lib/request'
-import useUser from 'lib/useUser'
+import { useUserSession, UserSession } from 'hooks/useUserSession'
 
 /*
 api는 클라이언트에서 submit 할 때만 필요. 혹은, session에 접근할 때
@@ -12,7 +12,7 @@ api는 클라이언트에서 submit 할 때만 필요. 혹은, session에 접근
 */
 
 export default function Dashboard({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-    const { user, mutateUser } = useUser({ redirectTo: '/signin' })
+    const { user, mutateUser } = useUserSession({ redirectTo: '/signin' })
     const [errorMsg, setErrorMsg] = React.useState('')
 
     return (
@@ -26,7 +26,7 @@ export default function Dashboard({ data }: InferGetServerSidePropsType<typeof g
                     try {
                         const { data } = await delete_('/api/logout')
 
-                        mutateUser(data as User, false)
+                        mutateUser(data as UserSession, false)
                     } catch (error: unknown) {
                         console.error('An unexpected error happened:', error)
                         if (error instanceof FetchError) {

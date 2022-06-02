@@ -8,6 +8,7 @@ async function route(req: NextApiRequest, res: NextApiResponse) {
     try {
         const body = await req.body
 
+        이건 backendUrl을 불러와야 한다.
         const { data, headers } = await post('/auth/login', body)
 
         const { id, email } = data as { id: string; email: string }

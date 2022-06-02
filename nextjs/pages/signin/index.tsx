@@ -1,12 +1,11 @@
 import * as React from 'react'
 import type { ReactElement } from 'react'
-import useUser from 'lib/useUser'
+import { useUserSession, UserSession } from 'hooks/useUserSession'
 import { FetchError, post } from 'lib/request'
-import { User } from 'lib/session'
 import Link from 'next/link'
 
 export default function SignIn() {
-    const { mutateUser } = useUser({ redirectTo: '/dashboard', redirectIfFound: true })
+    const { mutateUser } = useUserSession({ redirectTo: '/dashboard', redirectIfFound: true })
 
     const [errorMsg, setErrorMsg] = React.useState<string>()
 
@@ -25,9 +24,12 @@ export default function SignIn() {
         const body = { email, password }
 
         try {
+            이건 backendUrl을 불러오면 안 된다.
             const { data } = await post('/api/login', body)
 
-            mutateUser(data as User)
+            alert('SIGNIN RESPONSE mutateUser,' + JSON.stringify(data))
+
+            mutateUser(data as UserSession)
         } catch (error: unknown) {
             if (error instanceof FetchError) {
                 setErrorMsg(error.data.message)

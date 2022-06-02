@@ -1,10 +1,22 @@
 import { useEffect } from 'react'
 import Router from 'next/router'
 import useSWR from 'swr'
-import { User } from './session'
 
-export default function useUser({ redirectTo = '', redirectIfFound = false } = {}) {
-    const { data: user, mutate: mutateUser } = useSWR<User>('/api/user')
+export type UserSession = {
+    isLoggedIn: boolean
+    id: string
+    email: string
+    authCookie: string
+}
+
+declare module 'iron-session' {
+    interface IronSessionData {
+        user?: UserSession
+    }
+}
+
+export function useUserSession({ redirectTo = '', redirectIfFound = false } = {}) {
+    const { data: user, mutate: mutateUser } = useSWR<UserSession>('/api/user')
 
     useEffect(() => {
         if (!redirectTo || !user) return
@@ -21,13 +33,3 @@ export default function useUser({ redirectTo = '', redirectIfFound = false } = {
 
     return { user, mutateUser }
 }
-
-// const fetcher = (url, token) =>
-//     axios
-//       .get(url, { headers: { Authorization: "Bearer " + token } })
-//       .then((res) => res.data);
-
-// const { data, error } = useSWR(
-//   [`http://localhost:8000/api/v1/users/get-avatar`, auth.token],
-//   fetcher
-// );
