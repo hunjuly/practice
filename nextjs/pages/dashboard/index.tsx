@@ -1,18 +1,13 @@
 import * as React from 'react'
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
-import { withIronSessionSsr } from 'iron-session/next'
-import { sessionOptions } from 'lib/session'
+import { User, withSessionSsr } from 'lib/session'
+import { FetchError, delete_ } from 'lib/request'
 import useUser from 'lib/useUser'
-import { delete_ } from 'lib/request'
-import { FetchError } from 'lib/types'
 
 /*
-api는 클라이언트에서 submit 할 때만 필요.
+api는 클라이언트에서 submit 할 때만 필요. 혹은, session에 접근할 때
 
-request 하나로 통합
-
-0. SSR 구현
 3. BackendMock 구현
 */
 
@@ -29,7 +24,9 @@ export default function Dashboard({ data }: InferGetServerSidePropsType<typeof g
                     e.preventDefault()
 
                     try {
-                        mutateUser(await delete_('/api/logout'), false)
+                        const { data } = await delete_('/api/logout')
+
+                        mutateUser(data as User, false)
                     } catch (error: unknown) {
                         console.error('An unexpected error happened:', error)
                         if (error instanceof FetchError) {
@@ -46,7 +43,9 @@ export default function Dashboard({ data }: InferGetServerSidePropsType<typeof g
     )
 }
 
-export const getServerSideProps: GetServerSideProps = withIronSessionSsr(async ({ req, res }) => {
+// req,res 외에 추가 인자 등 상세 설명
+// https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props
+export const getServerSideProps: GetServerSideProps = withSessionSsr(async ({ req, res }) => {
     // const user = req.session.user
 
     // const res = await fetch('https://.../data')
@@ -64,10 +63,6 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(async (
     }
 
     if (!data) {
-        // 아래 redirect로 충분한가? res.setHeader 해야 하는가?
-        //         res.setHeader('location', '/login')
-        //         res.statusCode = 302
-        //         res.end()
         return {
             redirect: { destination: '/', permanent: false }
         }
@@ -78,4 +73,4 @@ export const getServerSideProps: GetServerSideProps = withIronSessionSsr(async (
             data
         }
     }
-}, sessionOptions)
+})

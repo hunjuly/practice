@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import Router from 'next/router'
 import useSWR from 'swr'
-import { User } from './types'
+import { User } from './session'
 
 export default function useUser({ redirectTo = '', redirectIfFound = false } = {}) {
     const { data: user, mutate: mutateUser } = useSWR<User>('/api/user')
@@ -21,3 +21,13 @@ export default function useUser({ redirectTo = '', redirectIfFound = false } = {
 
     return { user, mutateUser }
 }
+
+// const fetcher = (url, token) =>
+//     axios
+//       .get(url, { headers: { Authorization: "Bearer " + token } })
+//       .then((res) => res.data);
+
+// const { data, error } = useSWR(
+//   [`http://localhost:8000/api/v1/users/get-avatar`, auth.token],
+//   fetcher
+// );

@@ -1,11 +1,10 @@
-import { withIronSessionApiRoute } from 'iron-session/next'
-import { sessionOptions } from 'lib/session'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { post } from './lib/request'
+import { withSessionApiRoute } from 'lib/session'
+import { post } from 'lib/request'
 
-export default withIronSessionApiRoute(signupRoute, sessionOptions)
+export default withSessionApiRoute(route)
 
-async function signupRoute(req: NextApiRequest, res: NextApiResponse) {
+async function route(req: NextApiRequest, res: NextApiResponse) {
     try {
         const body = await req.body
 

@@ -1,8 +1,8 @@
 import * as React from 'react'
 import type { ReactElement } from 'react'
 import useUser from 'lib/useUser'
-import { post } from 'lib/request'
-import { FetchError } from 'lib/types'
+import { FetchError, post } from 'lib/request'
+import { User } from 'lib/session'
 import Link from 'next/link'
 
 export default function SignUp() {
@@ -25,7 +25,9 @@ export default function SignUp() {
         try {
             await post('/api/signup', body)
 
-            mutateUser(await post('/api/login', body))
+            const { data } = await post('/api/login', body)
+
+            mutateUser(data as User)
         } catch (error: unknown) {
             if (error instanceof FetchError) {
                 setErrorMsg(error.data.message)

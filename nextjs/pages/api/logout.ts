@@ -1,11 +1,10 @@
-import { withIronSessionApiRoute } from 'iron-session/next'
-import { sessionOptions } from 'lib/session'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { delete_ } from './lib/request'
+import { delete_ } from 'lib/request'
+import { withSessionApiRoute } from 'lib/session'
 
-export default withIronSessionApiRoute(logoutRoute, sessionOptions)
+export default withSessionApiRoute(route)
 
-async function logoutRoute(req: NextApiRequest, res: NextApiResponse) {
+async function route(req: NextApiRequest, res: NextApiResponse) {
     const session = req.session.user
     req.session.destroy()
 

@@ -1,9 +1,7 @@
-import { withIronSessionApiRoute } from 'iron-session/next'
-import { sessionOptions } from 'lib/session'
-import { User } from 'lib/types'
 import { NextApiRequest, NextApiResponse } from 'next'
+import { withSessionApiRoute, User } from 'lib/session'
 
-export default withIronSessionApiRoute(route, sessionOptions)
+export default withSessionApiRoute(route)
 
 async function route(req: NextApiRequest, res: NextApiResponse<User>) {
     if (req.session.user) {
