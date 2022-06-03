@@ -1,4 +1,5 @@
 import { ResponseType } from './request'
+import { HeadersMock } from './HeadersMock'
 
 export async function requestMock<T>(path: string, init?: RequestInit): Promise<ResponseType<T>> {
     let data = {} as T
@@ -30,39 +31,4 @@ export async function requestMock<T>(path: string, init?: RequestInit): Promise<
     }
 
     return { data, headers }
-}
-
-class HeadersMock implements Headers {
-    constructor(private items: { [key: string]: string }) {}
-
-    get(name: string): string | null {
-        return this.items[name]
-    }
-    has(name: string): boolean {
-        return false
-    }
-    entries(): IterableIterator<[string, string]> {
-        throw new Error('Method not implemented.')
-    }
-    keys(): IterableIterator<string> {
-        throw new Error('Method not implemented.')
-    }
-    values(): IterableIterator<string> {
-        throw new Error('Method not implemented.')
-    }
-    [Symbol.iterator](): IterableIterator<[string, string]> {
-        throw new Error('Method not implemented.')
-    }
-    append(name: string, value: string): void {
-        throw new Error('Method not implemented.')
-    }
-    delete(name: string): void {
-        throw new Error('Method not implemented.')
-    }
-    set(name: string, value: string): void {
-        throw new Error('Method not implemented.')
-    }
-    forEach(callbackfn: (value: string, key: string, parent: Headers) => void, thisArg?: any): void {
-        throw new Error('Method not implemented.')
-    }
 }

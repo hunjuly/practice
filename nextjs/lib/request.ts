@@ -29,7 +29,7 @@ export class RequestError extends Error {
     }
 }
 
-class RequestRest {
+class ApiRequest {
     constructor(private readonly hostUrl = '') {}
 
     public async get<T>(path: string, authCookie?: string): Promise<ResponseType<T>> {
@@ -76,8 +76,8 @@ class RequestRest {
     }
 }
 
-export const serviceApi = new RequestRest(process.env.BACKEND_URL)
-export const localApi = new RequestRest()
+export const serviceApi = new ApiRequest(process.env.BACKEND_URL)
+export const localApi = new ApiRequest()
 
 export async function fetcher<JSON = unknown>(input: RequestInfo, init?: RequestInit): Promise<JSON> {
     const response = await fetch(input, init)
