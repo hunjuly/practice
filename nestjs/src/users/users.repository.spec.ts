@@ -16,6 +16,7 @@ describe('UsersRepository', () => {
                     provide: getRepositoryToken(User),
                     useValue: {
                         findOne: jest.fn(),
+                        findOneBy: jest.fn(),
                         findAndCount: jest.fn(),
                         count: jest.fn(),
                         delete: jest.fn(),
@@ -61,12 +62,12 @@ describe('UsersRepository', () => {
     it('find a user', async () => {
         const user = { id: 'uuid#1' } as User
 
-        jest.spyOn(typeorm, 'findOne').mockResolvedValue(user)
+        jest.spyOn(typeorm, 'findOneBy').mockResolvedValue(user)
 
         const actual = await repository.get('userId#1')
 
         expect(actual).toEqual(user)
-        expect(typeorm.findOne).toHaveBeenCalledWith('userId#1')
+        expect(typeorm.findOneBy).toHaveBeenCalled()
     })
 
     it('remove the user', async () => {
