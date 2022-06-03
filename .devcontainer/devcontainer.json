@@ -21,7 +21,6 @@
     ],
     "remoteEnv": {
         "WORKSPACE_ROOT": "${containerWorkspaceFolder}",
-        "FILE_STORAGE": "/workspaces/files"
     },
     "postCreateCommand": "sh .devcontainer/postCreateCommand.sh"
 }
