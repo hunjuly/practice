@@ -2,14 +2,8 @@ import * as React from 'react'
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
 import { withSessionSsr } from 'lib/session'
-import { FetchError, delete_ } from 'lib/request'
+import { RequestError, localApi } from 'lib/request'
 import { useUserSession, UserSession } from 'hooks/useUserSession'
-
-/*
-api는 클라이언트에서 submit 할 때만 필요. 혹은, session에 접근할 때
-
-3. BackendMock 구현
-*/
 
 export default function Dashboard({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const { user, mutateUser } = useUserSession({ redirectTo: '/signin' })
@@ -24,12 +18,11 @@ export default function Dashboard({ data }: InferGetServerSidePropsType<typeof g
                     e.preventDefault()
 
                     try {
-                        const { data } = await delete_('/api/logout')
+                        const { data } = await localApi.delete_<UserSession>('/api/logout')
 
-                        mutateUser(data as UserSession, false)
-                    } catch (error: unknown) {
-                        console.error('An unexpected error happened:', error)
-                        if (error instanceof FetchError) {
+                        mutateUser(data, false)
+                    } catch (error) {
+                        if (error instanceof RequestError) {
                             setErrorMsg(error.data.message)
                         } else {
                             console.error('An unexpected error happened:', error)
@@ -52,14 +45,7 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(async ({ re
     // const data: Data = await res.json()
 
     const data = {
-        users: [
-            {
-                isLoggedIn: false,
-                id: 'string',
-                email: 'string',
-                authCookie: 'string'
-            }
-        ]
+        users: [{ isLoggedIn: false, id: 'string', email: 'string', authCookie: 'string' }]
     }
 
     if (!data) {
@@ -69,8 +55,6 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(async ({ re
     }
 
     return {
-        props: {
-            data
-        }
+        props: { data }
     }
 })

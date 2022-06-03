@@ -1,7 +1,7 @@
 import * as React from 'react'
 import type { ReactElement } from 'react'
 import { useUserSession, UserSession } from 'hooks/useUserSession'
-import { FetchError, post } from 'lib/request'
+import { RequestError, localApi } from 'lib/request'
 import Link from 'next/link'
 
 export default function SignIn() {
@@ -24,14 +24,11 @@ export default function SignIn() {
         const body = { email, password }
 
         try {
-            이건 backendUrl을 불러오면 안 된다.
-            const { data } = await post('/api/login', body)
+            const { data } = await localApi.post<UserSession>('/api/login', body)
 
-            alert('SIGNIN RESPONSE mutateUser,' + JSON.stringify(data))
-
-            mutateUser(data as UserSession)
-        } catch (error: unknown) {
-            if (error instanceof FetchError) {
+            mutateUser(data)
+        } catch (error) {
+            if (error instanceof RequestError) {
                 setErrorMsg(error.data.message)
             } else {
                 console.error('An unexpected error happened:', error)

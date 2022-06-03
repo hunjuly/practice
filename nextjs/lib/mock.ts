@@ -1,9 +1,9 @@
 import { ResponseType } from './request'
 
-export async function requestMock(path: string, init?: RequestInit): Promise<ResponseType> {
+export async function requestMock<T>(path: string, init?: RequestInit): Promise<ResponseType<T>> {
     const headers = new HeadersMock()
 
-    return { data: {}, headers }
+    return { data: {} as T, headers }
 }
 
 class HeadersMock implements Headers {

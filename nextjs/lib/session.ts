@@ -13,6 +13,7 @@ export function withSessionSsr<P extends withSessionSsrType = withSessionSsrType
 type withSessionSsrType = {
     [key: string]: unknown
 }
+
 type SsrHandler<P> = (
     context: GetServerSidePropsContext
 ) => GetServerSidePropsResult<P> | Promise<GetServerSidePropsResult<P>>

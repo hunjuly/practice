@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { withSessionApiRoute } from 'lib/session'
-import { post } from 'lib/request'
+import { serviceApi } from 'lib/request'
 
 export default withSessionApiRoute(route)
 
@@ -8,7 +8,7 @@ async function route(req: NextApiRequest, res: NextApiResponse) {
     try {
         const body = await req.body
 
-        await post('/users', body)
+        await serviceApi.post('/users', body)
 
         res.json({ message: 'done' })
     } catch (error) {

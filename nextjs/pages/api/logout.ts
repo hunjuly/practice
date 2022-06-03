@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { delete_ } from 'lib/request'
+import { serviceApi } from 'lib/request'
 import { withSessionApiRoute } from 'lib/session'
 
 export default withSessionApiRoute(route)
@@ -9,7 +9,7 @@ async function route(req: NextApiRequest, res: NextApiResponse) {
     req.session.destroy()
 
     try {
-        await delete_('/auth/logout', session?.authCookie)
+        await serviceApi.delete_('/auth/logout', session?.authCookie)
 
         res.json({
             isLoggedIn: false,
