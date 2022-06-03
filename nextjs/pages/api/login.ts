@@ -1,17 +1,21 @@
 import { withSessionApiRoute } from 'lib/session'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { post } from 'lib/request'
+import { serviceApi } from 'lib/request'
 
 export default withSessionApiRoute(route)
+
+type LoginInfo = {
+    id: string
+    email: string
+}
 
 async function route(req: NextApiRequest, res: NextApiResponse) {
     try {
         const body = await req.body
 
-        이건 backendUrl을 불러와야 한다.
-        const { data, headers } = await post('/auth/login', body)
+        const { data, headers } = await serviceApi.post<LoginInfo>('/auth/login', body)
 
-        const { id, email } = data as { id: string; email: string }
+        const { id, email } = data
 
         const authCookie = headers.get('set-cookie')
 
@@ -23,6 +27,8 @@ async function route(req: NextApiRequest, res: NextApiResponse) {
             res.json({})
         }
     } catch (error) {
-        res.status(500).json({ message: (error as Error).message })
+        const message = (error as Error).message
+
+        res.status(500).json({ message })
     }
 }

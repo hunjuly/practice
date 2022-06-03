@@ -1,29 +1,26 @@
 import { requestMock } from './mock'
 
-export type ResponseType = { data: unknown; headers: Headers }
+export type ResponseType<T> = { data: T; headers: Headers }
 
-export class FetchError extends Error {
+type ErrorInfo = {
+    message: string
     response: Response
     data: {
         message: string
     }
-    constructor({
-        message,
-        response,
-        data
-    }: {
+}
+
+export class RequestError extends Error {
+    response: Response
+    data: {
         message: string
-        response: Response
-        data: {
-            message: string
-        }
-    }) {
-        // Pass remaining arguments (including vendor specific ones) to parent constructor
+    }
+    constructor({ message, response, data }: ErrorInfo) {
         super(message)
 
         // Maintains proper stack trace for where our error was thrown (only available on V8)
         if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, FetchError)
+            Error.captureStackTrace(this, RequestError)
         }
 
         this.name = 'FetchError'
@@ -32,51 +29,63 @@ export class FetchError extends Error {
     }
 }
 
-export async function get(path: string, authCookie?: string): Promise<ResponseType> {
-    const headers = authCookie ? { cookie: authCookie } : undefined
+class RequestRest {
+    constructor(private readonly hostUrl = '') {}
 
-    return request(path, { method: 'GET', headers })
-}
+    public async get<T>(path: string, authCookie?: string): Promise<ResponseType<T>> {
+        const headers = authCookie ? { cookie: authCookie } : undefined
 
-export async function delete_(path: string, authCookie?: string): Promise<ResponseType> {
-    const headers = authCookie ? { cookie: authCookie } : undefined
-
-    return request(path, { method: 'DELETE', headers })
-}
-
-export async function post(path: string, body: unknown, authCookie?: string): Promise<ResponseType> {
-    const headers = authCookie ? { cookie: authCookie } : undefined
-
-    const option = {
-        method: 'POST',
-        headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        return this.request(path, { method: 'GET', headers })
     }
 
-    return request(path, option)
-}
+    public async delete_<T>(path: string, authCookie?: string): Promise<ResponseType<T>> {
+        const headers = authCookie ? { cookie: authCookie } : undefined
 
-async function request(path: string, init?: RequestInit): Promise<ResponseType> {
-    const backendUrl = process.env.BACKEND_URL as string
+        return this.request(path, { method: 'DELETE', headers })
+    }
 
-    console.log('REQUEST - ', path, init?.body, init?.headers)
+    public async post<T>(path: string, body: unknown, authCookie?: string): Promise<ResponseType<T>> {
+        const headers = authCookie ? { cookie: authCookie } : undefined
 
-    if (backendUrl === 'mock') {
-        return requestMock(path, init)
-    } else {
-        const url = backendUrl + path
-
-        const response = await fetch(url, init)
-
-        const data = await response.json()
-
-        if (response.ok) {
-            console.log('RESPONSE OK - ', data, response.headers)
-            return { data, headers: response.headers }
+        const option = {
+            method: 'POST',
+            headers: { ...headers, 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
         }
 
-        console.log('RESPONSE ERROR- ', response.statusText)
-
-        throw new FetchError({ message: response.statusText, response, data })
+        return this.request(path, option)
     }
+
+    public async request<T>(path: string, init?: RequestInit): Promise<ResponseType<T>> {
+        if (this.hostUrl === 'mock') {
+            return requestMock(path, init)
+        } else {
+            const url = this.hostUrl + path
+
+            const response = await fetch(url, init)
+
+            const data = await response.json()
+
+            if (response.ok) {
+                return { data, headers: response.headers }
+            }
+
+            throw new RequestError({ message: response.statusText, response, data })
+        }
+    }
+}
+
+export const serviceApi = new RequestRest(process.env.BACKEND_URL)
+export const localApi = new RequestRest()
+
+export async function fetcher<JSON = unknown>(input: RequestInfo, init?: RequestInit): Promise<JSON> {
+    const response = await fetch(input, init)
+
+    const data = await response.json()
+
+    if (response.ok) {
+        return data
+    }
+
+    throw new RequestError({ message: response.statusText, response, data })
 }
