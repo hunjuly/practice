@@ -23,7 +23,7 @@ export class RequestError extends Error {
             Error.captureStackTrace(this, RequestError)
         }
 
-        this.name = 'FetchError'
+        this.name = 'RequestError'
         this.response = response
         this.data = data ?? { message: message }
     }
@@ -67,6 +67,7 @@ class RequestRest {
             const data = await response.json()
 
             if (response.ok) {
+                console.log('Server Request -- ', path, init?.method, data, response.headers)
                 return { data, headers: response.headers }
             }
 

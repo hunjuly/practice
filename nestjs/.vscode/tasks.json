@@ -16,7 +16,7 @@
             "command": "npm",
             "args": [
                 "run",
-                "start:dev"
+                "dev"
             ]
         },
         {

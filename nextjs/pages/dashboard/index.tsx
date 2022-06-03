@@ -2,12 +2,11 @@ import * as React from 'react'
 import { GetServerSideProps } from 'next'
 import { InferGetServerSidePropsType } from 'next'
 import { withSessionSsr } from 'lib/session'
-import { RequestError, localApi } from 'lib/request'
+import { localApi } from 'lib/request'
 import { useUserSession, UserSession } from 'hooks/useUserSession'
 
 export default function Dashboard({ data }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const { user, mutateUser } = useUserSession({ redirectTo: '/signin' })
-    const [errorMsg, setErrorMsg] = React.useState('')
 
     return (
         <div>
@@ -22,11 +21,7 @@ export default function Dashboard({ data }: InferGetServerSidePropsType<typeof g
 
                         mutateUser(data, false)
                     } catch (error) {
-                        if (error instanceof RequestError) {
-                            setErrorMsg(error.data.message)
-                        } else {
-                            console.error('An unexpected error happened:', error)
-                        }
+                        console.error('An unexpected error happened:', error)
                     }
                 }}
             >
@@ -45,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr(async ({ re
     // const data: Data = await res.json()
 
     const data = {
-        users: [{ isLoggedIn: false, id: 'string', email: 'string', authCookie: 'string' }]
+        users: [{ id: 'string', email: 'string', authCookie: 'string' }]
     }
 
     if (!data) {

@@ -9,6 +9,13 @@ export type UserSession = {
     authCookie: string
 }
 
+export const nullSession = {
+    isLoggedIn: false,
+    id: '',
+    email: '',
+    authCookie: ''
+}
+
 declare module 'iron-session' {
     interface IronSessionData {
         user?: UserSession
