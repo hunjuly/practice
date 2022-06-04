@@ -24,7 +24,7 @@ export class UsersService {
     async get(userId: string) {
         const user = await this.repository.get(userId)
 
-        if (user === undefined) {
+        if (user === null) {
             throw new NotFoundException()
         }
 
@@ -34,7 +34,7 @@ export class UsersService {
     async findOne(query: UserQuery) {
         const user = await this.repository.findOne(query)
 
-        if (user === undefined) {
+        if (user === null) {
             throw new NotFoundException()
         }
 
