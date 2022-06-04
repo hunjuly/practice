@@ -7,9 +7,6 @@
             "path": "nestjs"
         },
         {
-            "path": "example"
-        },
-        {
             "path": "archive"
         }
     ],

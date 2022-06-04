@@ -5,7 +5,7 @@
     "scripts": {
         "_comment": "",
         "mock": "BACKEND_URL=mock next dev",
-        "dev": "next dev",
+        "dev": "NODE_OPTIONS='--inspect' next dev",
         "build": "NODE_ENV=production next build",
         "start": "next start",
         "lint": "next lint"

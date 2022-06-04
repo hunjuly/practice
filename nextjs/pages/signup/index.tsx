@@ -40,20 +40,26 @@ export default function SignUp() {
         <div>
             <form onSubmit={handleSubmit}>
                 <div>
-                    First Name:
-                    <input type="text" name="firstName" />
+                    <label htmlFor="first">First name</label>
+                    <input type="text" id="first" name="firstName" required />
                 </div>
                 <div>
-                    Last Name:
-                    <input type="text" name="lastName" />
+                    <label htmlFor="last">Last name</label>
+                    <input type="text" id="last" name="lastName" required />
                 </div>
                 <div>
-                    Email:
-                    <input type="text" name="email" />
+                    <label htmlFor="email">email</label>
+                    <input
+                        type="text"
+                        id="email"
+                        name="email"
+                        pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
+                        required
+                    />
                 </div>
                 <div>
-                    Password:
-                    <input type="text" name="password" />
+                    <label htmlFor="password">password</label>
+                    <input type="password" id="password" name="password" required />
                 </div>
                 <div hidden={errorMsg === undefined}>Error: {errorMsg}</div>
                 <input type="submit" value="Submit" />
