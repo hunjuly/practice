@@ -20,6 +20,25 @@ type PaginatedResponse<T> = {
 
 type PropsType = { paginatedUsers: PaginatedResponse<User> }
 
+// req,res 외에 추가 인자 등 상세 설명
+// https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props
+export const getServerSideProps: GetServerSideProps = withSessionSsr<PropsType>(async ({ req, res }) => {
+    const { data: paginatedUsers } = await serviceApi.get<PaginatedResponse<User>>(
+        '/users',
+        req.session.user?.authCookie
+    )
+
+    if (!paginatedUsers) {
+        return {
+            redirect: { destination: '/', permanent: false }
+        }
+    }
+
+    return {
+        props: { paginatedUsers }
+    }
+})
+
 export default function Dashboard({ paginatedUsers }: PropsType) {
     const { user, mutateUser } = useUserSession({ redirectTo: '/signin' })
 
@@ -45,22 +64,3 @@ export default function Dashboard({ paginatedUsers }: PropsType) {
         </div>
     )
 }
-
-// req,res 외에 추가 인자 등 상세 설명
-// https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props
-export const getServerSideProps: GetServerSideProps = withSessionSsr<PropsType>(async ({ req, res }) => {
-    const { data: paginatedUsers } = await serviceApi.get<PaginatedResponse<User>>(
-        '/users',
-        req.session.user?.authCookie
-    )
-
-    if (!paginatedUsers) {
-        return {
-            redirect: { destination: '/', permanent: false }
-        }
-    }
-
-    return {
-        props: { paginatedUsers }
-    }
-})
