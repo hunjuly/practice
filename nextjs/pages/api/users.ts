@@ -1,19 +1,17 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { withSessionApiRoute } from 'lib/session'
-import { nullSession } from 'hooks/useUserSession'
+import { User, PaginatedResponse } from './types'
 import * as remote from './remote'
 
 export default withSessionApiRoute(route)
 
+type GetType = PaginatedResponse<User>
+
 async function route(req: NextApiRequest, res: NextApiResponse) {
-    const userSession = req.session.user
-
-    req.session.destroy()
-
     try {
-        await remote.delete_('/auth/logout', userSession?.authCookie)
+        const { data } = await remote.get<GetType>('/users', req.session.user?.authCookie)
 
-        res.json(nullSession)
+        res.json(data)
     } catch (error) {
         res.status(500).json({ message: (error as Error).message })
     }

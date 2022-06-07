@@ -1,19 +1,15 @@
 import { withSessionApiRoute } from 'lib/session'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { serviceApi } from 'lib/request'
+import { LoginInfo } from './types'
+import * as remote from './remote'
 
 export default withSessionApiRoute(route)
-
-type LoginInfo = {
-    id: string
-    email: string
-}
 
 async function route(req: NextApiRequest, res: NextApiResponse) {
     try {
         const body = await req.body
 
-        const { data, headers } = await serviceApi.post<LoginInfo>('/auth/login', body)
+        const { data, headers } = await remote.post<LoginInfo>('/auth/login', body)
 
         const { id, email } = data
 

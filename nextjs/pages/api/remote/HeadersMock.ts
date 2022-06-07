@@ -19,16 +19,16 @@ export class HeadersMock implements Headers {
     [Symbol.iterator](): IterableIterator<[string, string]> {
         throw new Error('Method not implemented.')
     }
-    append(name: string, value: string): void {
+    append(_name: string, _value: string): void {
         throw new Error('Method not implemented.')
     }
-    delete(name: string): void {
+    delete(_name: string): void {
         throw new Error('Method not implemented.')
     }
-    set(name: string, value: string): void {
+    set(_name: string, _value: string): void {
         throw new Error('Method not implemented.')
     }
-    forEach(callbackfn: (value: string, key: string, parent: Headers) => void, thisArg?: any): void {
+    forEach(_callbackfn: (value: string, key: string, parent: Headers) => void, _thisArg?: any): void {
         throw new Error('Method not implemented.')
     }
 }

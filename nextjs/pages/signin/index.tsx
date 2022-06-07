@@ -1,7 +1,7 @@
 import * as React from 'react'
 import type { ReactElement } from 'react'
 import { useUserSession, UserSession } from 'hooks/useUserSession'
-import { RequestError, localApi } from 'lib/request'
+import * as request from 'lib/request'
 import Link from 'next/link'
 
 export default function SignIn() {
@@ -24,11 +24,11 @@ export default function SignIn() {
         const body = { email, password }
 
         try {
-            const { data } = await localApi.post<UserSession>('/api/login', body)
+            const data: UserSession = await request.post('/api/login', body)
 
             mutateUser(data)
         } catch (error) {
-            if (error instanceof RequestError) {
+            if (error instanceof request.RequestError) {
                 setErrorMsg(error.data.message)
             } else {
                 console.error('An unexpected error happened:', error)

@@ -23,7 +23,7 @@ declare module 'iron-session' {
 }
 
 export function useUserSession({ redirectTo = '', redirectIfFound = false } = {}) {
-    const { data: user, mutate: mutateUser } = useSWR<UserSession>('/api/user')
+    const { data: user, mutate: mutateUser } = useSWR<UserSession>('/api/user-session')
 
     useEffect(() => {
         if (!redirectTo || !user) return

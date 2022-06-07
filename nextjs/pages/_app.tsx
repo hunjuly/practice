@@ -2,7 +2,7 @@ import type { ReactElement, ReactNode } from 'react'
 import type { NextPage } from 'next'
 import { AppProps } from 'next/app'
 import { SWRConfig } from 'swr'
-import { fetcher } from 'lib/request'
+import { clientSide } from 'lib/request'
 import './globals.css'
 
 export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
@@ -15,7 +15,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     return getLayout(
         <SWRConfig
             value={{
-                fetcher,
+                fetcher: (path: string) => clientSide.get(path),
                 onError: (err) => {
                     console.error(err)
                 }
