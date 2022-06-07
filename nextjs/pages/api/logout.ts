@@ -6,11 +6,17 @@ import { serverSide } from 'lib/request'
 export default withSessionApiRoute(route)
 
 async function route(req: NextApiRequest, res: NextApiResponse) {
-    req.session.destroy()
+    try {
+        req.session.destroy()
 
-    const option = { authCookie: req.session.user?.authCookie }
+        const option = { authCookie: req.session.user?.authCookie }
 
-    await serverSide.delete_('/auth/logout', option)
+        await serverSide.delete_('/auth/logout', option)
 
-    res.json(nullSession)
+        res.json(nullSession)
+    } catch (error) {
+        const message = (error as Error).message
+
+        res.status(500).json({ message })
+    }
 }

@@ -6,27 +6,33 @@ import { serverSide } from 'lib/request'
 export default withSessionApiRoute(route)
 
 async function route(req: NextApiRequest, res: NextApiResponse) {
-    const body = await req.body
+    try {
+        const body = await req.body
 
-    const authHeader = req.session.user?.authCookie ? { cookie: req.session.user.authCookie } : undefined
+        const authHeader = req.session.user?.authCookie ? { cookie: req.session.user.authCookie } : undefined
 
-    const option = {
-        method: 'POST',
-        headers: { ...authHeader, 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-    }
+        const option = {
+            method: 'POST',
+            headers: { ...authHeader, 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        }
 
-    const { data, headers } = await serverSide.request<LoginInfo>('/auth/login', option)
+        const { data, headers } = await serverSide.request<LoginInfo>('/auth/login', option)
 
-    const { id, email } = data
+        const { id, email } = data
 
-    const authCookie = headers.get('set-cookie')
+        const authCookie = headers.get('set-cookie')
 
-    if (authCookie) {
-        req.session.user = { isLoggedIn: true, id, email, authCookie }
+        if (authCookie) {
+            req.session.user = { isLoggedIn: true, id, email, authCookie }
 
-        await req.session.save()
+            await req.session.save()
 
-        res.json({})
+            res.json({})
+        }
+    } catch (error) {
+        const message = (error as Error).message
+
+        res.status(500).json({ message })
     }
 }

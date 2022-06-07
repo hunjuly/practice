@@ -1,4 +1,4 @@
-import { ResponseType } from '.'
+import { ResponseType } from './request'
 import { HeadersMock } from './HeadersMock'
 
 export async function requestMock<T>(path: string, init?: RequestInit): Promise<ResponseType<T>> {

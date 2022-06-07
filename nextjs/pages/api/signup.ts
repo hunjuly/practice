@@ -5,11 +5,17 @@ import { serverSide } from 'lib/request'
 export default withSessionApiRoute(route)
 
 async function route(req: NextApiRequest, res: NextApiResponse) {
-    const body = await req.body
+    try {
+        const body = await req.body
 
-    const option = { authCookie: req.session.user?.authCookie }
+        const option = { authCookie: req.session.user?.authCookie }
 
-    await serverSide.post('/users', body, option)
+        await serverSide.post('/users', body, option)
 
-    res.json({ message: 'done' })
+        res.json({ message: 'done' })
+    } catch (error) {
+        const message = (error as Error).message
+
+        res.status(500).json({ message })
+    }
 }

@@ -69,6 +69,7 @@ class Request {
         }
 
         const { data } = await this.request<T>(path, fullOption)
+        console.log('-----------------------', fullOption)
 
         return data
     }
