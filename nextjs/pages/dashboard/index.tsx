@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async (_context) => {
 }
 
 export default function Dashboard({ paginatedUsers }: PropsType) {
-    const { user, mutateUser } = useUserSession({ redirectTo: '/signin' })
+    const { mutateUser } = useUserSession({ redirectTo: '/signin' })
 
     return (
         <div>
