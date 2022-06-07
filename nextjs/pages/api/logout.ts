@@ -1,20 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { withSessionApiRoute } from 'lib/session'
 import { nullSession } from 'hooks/useUserSession'
-import * as remote from './remote'
+import { serverSide } from 'lib/request'
 
 export default withSessionApiRoute(route)
 
 async function route(req: NextApiRequest, res: NextApiResponse) {
-    const userSession = req.session.user
-
     req.session.destroy()
 
-    try {
-        await remote.delete_('/auth/logout', userSession?.authCookie)
+    const option = { authCookie: req.session.user?.authCookie }
 
-        res.json(nullSession)
-    } catch (error) {
-        res.status(500).json({ message: (error as Error).message })
-    }
+    await serverSide.delete_('/auth/logout', option)
+
+    res.json(nullSession)
 }

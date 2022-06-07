@@ -1,3 +1,7 @@
+import { requestMock } from './mock'
+
+export type ResponseType<T> = { data: T; headers: Headers }
+
 type ErrorInfo = {
     message: string
     response: Response
@@ -24,41 +28,70 @@ export class RequestError extends Error {
     }
 }
 
+type RequestOption = { authCookie?: string | undefined }
+
+function makeHeaders(option?: RequestOption) {
+    if (option) {
+        const headers = option.authCookie ? { cookie: option.authCookie } : undefined
+
+        return headers
+    }
+
+    return undefined
+}
+
 class Request {
     constructor(private host = '') {}
 
-    async request<T>(path: string, init?: RequestInit): Promise<T> {
-        const url = this.host + path
+    async get<T>(path: string, option?: RequestOption): Promise<T> {
+        const headers = makeHeaders(option)
 
-        const response = await fetch(url, init)
+        const { data } = await this.request<T>(path, { method: 'GET', headers })
 
-        const data = await response.json()
-
-        if (response.ok) {
-            return data
-        }
-
-        throw new RequestError({ message: response.statusText, response, data })
+        return data
     }
 
-    async get<T>(path: string): Promise<T> {
-        return this.request(path, { method: 'GET' })
+    async delete_<T>(path: string, option?: RequestOption): Promise<T> {
+        const headers = makeHeaders(option)
+
+        const { data } = await this.request<T>(path, { method: 'DELETE', headers })
+
+        return data
     }
 
-    async delete_<T>(path: string): Promise<T> {
-        return this.request(path, { method: 'DELETE' })
-    }
+    async post<T>(path: string, body: unknown, option?: RequestOption): Promise<T> {
+        const headers = makeHeaders(option)
 
-    async post<T>(path: string, body: unknown): Promise<T> {
-        const option = {
+        const fullOption = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { ...headers, 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
         }
 
-        return this.request(path, option)
+        const { data } = await this.request<T>(path, fullOption)
+
+        return data
+    }
+
+    async request<T>(path: string, init?: RequestInit): Promise<ResponseType<T>> {
+        if (this.host === 'mock') {
+            return requestMock(path, init)
+        } else {
+            const url = this.host + path
+
+            const response = await fetch(url, init)
+
+            const data = await response.json()
+
+            if (response.ok) {
+                console.log('Request -- ', path, init?.method, data, response.headers)
+                return { data, headers: response.headers }
+            }
+
+            throw new RequestError({ message: response.statusText, response, data })
+        }
     }
 }
 
 export const clientSide = new Request()
-export const serverSide = new Request(process.env.LOCAL_URL)
+export const serverSide = new Request(process.env.BACKEND_URL)

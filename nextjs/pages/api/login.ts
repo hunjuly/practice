@@ -1,30 +1,32 @@
 import { withSessionApiRoute } from 'lib/session'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { LoginInfo } from './types'
-import * as remote from './remote'
+import { LoginInfo } from 'lib/types'
+import { serverSide } from 'lib/request'
 
 export default withSessionApiRoute(route)
 
 async function route(req: NextApiRequest, res: NextApiResponse) {
-    try {
-        const body = await req.body
+    const body = await req.body
 
-        const { data, headers } = await remote.post<LoginInfo>('/auth/login', body)
+    const authHeader = req.session.user?.authCookie ? { cookie: req.session.user.authCookie } : undefined
 
-        const { id, email } = data
+    const option = {
+        method: 'POST',
+        headers: { ...authHeader, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+    }
 
-        const authCookie = headers.get('set-cookie')
+    const { data, headers } = await serverSide.request<LoginInfo>('/auth/login', option)
 
-        if (authCookie) {
-            req.session.user = { isLoggedIn: true, id, email, authCookie }
+    const { id, email } = data
 
-            await req.session.save()
+    const authCookie = headers.get('set-cookie')
 
-            res.json({})
-        }
-    } catch (error) {
-        const message = (error as Error).message
+    if (authCookie) {
+        req.session.user = { isLoggedIn: true, id, email, authCookie }
 
-        res.status(500).json({ message })
+        await req.session.save()
+
+        res.json({})
     }
 }

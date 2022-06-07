@@ -1,17 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { withSessionApiRoute } from 'lib/session'
-import * as remote from './remote'
+import { serverSide } from 'lib/request'
 
 export default withSessionApiRoute(route)
 
 async function route(req: NextApiRequest, res: NextApiResponse) {
-    try {
-        const body = await req.body
+    const body = await req.body
 
-        await remote.post('/users', body)
+    const option = { authCookie: req.session.user?.authCookie }
 
-        res.json({ message: 'done' })
-    } catch (error) {
-        res.status(500).json({ message: (error as Error).message })
-    }
+    await serverSide.post('/users', body, option)
+
+    res.json({ message: 'done' })
 }

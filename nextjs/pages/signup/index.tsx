@@ -1,7 +1,7 @@
 import * as React from 'react'
 import type { ReactElement } from 'react'
 import { useUserSession, UserSession } from 'hooks/useUserSession'
-import * as request from 'lib/request'
+import { clientSide, RequestError } from 'lib/request'
 import Link from 'next/link'
 
 export default function SignUp() {
@@ -22,13 +22,13 @@ export default function SignUp() {
         }
 
         try {
-            await request.post('/api/signup', body)
+            await clientSide.post('/api/signup', body)
 
-            const data: UserSession = await request.post('/api/login', body)
+            const data: UserSession = await clientSide.post('/api/login', body)
 
             mutateUser(data)
         } catch (error) {
-            if (error instanceof request.RequestError) {
+            if (error instanceof RequestError) {
                 setErrorMsg(error.data.message)
             } else {
                 console.error('An unexpected error happened:', error)

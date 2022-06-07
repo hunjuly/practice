@@ -2,14 +2,18 @@ import * as React from 'react'
 import { GetServerSideProps } from 'next'
 import { serverSide, clientSide } from 'lib/request'
 import { useUserSession, UserSession } from 'hooks/useUserSession'
-import { User, PaginatedResponse } from 'pages/api/types'
+import { User, PaginatedResponse } from 'lib/types'
+import { withSessionSsr } from 'lib/session'
 
+type GetType = PaginatedResponse<User>
 type PropsType = { paginatedUsers: PaginatedResponse<User> }
 
 // req,res 외에 추가 인자 등 상세 설명
 // https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props
-export const getServerSideProps: GetServerSideProps = async (_context) => {
-    const paginatedUsers: PaginatedResponse<User> = await serverSide.get('/api/users')
+export const getServerSideProps: GetServerSideProps = withSessionSsr<PropsType>(async ({ req, res }) => {
+    const option = { authCookie: req.session.user?.authCookie }
+
+    const paginatedUsers = await serverSide.get<GetType>('/users', option)
 
     if (!paginatedUsers) {
         return {
@@ -20,7 +24,7 @@ export const getServerSideProps: GetServerSideProps = async (_context) => {
     return {
         props: { paginatedUsers }
     }
-}
+})
 
 export default function Dashboard({ paginatedUsers }: PropsType) {
     const { mutateUser } = useUserSession({ redirectTo: '/signin' })
