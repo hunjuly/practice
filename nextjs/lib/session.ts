@@ -1,24 +1,7 @@
 import { withIronSessionApiRoute, withIronSessionSsr } from 'iron-session/next'
 import type { IronSessionOptions } from 'iron-session'
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextApiHandler } from 'next'
-
-export function withSessionApiRoute(handler: NextApiHandler): NextApiHandler {
-    return withIronSessionApiRoute(handler, option)
-}
-
-export function withSessionSsr<P extends withSessionSsrType = withSessionSsrType>(handler: SsrHandler<P>) {
-    // hander의 전달인자로 get,post,delete를 전달함
-
-    return withIronSessionSsr(handler, option)
-}
-
-type withSessionSsrType = {
-    [key: string]: unknown
-}
-
-type SsrHandler<P> = (
-    context: GetServerSidePropsContext
-) => GetServerSidePropsResult<P> | Promise<GetServerSidePropsResult<P>>
+import { serverSide } from 'lib/request'
 
 const option: IronSessionOptions = {
     password: process.env.SECRET_COOKIE_PASSWORD as string,
@@ -27,4 +10,37 @@ const option: IronSessionOptions = {
     cookieOptions: {
         secure: process.env.NODE_ENV === 'production'
     }
+}
+
+export function withSessionApiRoute(handler: NextApiHandler): NextApiHandler {
+    return withIronSessionApiRoute(handler, option)
+}
+
+type withSessionSsrType = {
+    [key: string]: unknown
+}
+
+type SsrHandler<P> = (request: {
+    get: <T>(path: string) => Promise<T>
+    delete_: <T>(path: string) => Promise<T>
+    post: <T>(path: string, body: unknown) => Promise<T>
+}) => GetServerSidePropsResult<P> | Promise<GetServerSidePropsResult<P>>
+
+export function withSessionSsr<P extends withSessionSsrType = withSessionSsrType>(handler: SsrHandler<P>) {
+    return withIronSessionSsr(async (context) => {
+        const get = <T>(path: string) => {
+            const option = { authCookie: context.req.session.user?.authCookie }
+            return serverSide.get<T>(path, option)
+        }
+        const delete_ = <T>(path: string) => {
+            const option = { authCookie: context.req.session.user?.authCookie }
+            return serverSide.delete_<T>(path, option)
+        }
+        const post = <T>(path: string, body: unknown) => {
+            const option = { authCookie: context.req.session.user?.authCookie }
+            return serverSide.post<T>(path, body, option)
+        }
+
+        return handler({ get, delete_, post })
+    }, option)
 }

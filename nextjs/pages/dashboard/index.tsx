@@ -10,10 +10,8 @@ type PropsType = { paginatedUsers: PaginatedResponse<User> }
 
 // req,res 외에 추가 인자 등 상세 설명
 // https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props
-export const getServerSideProps: GetServerSideProps = withSessionSsr<PropsType>(async ({ req, res }) => {
-    const option = { authCookie: req.session.user?.authCookie }
-
-    const paginatedUsers = await serverSide.get<GetType>('/users', option)
+export const getServerSideProps: GetServerSideProps = withSessionSsr<PropsType>(async (request) => {
+    const paginatedUsers = await request.get<GetType>('/users')
 
     if (!paginatedUsers) {
         return {
@@ -37,13 +35,9 @@ export default function Dashboard({ paginatedUsers }: PropsType) {
                 onClick={async (e) => {
                     e.preventDefault()
 
-                    // try {
                     const data = await clientSide.delete_<UserSession>('/api/logout')
 
                     mutateUser(data, false)
-                    // } catch (error) {
-                    //     console.error('An unexpected error happened:', error)
-                    // }
                 }}
             >
                 Logout
