@@ -28,7 +28,8 @@ function setApiDocument(app: INestApplication) {
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
-        logger: console
+        // logger: console
+        logger: ['error', 'debug', 'log', 'warn', 'verbose']
     })
 
     setApiDocument(app)

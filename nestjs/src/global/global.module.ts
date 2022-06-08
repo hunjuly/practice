@@ -1,4 +1,4 @@
-import { APP_INTERCEPTOR, APP_PIPE, APP_GUARD } from '@nestjs/core'
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE, APP_GUARD } from '@nestjs/core'
 import { MiddlewareConsumer, Module, NestModule, ValidationPipe } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import * as Joi from 'joi'
@@ -9,12 +9,17 @@ import { SessionService } from './session'
 import { RedisService } from './redis'
 import { LoggingInterceptor } from 'src/common'
 import { UserGuard } from 'src/auth/user.guard'
+import { HttpExceptionFilter } from './http-exception.filter'
 
 @Module({
     imports: [createOrmModule(), createConfigModule()],
     providers: [
         RedisService,
         SessionService,
+        {
+            provide: APP_FILTER,
+            useClass: HttpExceptionFilter
+        },
         {
             provide: APP_PIPE,
             useValue: new ValidationPipe({ transform: true })
