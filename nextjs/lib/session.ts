@@ -7,6 +7,8 @@ export function withSessionApiRoute(handler: NextApiHandler): NextApiHandler {
 }
 
 export function withSessionSsr<P extends withSessionSsrType = withSessionSsrType>(handler: SsrHandler<P>) {
+    // hander의 전달인자로 get,post,delete를 전달함
+
     return withIronSessionSsr(handler, option)
 }
 

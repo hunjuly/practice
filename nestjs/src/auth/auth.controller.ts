@@ -8,7 +8,7 @@ import { LoginUserDto } from './dto/login-user.dto'
 export class AuthController {
     constructor() {}
 
-    @Post('login')
+    @Post()
     @Public()
     @UseGuards(LocalAuthGuard)
     @ApiBody({ type: LoginUserDto })
@@ -16,7 +16,7 @@ export class AuthController {
         return { id: req.user.id, email: req.user.email }
     }
 
-    @Delete('logout')
+    @Delete()
     async logout(@Request() req) {
         await req.logOut()
 

@@ -27,7 +27,7 @@ export const getServerSideProps: GetServerSideProps = withSessionSsr<PropsType>(
 })
 
 export default function Dashboard({ paginatedUsers }: PropsType) {
-    const { mutateUser } = useUserSession({ redirectTo: '/signin' })
+    const { mutateUser } = useUserSession({ redirectTo: '/login' })
 
     return (
         <div>
@@ -37,13 +37,13 @@ export default function Dashboard({ paginatedUsers }: PropsType) {
                 onClick={async (e) => {
                     e.preventDefault()
 
-                    try {
-                        const data = await clientSide.delete_<UserSession>('/api/logout')
+                    // try {
+                    const data = await clientSide.delete_<UserSession>('/api/logout')
 
-                        mutateUser(data, false)
-                    } catch (error) {
-                        console.error('An unexpected error happened:', error)
-                    }
+                    mutateUser(data, false)
+                    // } catch (error) {
+                    //     console.error('An unexpected error happened:', error)
+                    // }
                 }}
             >
                 Logout

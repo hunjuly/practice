@@ -4,7 +4,7 @@ import { useUserSession, UserSession } from 'hooks/useUserSession'
 import { clientSide, RequestError } from 'lib/request'
 import Link from 'next/link'
 
-export default function SignUp() {
+export default function Register() {
     const { mutateUser } = useUserSession({ redirectTo: '/dashboard', redirectIfFound: true })
 
     const [errorMsg, setErrorMsg] = React.useState('')
@@ -22,7 +22,7 @@ export default function SignUp() {
         }
 
         try {
-            await clientSide.post('/api/signup', body)
+            await clientSide.post('/api/register', body)
 
             const data: UserSession = await clientSide.post('/api/login', body)
 
@@ -65,7 +65,7 @@ export default function SignUp() {
                 <input type="submit" value="Submit" />
             </form>
             <div>
-                <Link href="/signin">
+                <Link href="/login">
                     <a>Already have an account?</a>
                 </Link>
             </div>
@@ -74,6 +74,6 @@ export default function SignUp() {
     )
 }
 
-SignUp.getLayout = function getLayout(page: ReactElement) {
+Register.getLayout = function getLayout(page: ReactElement) {
     return page
 }

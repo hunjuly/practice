@@ -4,7 +4,7 @@ import { useUserSession, UserSession } from 'hooks/useUserSession'
 import { clientSide, RequestError } from 'lib/request'
 import Link from 'next/link'
 
-export default function SignIn() {
+export default function Login() {
     const { mutateUser } = useUserSession({ redirectTo: '/dashboard', redirectIfFound: true })
 
     const [errorMsg, setErrorMsg] = React.useState<string>()
@@ -49,7 +49,7 @@ export default function SignIn() {
             <div hidden={errorMsg === undefined}>Error: {errorMsg}</div>
             <input type="button" value={'Submit'} onClick={handleSubmit} />
             <div>
-                <Link href="/signup">
+                <Link href="/register">
                     <a>Don't have an account? Sign Up</a>
                 </Link>
             </div>
@@ -58,6 +58,6 @@ export default function SignIn() {
     )
 }
 
-SignIn.getLayout = function getLayout(page: ReactElement) {
+Login.getLayout = function getLayout(page: ReactElement) {
     return page
 }

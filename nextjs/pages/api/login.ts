@@ -17,7 +17,7 @@ async function route(req: NextApiRequest, res: NextApiResponse) {
             body: JSON.stringify(body)
         }
 
-        const { data, headers } = await serverSide.request<LoginInfo>('/auth/login', option)
+        const { data, headers } = await serverSide.request<LoginInfo>('/auth', option)
 
         const { id, email } = data
 
