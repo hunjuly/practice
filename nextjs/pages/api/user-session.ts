@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { withSessionApiRoute } from 'lib/session'
+import { withSessionApi } from 'lib/session'
 import { UserSession, nullSession } from 'hooks/useUserSession'
 
-export default withSessionApiRoute(route)
+export default withSessionApi(route)
 
 async function route(req: NextApiRequest, res: NextApiResponse<UserSession>) {
     if (req.session.user) {

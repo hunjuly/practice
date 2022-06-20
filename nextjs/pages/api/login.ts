@@ -1,9 +1,9 @@
-import { withSessionApiRoute } from 'lib/session'
+import { withSessionApi } from 'lib/session'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { LoginInfo } from 'lib/types'
 import { serverSide } from 'lib/request'
 
-export default withSessionApiRoute(route)
+export default withSessionApi(route)
 
 async function route(req: NextApiRequest, res: NextApiResponse) {
     try {

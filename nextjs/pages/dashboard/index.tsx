@@ -10,17 +10,21 @@ type PropsType = { paginatedUsers: PaginatedResponse<User> }
 
 // req,res 외에 추가 인자 등 상세 설명
 // https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props
-export const getServerSideProps: GetServerSideProps = withSessionSsr<PropsType>(async (request) => {
-    const paginatedUsers = await request.get<GetType>('/users')
+export const getServerSideProps: GetServerSideProps = withSessionSsr<PropsType>(async ({ get, req }) => {
+    const user = req.session.user
 
-    if (!paginatedUsers) {
-        return {
-            redirect: { destination: '/', permanent: false }
+    if (user) {
+        const paginatedUsers = await get<GetType>('/users')
+
+        if (paginatedUsers) {
+            return {
+                props: { paginatedUsers }
+            }
         }
     }
 
     return {
-        props: { paginatedUsers }
+        redirect: { destination: '/', permanent: false }
     }
 })
 

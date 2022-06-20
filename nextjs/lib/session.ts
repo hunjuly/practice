@@ -1,7 +1,10 @@
 import { withIronSessionApiRoute, withIronSessionSsr } from 'iron-session/next'
 import type { IronSessionOptions } from 'iron-session'
-import { GetServerSidePropsContext, GetServerSidePropsResult, NextApiHandler } from 'next'
+import { GetServerSidePropsResult, NextApiHandler } from 'next'
 import { serverSide } from 'lib/request'
+import { IncomingMessage } from 'http'
+import { NextApiRequestCookies } from 'next/dist/server/api-utils'
+import { ServerResponse } from 'http'
 
 const option: IronSessionOptions = {
     password: process.env.SECRET_COOKIE_PASSWORD as string,
@@ -12,7 +15,7 @@ const option: IronSessionOptions = {
     }
 }
 
-export function withSessionApiRoute(handler: NextApiHandler): NextApiHandler {
+export function withSessionApi(handler: NextApiHandler): NextApiHandler {
     return withIronSessionApiRoute(handler, option)
 }
 
@@ -24,6 +27,8 @@ type SsrHandler<P> = (request: {
     get: <T>(path: string) => Promise<T>
     delete_: <T>(path: string) => Promise<T>
     post: <T>(path: string, body: unknown) => Promise<T>
+    req: IncomingMessage & { cookies: NextApiRequestCookies }
+    res: ServerResponse
 }) => GetServerSidePropsResult<P> | Promise<GetServerSidePropsResult<P>>
 
 export function withSessionSsr<P extends withSessionSsrType = withSessionSsrType>(handler: SsrHandler<P>) {
@@ -41,6 +46,6 @@ export function withSessionSsr<P extends withSessionSsrType = withSessionSsrType
             return serverSide.post<T>(path, body, option)
         }
 
-        return handler({ get, delete_, post })
+        return handler({ get, delete_, post, req: context.req, res: context.res })
     }, option)
 }
