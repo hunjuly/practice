@@ -42,8 +42,8 @@ async function createUser() {
 }
 
 async function login() {
-    // curl http://localhost:4000/users/login -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" -v
-    const res = await post(app, '/auth/login', { email: 'test@mail.com', password: 'testpass' })
+    // curl http://localhost:4000/auth -d '{ "email": "test@mail.com", "password": "testpass" }' -H "Content-Type: application/json" -v
+    const res = await post(app, '/auth', { email: 'test@mail.com', password: 'testpass' })
 
     expect(res.statusCode).toEqual(201)
 
@@ -61,8 +61,8 @@ async function getUser(userId: string, cookie: string) {
 }
 
 async function logout(cookie: string) {
-    // curl -X delete http://localhost:4000/users/logout --cookie "connect.sid=s%3AW263OQ3h8lMvJrqGc;"
-    const res = await del(app, '/auth/logout', [{ cookie: cookie }])
+    // curl -X delete http://localhost:4000/auth --cookie "connect.sid=s%3AW263OQ3h8lMvJrqGc;"
+    const res = await del(app, '/auth', [{ cookie: cookie }])
 
     expect(res.statusCode).toEqual(200)
 }
