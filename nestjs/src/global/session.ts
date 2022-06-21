@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import * as RedisStore from 'connect-redis'
 import * as session from 'express-session'
+import { Logger } from '@nestjs/common'
 import { RedisService } from './redis'
 import { ConfigService } from '@nestjs/config'
 
@@ -34,7 +35,7 @@ export class SessionService {
                 }
             }
         } else if (type === 'memory') {
-            console.log('USING DEFAULT SESSION')
+            Logger.warn('USING DEFAULT SESSION')
 
             return {
                 saveUninitialized: false,

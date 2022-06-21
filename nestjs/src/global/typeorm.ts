@@ -3,6 +3,7 @@ import { TypeOrmModule, TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nes
 import { exit } from 'process'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { Logger } from '@nestjs/common'
 import { LoggerOptions } from 'typeorm'
 
 type DatabaseType = 'mysql' | 'sqlite' | undefined
@@ -18,7 +19,7 @@ class TypeOrmConfigService implements TypeOrmOptionsFactory {
         const synchronize = this.configService.get<boolean>('TYPEORM_ENABLE_SYNC')
 
         if (nodeEnv === 'production' && synchronize) {
-            console.log('Do not use synchronize(TYPEORM_ENABLE_SYNC) on production')
+            Logger.error('Do not use synchronize(TYPEORM_ENABLE_SYNC) on production')
 
             exit(1)
         }
@@ -29,7 +30,9 @@ class TypeOrmConfigService implements TypeOrmOptionsFactory {
         const common = { type, synchronize, autoLoadEntities: true, logger, logging, database }
 
         if (type === 'sqlite') {
-            console.log('WARNING database connection is not set. using MEMORY DB.')
+            // if (nodeEnv === 'production')
+
+            Logger.warn('WARNING database connection is not set. using MEMORY DB.')
 
             return common
         } else if (type === 'mysql') {

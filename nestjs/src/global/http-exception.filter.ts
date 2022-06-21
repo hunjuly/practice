@@ -16,7 +16,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             timestamp: new Date().toISOString()
         }
 
-        Logger.error(JSON.stringify(body))
+        Logger.warn(JSON.stringify(body))
 
         response.status(status).json(body)
     }

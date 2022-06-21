@@ -1,5 +1,10 @@
 # practice
 
+## Todo
+
+1. Logger로 대체. production에서만 출력되는 log도 있다. 주석 대신 사용한다.
+2. 테스트 상세하게
+
 ## Debugging
 
 -   test를 비롯한 모든 디버깅 모드(`node --inspect`)로 실행 중인 프로세스는 `.vscode/launch.json`의 `Attach`를 사용한다.
