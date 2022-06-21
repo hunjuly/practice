@@ -4,7 +4,6 @@
 
 1. Logger로 대체. production에서만 출력되는 log도 있다. 주석 대신 사용한다.
 1. 테스트 상세하게
-1. task 분리하고 단축키
 
 ## Debugging
 
