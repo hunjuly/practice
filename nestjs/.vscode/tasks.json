@@ -2,8 +2,18 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "run:dev",
+            "detail": "⌥⌘Q",
+            "type": "shell",
+            "command": "npm",
+            "args": [
+                "run",
+                "dev"
+            ]
+        },
+        {
             "label": "test:e2e",
-            "detail": "shortcut",
+            "detail": "⌥⌘W",
             "type": "shell",
             "command": "npm",
             "args": [
@@ -13,7 +23,7 @@
         },
         {
             "label": "test:unit",
-            "detail": "shortcut",
+            "detail": "⌥⌘E",
             "type": "shell",
             "command": "npm",
             "args": [
@@ -23,21 +33,11 @@
         },
         {
             "label": "test:e2e:debug",
-            "detail": "shortcut",
             "type": "shell",
             "command": "npm",
             "args": [
                 "run",
                 "test:e2e:debug"
-            ]
-        },
-        {
-            "label": "run",
-            "type": "shell",
-            "command": "npm",
-            "args": [
-                "run",
-                "dev"
             ]
         },
         {
