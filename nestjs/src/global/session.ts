@@ -16,7 +16,7 @@ export class SessionService {
 
         if (type === 'redis') {
             if (this.redisService.isAvailable()) {
-                console.log('USING REDIS SESSION')
+                Logger.log('USING REDIS SESSION')
 
                 const store = new (RedisStore(session))({
                     client: this.redisService.getClient(),

@@ -30,8 +30,6 @@ class TypeOrmConfigService implements TypeOrmOptionsFactory {
         const common = { type, synchronize, autoLoadEntities: true, logger, logging, database }
 
         if (type === 'sqlite') {
-            // if (nodeEnv === 'production')
-
             Logger.warn('WARNING database connection is not set. using MEMORY DB.')
 
             return common
