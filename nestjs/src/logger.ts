@@ -1,17 +1,35 @@
 import { LoggerService } from '@nestjs/common'
 import { ConsoleLogger } from '@nestjs/common'
+import * as winston from 'winston'
 
-class DevLogger extends ConsoleLogger {
-    warn(...args: [message: any, context?: string]) {
-        // ignore warnings
-    }
-}
+// If we're not in production then log to the `console` with the format:
+// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
+//
 
 class ProdLogger implements LoggerService {
+    private logger: winston.Logger
+
+    constructor() {
+        this.logger = winston.createLogger({
+            level: 'info',
+            format: winston.format.json(),
+            defaultMeta: { service: 'user-service' },
+            transports: [
+                new winston.transports.Console({
+                    format: winston.format.simple(),
+                    level: 'error'
+                }),
+                new winston.transports.File({ filename: 'error.log', level: 'error' }),
+                new winston.transports.File({ filename: 'combined.log' })
+            ]
+        })
+    }
     /**
      * Write a 'log' level log.
      */
-    log(message: any, ...optionalParams: any[]) {}
+    log(message: any, ...optionalParams: any[]) {
+        this.logger.info(message, optionalParams)
+    }
 
     /**
      * Write an 'error' level log.
@@ -34,8 +52,14 @@ class ProdLogger implements LoggerService {
     verbose?(message: any, ...optionalParams: any[]) {}
 }
 
-export function getLogger(): LoggerService {
-    if (process.env.NODE_ENV === 'production') {
+class DevLogger extends ConsoleLogger {
+    warn(...args: [message: any, context?: string]) {
+        // ignore warnings
+    }
+}
+
+export function getLogger(isProduction: boolean): LoggerService {
+    if (isProduction) {
         return new ProdLogger()
     }
 

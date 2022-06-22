@@ -28,14 +28,14 @@ function setApiDocument(app: INestApplication) {
 }
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule, {
-        logger: getLogger()
-    })
+    const logger = getLogger(process.env.NODE_ENV === 'production')
+
+    const app = await NestFactory.create(AppModule, { logger })
 
     setApiDocument(app)
 
     await app.listen(4000)
 
-    Logger.log(`Application running on port ${await app.getUrl()}`)
+    console.log(`Application running on port ${await app.getUrl()}`)
 }
 bootstrap()

@@ -3,6 +3,8 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger } from '@n
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
+    private readonly logger = new Logger(HttpExceptionFilter.name)
+
     async catch(exception: HttpException, host: ArgumentsHost) {
         const ctx = host.switchToHttp()
         const response = ctx.getResponse<Response>()
@@ -16,7 +18,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             timestamp: new Date().toISOString()
         }
 
-        Logger.warn(JSON.stringify(body))
+        this.logger.log(JSON.stringify(body))
 
         response.status(status).json(body)
     }
