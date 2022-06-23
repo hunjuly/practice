@@ -1,9 +1,8 @@
-import { INestApplication, Logger } from '@nestjs/common'
+import { INestApplication } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
-import { PaginatedResponse } from 'src/common'
-import { getLogger } from 'src/common'
+import { PaginatedResponse, MyLogger } from 'src/common'
 
 function setApiDocument(app: INestApplication) {
     const config = new DocumentBuilder()
@@ -28,9 +27,10 @@ function setApiDocument(app: INestApplication) {
 }
 
 async function bootstrap() {
-    const logger = getLogger(process.env.NODE_ENV === 'production')
-
-    const app = await NestFactory.create(AppModule, { logger })
+    const app = await NestFactory.create(AppModule, {
+        bufferLogs: true
+    })
+    app.useLogger(app.get(MyLogger))
 
     setApiDocument(app)
 

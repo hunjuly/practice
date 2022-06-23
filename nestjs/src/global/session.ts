@@ -38,6 +38,7 @@ export class SessionService {
             }
         } else if (type === 'memory') {
             this.logger.warn('USING DEFAULT SESSION')
+            Logger.log('USING DEFAULT SESSION2')
 
             return {
                 saveUninitialized: false,

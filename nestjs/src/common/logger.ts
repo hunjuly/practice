@@ -1,14 +1,11 @@
 import { LoggerService } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import * as winston from 'winston'
 
-// If we're not in production then log to the `console` with the format:
-// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
-//
-
-class ProdLogger implements LoggerService {
+export class MyLogger implements LoggerService {
     private logger: winston.Logger
 
-    constructor() {
+    constructor(private configService: ConfigService) {
         this.logger = winston.createLogger({
             level: 'info',
             format: winston.format.json(),
@@ -16,7 +13,7 @@ class ProdLogger implements LoggerService {
             transports: [
                 new winston.transports.Console({
                     format: winston.format.simple(),
-                    level: 'warning'
+                    level: 'info'
                 }),
                 new winston.transports.File({ filename: 'error.log', level: 'error' }),
                 new winston.transports.File({ filename: 'combined.log' })
@@ -46,26 +43,3 @@ class ProdLogger implements LoggerService {
         this.logger.verbose(message, optionalParams)
     }
 }
-
-// class DevLogger extends ConsoleLogger {
-//     warn(...args: [message: any, context?: string]) {
-//         // ignore warnings
-//     }
-// }
-
-export function getLogger(isProduction: boolean): LoggerService {
-    // if (isProduction) {
-    return new ProdLogger()
-    // }
-
-    // return new DevLogger()
-}
-
-// @Injectable()
-// class MyService {
-//   private readonly logger = new Logger(MyService.name);
-
-//   doSomething() {
-//     this.logger.log('Doing something...');
-//   }
-// }

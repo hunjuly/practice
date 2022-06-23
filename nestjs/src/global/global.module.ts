@@ -10,6 +10,7 @@ import { RedisService } from './redis'
 import { LoggingInterceptor } from './logging-interceptor'
 import { UserGuard } from 'src/auth/user.guard'
 import { HttpExceptionFilter } from './http-exception.filter'
+import { MyLogger } from 'src/common/logger'
 
 @Module({
     imports: [createOrmModule(), createConfigModule()],
@@ -33,9 +34,10 @@ import { HttpExceptionFilter } from './http-exception.filter'
             provide: APP_GUARD,
             useExisting: UserGuard
         },
-        UserGuard
+        UserGuard,
+        MyLogger
     ],
-    exports: [RedisService]
+    exports: [RedisService, MyLogger]
 })
 export class GlobalModule implements NestModule {
     constructor(private readonly sessionService: SessionService) {}
