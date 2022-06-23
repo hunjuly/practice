@@ -9,6 +9,8 @@ type SessionType = 'memory' | 'redis' | undefined
 
 @Injectable()
 export class SessionService {
+    private readonly logger = new Logger(SessionService.name)
+
     constructor(private configService: ConfigService, private redisService: RedisService) {}
 
     createOption() {
@@ -16,7 +18,7 @@ export class SessionService {
 
         if (type === 'redis') {
             if (this.redisService.isAvailable()) {
-                Logger.log('USING REDIS SESSION')
+                this.logger.log('USING REDIS SESSION')
 
                 const store = new (RedisStore(session))({
                     client: this.redisService.getClient(),
@@ -35,7 +37,7 @@ export class SessionService {
                 }
             }
         } else if (type === 'memory') {
-            Logger.warn('USING DEFAULT SESSION')
+            this.logger.warn('USING DEFAULT SESSION')
 
             return {
                 saveUninitialized: false,

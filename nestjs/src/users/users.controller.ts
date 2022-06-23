@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, UseFilters } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger'
-import { ApiPaginatedResponse, Pagination, PageQuery } from 'src/common/pagination'
+import { ApiPaginatedResponse, Pagination, PageQuery } from 'src/common'
 import { Public } from 'src/auth/public'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'

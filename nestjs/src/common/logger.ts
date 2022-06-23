@@ -1,22 +1,71 @@
-import { Logger } from '@nestjs/common'
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common'
-import { Observable } from 'rxjs'
-import { tap } from 'rxjs/operators'
+import { LoggerService } from '@nestjs/common'
+import * as winston from 'winston'
 
-@Injectable()
-export class LoggingInterceptor implements NestInterceptor {
-    async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
-        const logger = new Logger('_')
+// If we're not in production then log to the `console` with the format:
+// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
+//
 
-        const now = Date.now()
+class ProdLogger implements LoggerService {
+    private logger: winston.Logger
 
-        const request = context.switchToHttp().getRequest()
-        const body = JSON.stringify(request.body)
+    constructor() {
+        this.logger = winston.createLogger({
+            level: 'info',
+            format: winston.format.json(),
+            defaultMeta: { service: 'user-service' },
+            transports: [
+                new winston.transports.Console({
+                    format: winston.format.simple(),
+                    level: 'warning'
+                }),
+                new winston.transports.File({ filename: 'error.log', level: 'error' }),
+                new winston.transports.File({ filename: 'combined.log' })
+            ]
+        })
+    }
 
-        const response = context.switchToHttp().getResponse()
+    log(message: any, ...optionalParams: any[]) {
+        console.log('USING DEFAULT SESSION')
 
-        const message = `${request.url}, body: ${body}, status: ${response.statusCode}  ${Date.now() - now}ms`
+        this.logger.info(message, optionalParams)
+    }
 
-        return next.handle().pipe(tap(() => logger.log(message)))
+    error(message: any, ...optionalParams: any[]) {
+        this.logger.error(message, optionalParams)
+    }
+
+    warn(message: any, ...optionalParams: any[]) {
+        this.logger.warn(message, optionalParams)
+    }
+
+    debug?(message: any, ...optionalParams: any[]) {
+        this.logger.debug(message, optionalParams)
+    }
+
+    verbose?(message: any, ...optionalParams: any[]) {
+        this.logger.verbose(message, optionalParams)
     }
 }
+
+// class DevLogger extends ConsoleLogger {
+//     warn(...args: [message: any, context?: string]) {
+//         // ignore warnings
+//     }
+// }
+
+export function getLogger(isProduction: boolean): LoggerService {
+    // if (isProduction) {
+    return new ProdLogger()
+    // }
+
+    // return new DevLogger()
+}
+
+// @Injectable()
+// class MyService {
+//   private readonly logger = new Logger(MyService.name);
+
+//   doSomething() {
+//     this.logger.log('Doing something...');
+//   }
+// }

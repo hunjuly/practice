@@ -7,7 +7,7 @@ import * as session from 'express-session'
 import { createOrmModule } from './typeorm'
 import { SessionService } from './session'
 import { RedisService } from './redis'
-import { LoggingInterceptor } from 'src/common'
+import { LoggingInterceptor } from './logging-interceptor'
 import { UserGuard } from 'src/auth/user.guard'
 import { HttpExceptionFilter } from './http-exception.filter'
 
