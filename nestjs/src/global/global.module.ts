@@ -32,8 +32,9 @@ import { MyLogger } from './my-logger'
         },
         {
             provide: APP_GUARD,
-            useClass: UserGuard
-        }
+            useExisting: UserGuard
+        },
+        UserGuard
     ],
     exports: [RedisService, MyLogger]
 })

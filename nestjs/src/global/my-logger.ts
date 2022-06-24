@@ -12,7 +12,7 @@ export class MyLogger implements LoggerService {
             transports: [
                 new winston.transports.Console({
                     format: winston.format.simple(),
-                    level: 'info'
+                    level: 'warning'
                 }),
                 new winston.transports.File({ filename: 'error.log', level: 'error' }),
                 new winston.transports.File({ filename: 'combined.log' })

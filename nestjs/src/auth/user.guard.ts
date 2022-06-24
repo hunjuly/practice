@@ -28,10 +28,12 @@ class JwtAuthGuard extends AuthGuard('jwt') {
 @Injectable()
 export class UserGuard extends SessionGuard {
     constructor(protected reflector: Reflector) {
+        console.log('------------------1')
         super(reflector)
     }
 
     canActivate(context: ExecutionContext) {
+        console.log('------------------2')
         const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
             context.getHandler(),
             context.getClass()
