@@ -10,11 +10,12 @@ import { RedisService } from './redis'
 import { LoggingInterceptor } from './logging-interceptor'
 import { UserGuard } from 'src/auth/user.guard'
 import { HttpExceptionFilter } from './http-exception.filter'
-import { MyLogger } from 'src/common/logger'
+import { MyLogger } from './my-logger'
 
 @Module({
     imports: [createOrmModule(), createConfigModule()],
     providers: [
+        MyLogger,
         RedisService,
         SessionService,
         {
@@ -29,13 +30,10 @@ import { MyLogger } from 'src/common/logger'
             provide: APP_INTERCEPTOR,
             useClass: LoggingInterceptor
         },
-        // useExisting, useClass 각각 사용한 이유는 없다. 연슴 삼아 써봤다.
         {
             provide: APP_GUARD,
-            useExisting: UserGuard
-        },
-        UserGuard,
-        MyLogger
+            useClass: UserGuard
+        }
     ],
     exports: [RedisService, MyLogger]
 })

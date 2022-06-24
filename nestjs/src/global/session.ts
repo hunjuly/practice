@@ -10,10 +10,10 @@ type SessionType = 'memory' | 'redis' | undefined
 
 @Injectable()
 export class SessionService {
-    constructor(private configService: ConfigService, private redisService: RedisService) {}
+    constructor(private config: ConfigService, private redisService: RedisService) {}
 
     createOption() {
-        const type = this.configService.get<SessionType>('SESSION_TYPE')
+        const type = this.config.get<SessionType>('SESSION_TYPE')
 
         if (type === 'redis') {
             if (this.redisService.isAvailable()) {
@@ -36,7 +36,7 @@ export class SessionService {
                 }
             }
         } else if (type === 'memory') {
-            const nodeEnv = this.configService.get<string>('NODE_ENV')
+            const nodeEnv = this.config.get<string>('NODE_ENV')
 
             if (nodeEnv === 'production') {
                 Logger.error('Do not use memory session on production')

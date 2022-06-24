@@ -1,8 +1,9 @@
-import { INestApplication } from '@nestjs/common'
+import { INestApplication, Logger } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
-import { PaginatedResponse, MyLogger } from 'src/common'
+import { PaginatedResponse } from 'src/common'
+import { MyLogger } from 'src/global/my-logger'
 
 function setApiDocument(app: INestApplication) {
     const config = new DocumentBuilder()
@@ -36,6 +37,6 @@ async function bootstrap() {
 
     await app.listen(4000)
 
-    console.log(`Application running on port ${await app.getUrl()}`)
+    Logger.log(`Application running on port ${await app.getUrl()}`)
 }
 bootstrap()

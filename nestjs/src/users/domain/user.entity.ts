@@ -6,7 +6,7 @@ import {
     VersionColumn,
     PrimaryGeneratedColumn
 } from 'typeorm'
-import { BaseEntity } from 'src/common/base-entity'
+import { BaseEntity } from 'src/common'
 
 @Entity()
 export class User extends BaseEntity {

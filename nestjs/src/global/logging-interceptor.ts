@@ -9,6 +9,7 @@ export class LoggingInterceptor implements NestInterceptor {
         const now = Date.now()
 
         const request = context.switchToHttp().getRequest()
+
         const body = JSON.stringify(request.body)
 
         const response = context.switchToHttp().getResponse()

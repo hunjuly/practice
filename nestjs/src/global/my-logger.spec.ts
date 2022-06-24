@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
-import { MyLogger } from './logger'
+import { MyLogger } from './my-logger'
 
 describe('Logger', () => {
     // let controller: AppController

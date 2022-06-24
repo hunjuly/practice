@@ -5,11 +5,10 @@ import * as winston from 'winston'
 export class MyLogger implements LoggerService {
     private logger: winston.Logger
 
-    constructor(private configService: ConfigService) {
+    constructor(private config: ConfigService) {
         this.logger = winston.createLogger({
             level: 'info',
             format: winston.format.json(),
-            defaultMeta: { service: 'user-service' },
             transports: [
                 new winston.transports.Console({
                     format: winston.format.simple(),
@@ -22,8 +21,6 @@ export class MyLogger implements LoggerService {
     }
 
     log(message: any, ...optionalParams: any[]) {
-        console.log('USING DEFAULT SESSION')
-
         this.logger.info(message, optionalParams)
     }
 

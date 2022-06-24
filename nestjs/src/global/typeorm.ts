@@ -4,70 +4,95 @@ import { exit } from 'process'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Logger } from '@nestjs/common'
-import { LoggerOptions, Logger as OrmLogger, QueryRunner } from 'typeorm'
+import { Logger as OrmLogger, QueryRunner } from 'typeorm'
+import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions'
+import * as winston from 'winston'
 
 class OrmLoggerImpl implements OrmLogger {
+    private logger: winston.Logger
+
+    constructor(private config: ConfigService) {
+        this.logger = winston.createLogger({
+            level: 'verbose',
+            format: winston.format.json(),
+            transports: [
+                new winston.transports.Console({
+                    format: winston.format.simple(),
+                    level: 'info'
+                }),
+                new winston.transports.File({ filename: 'db-error.log', level: 'error' }),
+                new winston.transports.File({ filename: 'db-info.log', level: 'info' }),
+                new winston.transports.File({ filename: 'db-verbose.log', level: 'verbose' }),
+                new winston.transports.File({ filename: 'db-combined.log' })
+            ]
+        })
+    }
+
     logQuery(query: string, parameters?: any[], queryRunner?: QueryRunner) {
-        throw new Error('Method not implemented.')
+        this.logger.verbose(query, parameters)
     }
     logQueryError(error: string | Error, query: string, parameters?: any[], queryRunner?: QueryRunner) {
-        throw new Error('Method not implemented.')
+        if (error instanceof Error) {
+            this.logger.error(error.message, query, parameters)
+        } else {
+            this.logger.error(error, query, parameters)
+        }
     }
     logQuerySlow(time: number, query: string, parameters?: any[], queryRunner?: QueryRunner) {
-        throw new Error('Method not implemented.')
+        this.logger.warn(query, time, parameters)
     }
     logSchemaBuild(message: string, queryRunner?: QueryRunner) {
-        throw new Error('Method not implemented.')
+        this.logger.info(message)
     }
     logMigration(message: string, queryRunner?: QueryRunner) {
-        throw new Error('Method not implemented.')
+        this.logger.info(message)
     }
     log(level: 'warn' | 'info' | 'log', message: any, queryRunner?: QueryRunner) {
-        throw new Error('Method not implemented.')
+        this.logger.log(level, message)
     }
 }
 
+type DatabaseType = 'mysql' | 'sqlite' | undefined
+
 @Injectable()
 class TypeOrmConfigService implements TypeOrmOptionsFactory {
-    private readonly logger = new Logger(TypeOrmConfigService.name)
-
-    constructor(private configService: ConfigService) {}
+    constructor(private config: ConfigService) {}
 
     createTypeOrmOptions(): TypeOrmModuleOptions {
-        const nodeEnv = this.configService.get<string>('NODE_ENV')
-        const synchronize = this.configService.get<boolean>('TYPEORM_ENABLE_SYNC')
+        const nodeEnv = this.config.get<string>('NODE_ENV')
+        const synchronize = this.config.get<boolean>('TYPEORM_ENABLE_SYNC')
 
         if (nodeEnv === 'production' && synchronize) {
-            this.logger.error('Do not use synchronize(TYPEORM_ENABLE_SYNC) on production')
+            Logger.error('Do not use synchronize(TYPEORM_ENABLE_SYNC) on production')
 
             exit(1)
         }
 
-        type DatabaseType = 'mysql' | 'sqlite' | undefined
+        const type = this.config.get<DatabaseType>('TYPEORM_TYPE')
+        const database = this.config.get<string>('TYPEORM_DATABASE')
 
-        const type = this.configService.get<DatabaseType>('TYPEORM_TYPE')
-        const database = this.configService.get<string>('TYPEORM_DATABASE')
+        const logger = new OrmLoggerImpl(this.config)
 
         const common = {
             type,
             synchronize,
             autoLoadEntities: true,
-            logger: new OrmLoggerImpl(this.logger),
-            logging: ['error', 'warn', 'info', 'log'] as LoggerOptions,
+            logger,
+            logging: 'all',
             database
         }
 
         if (type === 'sqlite') {
-            this.logger.warn('database connection is not set. using MEMORY DB.')
+            Logger.warn('database connection is not set. using MEMORY DB.')
 
-            return common
+            return common as TypeOrmModuleOptions
         } else if (type === 'mysql') {
-            const host = this.configService.get<string>('TYPEORM_HOST')
-            const port = this.configService.get<number>('TYPEORM_PORT')
-            const username = this.configService.get<string>('TYPEORM_USERNAME')
-            const password = this.configService.get<string>('TYPEORM_PASSWORD')
+            const host = this.config.get<string>('TYPEORM_HOST')
+            const port = this.config.get<number>('TYPEORM_PORT')
+            const username = this.config.get<string>('TYPEORM_USERNAME')
+            const password = this.config.get<string>('TYPEORM_PASSWORD')
 
-            return { ...common, host, port, database, username, password }
+            return { ...common, host, port, database, username, password } as MysqlConnectionOptions
         }
 
         throw new Error(`unknown TYPEORM_TYPE(${type})`)
@@ -75,16 +100,13 @@ class TypeOrmConfigService implements TypeOrmOptionsFactory {
 }
 
 export async function createOrmModule() {
-    return TypeOrmModule.forRootAsync({
-        useClass: TypeOrmConfigService,
-        extraProviders: []
-    })
+    return TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService })
 }
 
 // 다음과 같이 useFactory 사용해도 된다. docs에 위와 같이 되어있었을 뿐이다.
 // TypeOrmModule.forRootAsync({
 //     imports: [ConfigModule],
-//     useFactory: (configService: ConfigService) => ({
+//     useFactory: (config: ConfigService) => ({
 //         type: 'mysql',
 //         host: configService.get('HOST'),
 //         port: +configService.get('PORT'),

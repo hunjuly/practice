@@ -7,9 +7,9 @@ import { RedisClient } from 'redis'
 export class RedisService {
     private client: RedisClient | undefined
 
-    constructor(private configService: ConfigService) {
-        const host = this.configService.get<string>('REDIS_HOST')
-        const port = this.configService.get<number>('REDIS_PORT')
+    constructor(private config: ConfigService) {
+        const host = this.config.get<string>('REDIS_HOST')
+        const port = this.config.get<number>('REDIS_PORT')
 
         if (host && port) {
             this.client = Redis.createClient({ host, port })
