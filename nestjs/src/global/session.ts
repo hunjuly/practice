@@ -1,3 +1,4 @@
+import { exit } from 'process'
 import { Injectable } from '@nestjs/common'
 import * as RedisStore from 'connect-redis'
 import * as session from 'express-session'
@@ -9,8 +10,6 @@ type SessionType = 'memory' | 'redis' | undefined
 
 @Injectable()
 export class SessionService {
-    private readonly logger = new Logger(SessionService.name)
-
     constructor(private configService: ConfigService, private redisService: RedisService) {}
 
     createOption() {
@@ -18,7 +17,7 @@ export class SessionService {
 
         if (type === 'redis') {
             if (this.redisService.isAvailable()) {
-                this.logger.log('USING REDIS SESSION')
+                Logger.log('using redis session')
 
                 const store = new (RedisStore(session))({
                     client: this.redisService.getClient(),
@@ -37,8 +36,15 @@ export class SessionService {
                 }
             }
         } else if (type === 'memory') {
-            this.logger.warn('USING DEFAULT SESSION')
-            Logger.log('USING DEFAULT SESSION2')
+            const nodeEnv = this.configService.get<string>('NODE_ENV')
+
+            if (nodeEnv === 'production') {
+                Logger.error('Do not use memory session on production')
+
+                exit(1)
+            }
+
+            Logger.log('using memory session')
 
             return {
                 saveUninitialized: false,

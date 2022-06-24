@@ -2,8 +2,7 @@
 
 ## Todo
 
-1. logger 호출이 안 되고있다.
-1. Logger로 대체. production에서만 출력되는 log도 있다. 주석 대신 사용한다.
+1. jest에서는 log가 적었으면. 어떻게?? info는 무시할까?
 1. logstash, elastic search, kibana 적용
 1. 테스트 상세하게
 1. 환경 설정 .env.production으로 설정하게 한다.
