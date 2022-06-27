@@ -2,7 +2,10 @@
 
 ## Todo
 
-1. jest에서는 log가 적었으면. 어떻게?? info는 무시할까?
+1. docker-compose 적용
+1. log 환경설정
+1. docker build
+1. .env 설정
 1. logstash, elastic search, kibana 적용
 1. 테스트 상세하게
 1. 환경 설정 .env.production으로 설정하게 한다.
