@@ -55,7 +55,7 @@ export class GlobalModule implements NestModule {
 async function createConfigModule() {
     return ConfigModule.forRoot({
         isGlobal: true,
-        envFilePath: ['.env.development'],
+        // envFilePath: ['.env.development'],
         validationSchema: Joi.object({
             NODE_ENV: Joi.string().valid('development', 'production'),
             TYPEORM_TYPE: Joi.string().valid('sqlite', 'mysql'),

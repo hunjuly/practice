@@ -32,13 +32,13 @@ services:
             - '4000:4000'
         networks:
             - back-tier
-
-# volumes:
-#     db-data:
-#         driver: flocker
-#         driver_opts:
-#             size: '10GiB'
-
+        volumes:
+          - type: volume
+            source: /home/hunjuly/practice/nestjs/logs
+            target: /workspace/practice/logs
+# 볼륨 지정하는거 이거 맞나?
+volumes:
+  log-data:
 # configs:
 #     httpd-config:
 #         external: true

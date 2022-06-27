@@ -20,10 +20,10 @@ class OrmLoggerImpl implements OrmLogger {
                     format: winston.format.simple(),
                     level: 'info'
                 }),
-                new winston.transports.File({ filename: 'db-error.log', level: 'error' }),
-                new winston.transports.File({ filename: 'db-info.log', level: 'info' }),
-                new winston.transports.File({ filename: 'db-verbose.log', level: 'verbose' }),
-                new winston.transports.File({ filename: 'db-combined.log' })
+                new winston.transports.File({ filename: 'logs/db-error.log', level: 'error' }),
+                new winston.transports.File({ filename: 'logs/db-info.log', level: 'info' }),
+                new winston.transports.File({ filename: 'logs/db-verbose.log', level: 'verbose' }),
+                new winston.transports.File({ filename: 'logs/db-combined.log' })
             ]
         })
     }
