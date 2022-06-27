@@ -1,6 +1,6 @@
 npm run build
 
-docker build -t practice .
+docker build -t practice/nestjs .
 
 exit 0
 
