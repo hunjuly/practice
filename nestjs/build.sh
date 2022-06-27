@@ -29,5 +29,6 @@ curl http://test:4000/users/login -d '{ "email": "test@mail.com", "password": "t
 curl http://test:4000/users | jq
 curl http://test:4000/users/154db0e3-f9b7-48da-b275-00b7772be859 --cookie "connect.sid=s%3Aipawz6BxpLlcuC4ZIKdGfDFDOSg37Zkc.ARemWAt1LzBmYGZ%2BzGv%2BuJBqGMYZ9r55iea9sWERQIg;" | jq
 
+echo "redis commands"
 echo "keys *"
 echo "get (key)"

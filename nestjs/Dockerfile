@@ -1,12 +1,11 @@
-FROM node:16
-ENV NODE_ENV=production
+FROM node:18-alpine
 
 WORKDIR /workspaces/practice
 
 COPY . .
 
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 EXPOSE 4000
 
-CMD [ "npm", "run" ,"start:prod"]
+CMD [ "npm", "start"]

@@ -20,8 +20,7 @@
         "vscode"
     ],
     "remoteEnv": {
-        "WORKSPACE_ROOT": "${containerWorkspaceFolder}",
-        "NODE_ENV": "development"
+        "WORKSPACE_ROOT": "${containerWorkspaceFolder}"
     },
-    "postCreateCommand": "sh .devcontainer/postCreateCommand.sh"
+    "postCreateCommand": "sh postCreateCommand.sh"
 }

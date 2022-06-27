@@ -1,4 +1,5 @@
 import { randomBytes } from 'crypto'
+import { File } from './File'
 
 export class utils {
     public static uuid(): string {
@@ -46,4 +47,16 @@ export function entityToDto<S, O>(items: S[], create: (s: S) => O) {
     })
 
     return dtos
+}
+
+type PackageInfo = {
+    name: string
+    version: string
+    description: string
+}
+
+export function getPackageInfo() {
+    const info = File.readJson<PackageInfo>('package.json')
+
+    return info
 }

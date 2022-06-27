@@ -2,14 +2,15 @@ import { INestApplication, Logger } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
-import { PaginatedResponse } from 'src/common'
+import { PaginatedResponse, getPackageInfo } from 'src/common'
 import { MyLogger } from 'src/global/my-logger'
 
 function setApiDocument(app: INestApplication) {
+    const info = getPackageInfo()
     const config = new DocumentBuilder()
-        .setTitle('Practice Title')
-        .setDescription('The Practice API description')
-        .setVersion('1.0')
+        .setTitle(info.name)
+        .setDescription(info.description)
+        .setVersion(info.version)
         .addCookieAuth()
         .build()
 
@@ -21,7 +22,7 @@ function setApiDocument(app: INestApplication) {
         swaggerOptions: {
             persistAuthorization: true
         },
-        customSiteTitle: 'Practice APIs'
+        customSiteTitle: `${info.name} APIs`
     }
 
     SwaggerModule.setup('api', app, document, customOptions)
