@@ -6,6 +6,8 @@
 1. log 환경설정
 1. docker build
 1. .env 설정
+1. middleware로 logging 구현
+1. interceptor는 뭐에 쓰나? middleware/interceptor 다시 보기
 1. logstash, elastic search, kibana 적용
 1. 테스트 상세하게
 1. 환경 설정 .env.production으로 설정하게 한다.

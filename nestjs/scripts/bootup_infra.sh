@@ -56,7 +56,11 @@ clear() (
     docker rm -f $MYSQL_CONTAINER $REDIS_CONTAINER
     docker volume rm -f $MYSQL_CONTAINER $REDIS_CONTAINER
 
-    rm -f ../.env.development
+    rm -f ../.env
+
+    echo "LOG_STORE_PATH=./logs" >>../.env
+    mkdir -p ../logs
+    chmod 777 ../logs
 )
 
 docker_mode() (
@@ -76,17 +80,17 @@ docker_mode() (
 
     redis
 
-    echo "TYPEORM_TYPE=$TYPEORM_TYPE" >>../.env.development
-    echo "TYPEORM_DATABASE=$TYPEORM_DATABASE" >>../.env.development
-    echo "TYPEORM_HOST=$TYPEORM_HOST" >>../.env.development
-    echo "TYPEORM_PORT=$TYPEORM_PORT" >>../.env.development
-    echo "TYPEORM_USERNAME=$TYPEORM_USERNAME" >>../.env.development
-    echo "TYPEORM_PASSWORD=$TYPEORM_PASSWORD" >>../.env.development
-    echo "TYPEORM_ENABLE_SYNC=true" >>../.env.development
+    echo "TYPEORM_TYPE=$TYPEORM_TYPE" >>../.env
+    echo "TYPEORM_DATABASE=$TYPEORM_DATABASE" >>../.env
+    echo "TYPEORM_HOST=$TYPEORM_HOST" >>../.env
+    echo "TYPEORM_PORT=$TYPEORM_PORT" >>../.env
+    echo "TYPEORM_USERNAME=$TYPEORM_USERNAME" >>../.env
+    echo "TYPEORM_PASSWORD=$TYPEORM_PASSWORD" >>../.env
+    echo "TYPEORM_ENABLE_SYNC=true" >>../.env
     echo ""
-    echo "SESSION_TYPE=redis" >>../.env.development
-    echo "REDIS_HOST=$REDIS_HOST" >>../.env.development
-    echo "REDIS_PORT=$REDIS_PORT" >>../.env.development
+    echo "SESSION_TYPE=redis" >>../.env
+    echo "REDIS_HOST=$REDIS_HOST" >>../.env
+    echo "REDIS_PORT=$REDIS_PORT" >>../.env
 
     echo ""
     echo "docker exec -it $MYSQL_CONTAINER mysql -p$TYPEORM_PASSWORD"
@@ -98,11 +102,11 @@ docker_mode() (
 memory_mode() (
     clear
 
-    echo "TYPEORM_TYPE=sqlite" >>../.env.development
-    echo "TYPEORM_DATABASE=\":memory:\"" >>../.env.development
-    echo "TYPEORM_ENABLE_SYNC=true" >>../.env.development
+    echo "TYPEORM_TYPE=sqlite" >>../.env
+    echo "TYPEORM_DATABASE=\":memory:\"" >>../.env
+    echo "TYPEORM_ENABLE_SYNC=true" >>../.env
     echo ""
-    echo "SESSION_TYPE=memory" >>../.env.development
+    echo "SESSION_TYPE=memory" >>../.env
 )
 
 MYSQL_CONTAINER="$(basename $WORKSPACE_ROOT).mysql"

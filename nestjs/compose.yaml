@@ -33,12 +33,12 @@ services:
         networks:
             - back-tier
         volumes:
-          - type: volume
-            source: /home/hunjuly/practice/nestjs/logs
-            target: /workspace/practice/logs
+            - type: volume
+              source: /home/hunjuly/practice/nestjs/logs
+              target: /workspaces/practice/logs
 # 볼륨 지정하는거 이거 맞나?
-volumes:
-  log-data:
+# volumes:
+#   log-data:
 # configs:
 #     httpd-config:
 #         external: true

@@ -1,6 +1,8 @@
 npm run build
 
 docker build -t practice/nestjs .
+docker-compose up
+docker logs nestjs
 
 exit 0
 

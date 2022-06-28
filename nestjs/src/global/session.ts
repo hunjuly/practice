@@ -5,12 +5,16 @@ import * as session from 'express-session'
 import { Logger } from '@nestjs/common'
 import { RedisService } from './redis'
 import { ConfigService } from '@nestjs/config'
+import { MyLogger } from './my-logger'
 
 type SessionType = 'memory' | 'redis' | undefined
 
 @Injectable()
 export class SessionService {
-    constructor(private config: ConfigService, private redisService: RedisService) {}
+    constructor(
+        private config: ConfigService,
+        private redisService: RedisService // private logger: MyLogger
+    ) {}
 
     createOption() {
         const type = this.config.get<SessionType>('SESSION_TYPE')

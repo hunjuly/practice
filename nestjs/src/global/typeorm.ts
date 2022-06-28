@@ -7,11 +7,14 @@ import { Logger } from '@nestjs/common'
 import { Logger as OrmLogger, QueryRunner } from 'typeorm'
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions'
 import * as winston from 'winston'
+import { Path } from 'src/common'
 
 class OrmLoggerImpl implements OrmLogger {
     private logger: winston.Logger
 
-    constructor(private config: ConfigService) {
+    constructor(config: ConfigService) {
+        const logStore = config.get<string>('LOG_STORE_PATH')
+
         this.logger = winston.createLogger({
             level: 'verbose',
             format: winston.format.json(),
@@ -20,10 +23,21 @@ class OrmLoggerImpl implements OrmLogger {
                     format: winston.format.simple(),
                     level: 'info'
                 }),
-                new winston.transports.File({ filename: 'logs/db-error.log', level: 'error' }),
-                new winston.transports.File({ filename: 'logs/db-info.log', level: 'info' }),
-                new winston.transports.File({ filename: 'logs/db-verbose.log', level: 'verbose' }),
-                new winston.transports.File({ filename: 'logs/db-combined.log' })
+                new winston.transports.File({
+                    filename: Path.join(logStore, 'db-error.log'),
+                    level: 'error'
+                }),
+                new winston.transports.File({
+                    filename: Path.join(logStore, 'db-info.log'),
+                    level: 'info'
+                }),
+                new winston.transports.File({
+                    filename: Path.join(logStore, 'db-verbose.log'),
+                    level: 'verbose'
+                }),
+                new winston.transports.File({
+                    filename: Path.join(logStore, 'db-combined.log')
+                })
             ]
         })
     }

@@ -1,31 +1,40 @@
-import { Logger } from '@nestjs/common'
-import { Test, TestingModule } from '@nestjs/testing'
+import { Test } from '@nestjs/testing'
+import { Injectable, Logger } from '@nestjs/common'
 import { MyLogger } from './my-logger'
+import { ConfigService } from '@nestjs/config'
+import { ConfigModule } from '@nestjs/config'
+import * as Joi from 'joi'
 
-describe('Logger', () => {
-    // let controller: AppController
-    // let service: AppService
+@Injectable()
+class LogService {
+    private readonly logger = new Logger(LogService.name)
 
-    // beforeEach(async () => {
-    //     const app: TestingModule = await Test.createTestingModule({
-    //         controllers: [AppController],
-    //         providers: [AppService]
-    //     }).compile()
+    constructor(private doNotUse: MyLogger) {}
 
-    //     controller = app.get<AppController>(AppController)
-    //     service = app.get<AppController>(AppController)
-    // })
+    printLog() {
+        this.logger.log('Instance Method')
 
-    it('logger on production', () => {
-        const logger = getLogger(true)
-        logger.log('log string', 'arg1', 'arg2')
-        logger.error('error string', 'arg1', 'arg2')
+        Logger.log('Static Method')
 
-        // const spy = jest.spyOn(service, 'getHello')
+        this.doNotUse.log('Not Recommended Method.')
+    }
+}
 
-        // const actual = controller.getHello()
+it('create & using Logger', async () => {
+    const module = await Test.createTestingModule({
+        imports: [
+            ConfigModule.forRoot({
+                validationSchema: Joi.object({
+                    LOG_STORE_PATH: Joi.string().default('logs')
+                })
+            })
+        ],
+        providers: [LogService, MyLogger, ConfigService]
+    }).compile()
 
-        // expect(actual).toEqual({ message: 'Hello World!' })
-        // expect(spy).toBeCalled()
-    })
+    module.useLogger(module.get(MyLogger))
+
+    const service = module.get(LogService)
+
+    service.printLog()
 })

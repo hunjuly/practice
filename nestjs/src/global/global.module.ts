@@ -1,7 +1,5 @@
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE, APP_GUARD } from '@nestjs/core'
 import { MiddlewareConsumer, Module, NestModule, ValidationPipe } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
-import * as Joi from 'joi'
 import * as passport from 'passport'
 import * as session from 'express-session'
 import { createOrmModule } from './typeorm'
@@ -11,6 +9,7 @@ import { LoggingInterceptor } from './logging-interceptor'
 import { UserGuard } from 'src/auth/user.guard'
 import { HttpExceptionFilter } from './http-exception.filter'
 import { MyLogger } from './my-logger'
+import { createConfigModule } from './config'
 
 @Module({
     imports: [createOrmModule(), createConfigModule()],
@@ -40,7 +39,7 @@ import { MyLogger } from './my-logger'
         },
         UserGuard
     ],
-    exports: [RedisService, MyLogger]
+    exports: [RedisService]
 })
 export class GlobalModule implements NestModule {
     constructor(private readonly sessionService: SessionService) {}
@@ -50,17 +49,4 @@ export class GlobalModule implements NestModule {
             .apply(session(this.sessionService.createOption()), passport.initialize(), passport.session())
             .forRoutes('*')
     }
-}
-
-async function createConfigModule() {
-    return ConfigModule.forRoot({
-        isGlobal: true,
-        // envFilePath: ['.env.development'],
-        validationSchema: Joi.object({
-            NODE_ENV: Joi.string().valid('development', 'production'),
-            TYPEORM_TYPE: Joi.string().valid('sqlite', 'mysql'),
-            SESSION_TYPE: Joi.string().valid('memory', 'redis'),
-            TYPEORM_ENABLE_SYNC: Joi.boolean().default(false)
-        })
-    })
 }

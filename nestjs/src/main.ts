@@ -30,7 +30,9 @@ function setApiDocument(app: INestApplication) {
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
-        bufferLogs: true
+        // Logger는 configService에 의존한다.
+        // bufferLogs: true로 하면 config에 문제가 있는 경우 로그를 출력하지 못한다.
+        bufferLogs: false
     })
     app.useLogger(app.get(MyLogger))
 
