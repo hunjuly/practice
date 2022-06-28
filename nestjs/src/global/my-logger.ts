@@ -1,52 +1,51 @@
 import { Injectable, LoggerService } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import * as winston from 'winston'
+import { transports, format, Logger, createLogger } from 'winston'
 import * as DailyRotateFile from 'winston-daily-rotate-file'
 import { Path } from 'src/common'
 
 @Injectable()
 export class MyLogger implements LoggerService {
-    private logger: winston.Logger
+    private logger: Logger
 
     constructor(private config: ConfigService) {
-        const logStore = this.config.get<string>('LOG_STORE_PATH')
+        const storagePath = this.config.get<string>('LOG_STORAGE_PATH')
+        Path.mkdir(storagePath)
 
-        Path.mkdir(logStore)
+        const storageDays = this.config.get<number>('LOG_STORAGE_DAYS')
 
         const transport: DailyRotateFile = new DailyRotateFile({
-            dirname: logStore,
-            filename: 'application-%DATE%.log',
-            datePattern: 'YYYY-MM-DD',
+            dirname: storagePath,
+            filename: '%DATE%.log',
+            datePattern: 'YYYY-MM-DD-HH',
             zippedArchive: true,
             maxSize: '20m',
-            maxFiles: '14d',
-            createSymlink: true
+            maxFiles: storageDays + 'd',
+            createSymlink: true,
+            format: format.combine(format.timestamp(), format.prettyPrint())
         })
 
         transport.on('rotate', function (oldFilename, newFilename) {
             console.log(oldFilename, newFilename)
         })
 
-        this.logger = winston.createLogger({
+        this.logger = createLogger({
             level: 'silly',
-            format: winston.format.json(),
+            format: format.json(),
             transports: [
                 transport,
-                new winston.transports.Console({
-                    format: winston.format.combine(
-                        winston.format.colorize({ all: true }),
-                        winston.format.simple()
-                    )
+                new transports.Console({
+                    format: format.combine(format.colorize({ all: true }), format.simple())
                 }),
-                new winston.transports.File({
-                    dirname: logStore,
+                new transports.File({
+                    dirname: storagePath,
                     filename: 'error.log',
                     level: 'error'
                 })
             ],
             exceptionHandlers: [
-                new winston.transports.File({
-                    dirname: logStore,
+                new transports.File({
+                    dirname: storagePath,
                     filename: 'error.log'
                 })
             ]

@@ -25,7 +25,8 @@ it('create & using Logger', async () => {
         imports: [
             ConfigModule.forRoot({
                 validationSchema: Joi.object({
-                    LOG_STORE_PATH: Joi.string().default('logs')
+                    LOG_STORAGE_PATH: Joi.string().default('logs'),
+                    LOG_STORAGE_DAYS: Joi.number().default(14)
                 })
             })
         ],

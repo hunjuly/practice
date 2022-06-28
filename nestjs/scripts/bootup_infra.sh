@@ -58,7 +58,8 @@ clear() (
 
     rm -f ../.env
 
-    echo "LOG_STORE_PATH=./logs" >>../.env
+    echo "LOG_STORAGE_PATH=./logs" >>../.env
+    echo "LOG_STORAGE_DAYS=14" >>../.env
     mkdir -p ../logs
     chmod 777 ../logs
 )
