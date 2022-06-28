@@ -1,47 +1,8 @@
 import { Injectable, LoggerService } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import * as winston from 'winston'
-
-// var winston = require('winston');
-// var fs = require( 'fs' );
-// var path = require('path');
-// var logDir = 'log'; // directory path you want to set
-// if ( !fs.existsSync( logDir ) ) {
-//     // Create the directory if it does not exist
-//     fs.mkdirSync( logDir );
-// }
-// var logger = new (winston.Logger)({
-//     transports: [
-//         new (winston.transports.Console)({
-//             colorize: 'all'
-//         }),
-//         new (winston.transports.File)({filename: path.join(logDir, '/log.txt')})
-//     ]
-// });
-// logger.info("Anything you want to write in logfile");
-
-// --------------winston-daily-rotate-file
-// import  *  as  winston  from  'winston';
-// import  DailyRotateFile from 'winston-daily-rotate-file';
-
-// const transport: DailyRotateFile = new DailyRotateFile({
-//     filename: 'application-%DATE%.log',
-//     datePattern: 'YYYY-MM-DD-HH',
-//     zippedArchive: true,
-//     maxSize: '20m',
-//     maxFiles: '14d'
-//   });
-
-// transport.on('rotate', function(oldFilename, newFilename) {
-//       // do something fun
-//     });
-
-// const logger = winston.createLogger({
-// transports: [
-//   transport
-// ]});
-
-// logger.info('Hello World!');
+import * as DailyRotateFile from 'winston-daily-rotate-file'
+import { Path } from 'src/common'
 
 @Injectable()
 export class MyLogger implements LoggerService {
@@ -50,21 +11,37 @@ export class MyLogger implements LoggerService {
     constructor(private config: ConfigService) {
         const logStore = this.config.get<string>('LOG_STORE_PATH')
 
+        Path.mkdir(logStore)
+
+        const transport: DailyRotateFile = new DailyRotateFile({
+            dirname: logStore,
+            filename: 'application-%DATE%.log',
+            datePattern: 'YYYY-MM-DD',
+            zippedArchive: true,
+            maxSize: '20m',
+            maxFiles: '14d',
+            createSymlink: true
+        })
+
+        transport.on('rotate', function (oldFilename, newFilename) {
+            console.log(oldFilename, newFilename)
+        })
+
         this.logger = winston.createLogger({
             level: 'silly',
-            format: winston.format.logstash(),
+            format: winston.format.json(),
             transports: [
+                transport,
                 new winston.transports.Console({
-                    format: winston.format.simple()
+                    format: winston.format.combine(
+                        winston.format.colorize({ all: true }),
+                        winston.format.simple()
+                    )
                 }),
                 new winston.transports.File({
                     dirname: logStore,
                     filename: 'error.log',
                     level: 'error'
-                }),
-                new winston.transports.File({
-                    dirname: logStore,
-                    filename: 'combined.log'
                 })
             ],
             exceptionHandlers: [
@@ -77,6 +54,7 @@ export class MyLogger implements LoggerService {
     }
 
     log(message: any, ...optionalParams: any[]) {
+        // this.logger.log('info', message, optionalParams)
         this.logger.info(message, optionalParams)
     }
 
