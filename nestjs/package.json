@@ -14,7 +14,7 @@
         "dev": "nest start --debug --watch",
         "test": "npm에서 npm 호출이 안 된다. npm run test:unit && npm run test:e2e",
         "test:unit": "jest --coverage",
-        "test:e2e": "jest --config ./test/jest-e2e.json",
+        "test:e2e": "node --trace-warnings node_modules/.bin/jest --no-cache --config ./test/jest-e2e.json",
         "test:e2e:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --config ./test/jest-e2e.json"
     },
     "dependencies": {

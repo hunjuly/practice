@@ -18,6 +18,14 @@ class LogService {
 
         this.doNotUse.log('Not Recommended Method.')
     }
+
+    printError() {
+        this.logger.error('error Instance Method')
+
+        Logger.error('error Static Method')
+
+        this.doNotUse.error('error Not Recommended Method.')
+    }
 }
 
 it('create & using Logger', async () => {
@@ -38,4 +46,5 @@ it('create & using Logger', async () => {
     const service = module.get(LogService)
 
     service.printLog()
+    service.printError()
 })

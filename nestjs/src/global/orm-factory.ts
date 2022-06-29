@@ -4,67 +4,8 @@ import { exit } from 'process'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Logger } from '@nestjs/common'
-import { Logger as OrmLogger, QueryRunner } from 'typeorm'
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions'
-import * as winston from 'winston'
-import { Path } from 'src/common'
-
-class OrmLoggerImpl implements OrmLogger {
-    private logger: winston.Logger
-
-    constructor(config: ConfigService) {
-        const logStore = config.get<string>('LOG_STORE_PATH')
-
-        this.logger = winston.createLogger({
-            level: 'verbose',
-            format: winston.format.json(),
-            transports: [
-                new winston.transports.Console({
-                    format: winston.format.simple(),
-                    level: 'info'
-                }),
-                new winston.transports.File({
-                    filename: Path.join(logStore, 'db-error.log'),
-                    level: 'error'
-                }),
-                new winston.transports.File({
-                    filename: Path.join(logStore, 'db-info.log'),
-                    level: 'info'
-                }),
-                new winston.transports.File({
-                    filename: Path.join(logStore, 'db-verbose.log'),
-                    level: 'verbose'
-                }),
-                new winston.transports.File({
-                    filename: Path.join(logStore, 'db-combined.log')
-                })
-            ]
-        })
-    }
-
-    logQuery(query: string, parameters?: any[], queryRunner?: QueryRunner) {
-        this.logger.verbose(query, parameters)
-    }
-    logQueryError(error: string | Error, query: string, parameters?: any[], queryRunner?: QueryRunner) {
-        if (error instanceof Error) {
-            this.logger.error(error.message, query, parameters)
-        } else {
-            this.logger.error(error, query, parameters)
-        }
-    }
-    logQuerySlow(time: number, query: string, parameters?: any[], queryRunner?: QueryRunner) {
-        this.logger.warn(query, time, parameters)
-    }
-    logSchemaBuild(message: string, queryRunner?: QueryRunner) {
-        this.logger.info(message)
-    }
-    logMigration(message: string, queryRunner?: QueryRunner) {
-        this.logger.info(message)
-    }
-    log(level: 'warn' | 'info' | 'log', message: any, queryRunner?: QueryRunner) {
-        this.logger.log(level, message)
-    }
-}
+import { OrmLoggerImpl } from './orm-logger'
 
 type DatabaseType = 'mysql' | 'sqlite' | undefined
 

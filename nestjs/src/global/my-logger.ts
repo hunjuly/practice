@@ -8,47 +8,42 @@ import { Path } from 'src/common'
 export class MyLogger implements LoggerService {
     private logger: Logger
 
-    constructor(private config: ConfigService) {
-        const storagePath = this.config.get<string>('LOG_STORAGE_PATH')
+    constructor(config: ConfigService) {
+        const storagePath = config.get<string>('LOG_STORAGE_PATH')
+        const storageDays = config.get<number>('LOG_STORAGE_DAYS')
+
         Path.mkdir(storagePath)
 
-        const storageDays = this.config.get<number>('LOG_STORAGE_DAYS')
-
-        const transport: DailyRotateFile = new DailyRotateFile({
+        const option = {
             dirname: storagePath,
-            filename: '%DATE%.log',
-            datePattern: 'YYYY-MM-DD-HH',
+            datePattern: 'YYYY-MM-DD, HH',
             zippedArchive: true,
             maxSize: '20m',
             maxFiles: storageDays + 'd',
             createSymlink: true,
             format: format.combine(format.timestamp(), format.prettyPrint())
+        }
+
+        const all = new DailyRotateFile({
+            ...option,
+            filename: '%DATE%.log'
         })
 
-        transport.on('rotate', function (oldFilename, newFilename) {
-            console.log(oldFilename, newFilename)
+        const errors = new DailyRotateFile({
+            ...option,
+            filename: '%DATE%.error.log',
+            level: 'error'
+        })
+
+        const dev = new transports.Console({
+            format: format.combine(format.colorize({ all: true }), format.simple())
         })
 
         this.logger = createLogger({
-            level: 'silly',
+            level: 'info',
             format: format.json(),
-            transports: [
-                transport,
-                new transports.Console({
-                    format: format.combine(format.colorize({ all: true }), format.simple())
-                }),
-                new transports.File({
-                    dirname: storagePath,
-                    filename: 'error.log',
-                    level: 'error'
-                })
-            ],
-            exceptionHandlers: [
-                new transports.File({
-                    dirname: storagePath,
-                    filename: 'error.log'
-                })
-            ]
+            transports: [all, errors, dev],
+            exceptionHandlers: [errors]
         })
     }
 
@@ -73,3 +68,45 @@ export class MyLogger implements LoggerService {
         this.logger.verbose(message, optionalParams)
     }
 }
+
+// useFactory로 다시 해봐라
+// export function myLoggerFactory(config: ConfigService) {
+//     const storagePath = config.get<string>('LOG_STORAGE_PATH')
+//     const storageDays = config.get<number>('LOG_STORAGE_DAYS')
+
+//     Path.mkdir(storagePath)
+
+//     const option = {
+//         dirname: storagePath,
+//         datePattern: 'YYYY-MM-DD, HH',
+//         zippedArchive: true,
+//         maxSize: '20m',
+//         maxFiles: storageDays + 'd',
+//         createSymlink: true,
+//         format: format.combine(format.timestamp(), format.prettyPrint())
+//     }
+
+//     const all = new DailyRotateFile({
+//         ...option,
+//         filename: '%DATE%.log'
+//     })
+
+//     const errors = new DailyRotateFile({
+//         ...option,
+//         filename: '%DATE%.error.log',
+//         level: 'error'
+//     })
+
+//     const dev = new transports.Console({
+//         format: format.combine(format.colorize({ all: true }), format.simple())
+//     })
+
+//     const logger = createLogger({
+//         level: 'info',
+//         format: format.json(),
+//         transports: [all, errors, dev],
+//         exceptionHandlers: [errors]
+//     })
+
+//     return logger
+// }

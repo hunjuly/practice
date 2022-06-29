@@ -2,7 +2,7 @@ import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE, APP_GUARD } from '@nestjs/core'
 import { MiddlewareConsumer, Module, NestModule, ValidationPipe } from '@nestjs/common'
 import * as passport from 'passport'
 import * as session from 'express-session'
-import { createOrmModule } from './typeorm'
+import { createOrmModule } from './orm-factory'
 import { SessionService } from './session'
 import { RedisService } from './redis'
 import { LoggingInterceptor } from './logging-interceptor'
@@ -15,6 +15,12 @@ import { createConfigModule } from './config'
     imports: [createOrmModule(), createConfigModule()],
     providers: [
         MyLogger,
+        // useFactory로 다시 해봐라
+        // {
+        //     provide: MyLogger,
+        //     useFactory: myLoggerFactory,
+        //     inject: [ConfigService]
+        // },
         RedisService,
         SessionService,
         {

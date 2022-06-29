@@ -2,6 +2,7 @@
 
 ## Todo
 
+1. (node:312728) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 uncaughtException listeners added to [process]. Use emitter.setMaxListeners() to increase limit
 1. docker-compose 적용
 1. log 환경설정
 1. docker build

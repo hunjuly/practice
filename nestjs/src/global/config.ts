@@ -9,7 +9,8 @@ export async function createConfigModule() {
             TYPEORM_TYPE: Joi.string().valid('sqlite', 'mysql').required(),
             SESSION_TYPE: Joi.string().valid('memory', 'redis').required(),
             TYPEORM_ENABLE_SYNC: Joi.boolean().default(false),
-            LOG_STORE_PATH: Joi.string().required()
+            LOG_STORAGE_PATH: Joi.string().required(),
+            LOG_STORAGE_DAYS: Joi.number().required()
         })
     })
 }
