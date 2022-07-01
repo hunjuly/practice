@@ -26,11 +26,15 @@ export class MyLogger implements LoggerService {
 
         const all = new DailyRotateFile({
             ...option,
-            filename: '%DATE%.log'
+            symlinkName: 'current.log',
+            filename: '%DATE%h.log'
         })
 
         const errors = new DailyRotateFile({
             ...option,
+            datePattern: 'YYYY-MM-DD',
+            maxFiles: null,
+            symlinkName: 'errors.log',
             filename: '%DATE%.error.log',
             level: 'error'
         })
@@ -39,12 +43,21 @@ export class MyLogger implements LoggerService {
             format: format.combine(format.colorize({ all: true }), format.simple())
         })
 
+        // TODO exceptionHandlers 설정하면 MaxExeed error 발생한다.
+        // clear를 호출해야 하는데...어떻게?
+
+        ref('https://stackoverflow.com/questions/63753467/how-to-close-database-connection-in-nestjs-service')
+
         this.logger = createLogger({
             level: 'info',
             format: format.json(),
             transports: [all, errors, dev],
             exceptionHandlers: [errors]
         })
+    }
+
+    close() {
+        this.logger.clear()
     }
 
     log(message: any, ...optionalParams: any[]) {
