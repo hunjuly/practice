@@ -10,6 +10,7 @@ import { UserGuard } from 'src/auth/user.guard'
 import { HttpExceptionFilter } from './http-exception.filter'
 import { MyLogger } from './my-logger'
 import { createConfigModule } from './config'
+import OrmLogger from './orm-logger'
 
 @Module({
     imports: [createOrmModule(), createConfigModule()],

@@ -7,21 +7,23 @@ import { Path } from 'src/common'
 @Injectable()
 export class MyLogger implements LoggerService {
     private logger: Logger
+    private storagePath: string
+    private storageDays: number
 
-    constructor(private config: ConfigService) {}
+    constructor(private config: ConfigService) {
+        this.storagePath = this.config.get<string>('LOG_STORAGE_PATH')
+        this.storageDays = this.config.get<number>('LOG_STORAGE_DAYS')
 
-    async onModuleInit() {
-        const storagePath = this.config.get<string>('LOG_STORAGE_PATH')
-        const storageDays = this.config.get<number>('LOG_STORAGE_DAYS')
-
-        Path.mkdir(storagePath)
+        // onModuleInit() 전에 this.logger를 호출하는 경우도 있다.
+        // 생성자에서 this.logger를 초기화 하지 않으면 에러다.
+        Path.mkdir(this.storagePath)
 
         const option = {
-            dirname: storagePath,
+            dirname: this.storagePath,
             datePattern: 'YYYY-MM-DD, HH',
             zippedArchive: true,
             maxSize: '20m',
-            maxFiles: storageDays + 'd',
+            maxFiles: this.storageDays + 'd',
             createSymlink: true,
             format: format.combine(format.timestamp(), format.prettyPrint())
         }
@@ -37,7 +39,7 @@ export class MyLogger implements LoggerService {
             datePattern: 'YYYY-MM-DD',
             maxFiles: null,
             symlinkName: 'errors.log',
-            filename: '%DATE%.error.log',
+            filename: '%DATE%, err.log',
             level: 'error'
         })
 
@@ -52,6 +54,8 @@ export class MyLogger implements LoggerService {
             exceptionHandlers: [errors]
         })
     }
+
+    async onModuleInit() {}
     async onModuleDestroy() {
         await this.logger.close()
     }
@@ -77,45 +81,3 @@ export class MyLogger implements LoggerService {
         this.logger.verbose(message, optionalParams)
     }
 }
-
-// useFactory로 다시 해봐라
-// export function myLoggerFactory(config: ConfigService) {
-//     const storagePath = config.get<string>('LOG_STORAGE_PATH')
-//     const storageDays = config.get<number>('LOG_STORAGE_DAYS')
-
-//     Path.mkdir(storagePath)
-
-//     const option = {
-//         dirname: storagePath,
-//         datePattern: 'YYYY-MM-DD, HH',
-//         zippedArchive: true,
-//         maxSize: '20m',
-//         maxFiles: storageDays + 'd',
-//         createSymlink: true,
-//         format: format.combine(format.timestamp(), format.prettyPrint())
-//     }
-
-//     const all = new DailyRotateFile({
-//         ...option,
-//         filename: '%DATE%.log'
-//     })
-
-//     const errors = new DailyRotateFile({
-//         ...option,
-//         filename: '%DATE%.error.log',
-//         level: 'error'
-//     })
-
-//     const dev = new transports.Console({
-//         format: format.combine(format.colorize({ all: true }), format.simple())
-//     })
-
-//     const logger = createLogger({
-//         level: 'info',
-//         format: format.json(),
-//         transports: [all, errors, dev],
-//         exceptionHandlers: [errors]
-//     })
-
-//     return logger
-// }

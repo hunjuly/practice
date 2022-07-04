@@ -5,13 +5,13 @@ import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Logger } from '@nestjs/common'
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions'
-import { OrmLoggerImpl } from './orm-logger'
+import OrmLogger from './orm-logger'
 
 type DatabaseType = 'mysql' | 'sqlite' | undefined
 
 @Injectable()
 class TypeOrmConfigService implements TypeOrmOptionsFactory {
-    constructor(private config: ConfigService) {}
+    constructor(private config: ConfigService, private logger: OrmLogger) {}
 
     createTypeOrmOptions(): TypeOrmModuleOptions {
         const nodeEnv = this.config.get<string>('NODE_ENV')
@@ -26,13 +26,11 @@ class TypeOrmConfigService implements TypeOrmOptionsFactory {
         const type = this.config.get<DatabaseType>('TYPEORM_TYPE')
         const database = this.config.get<string>('TYPEORM_DATABASE')
 
-        const logger = new OrmLoggerImpl(this.config)
-
         const common = {
             type,
             synchronize,
             autoLoadEntities: true,
-            logger,
+            logger: this.logger,
             logging: 'all',
             database
         }
@@ -55,21 +53,24 @@ class TypeOrmConfigService implements TypeOrmOptionsFactory {
 }
 
 export async function createOrmModule() {
-    return TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService })
+    return TypeOrmModule.forRootAsync({
+        useClass: TypeOrmConfigService,
+        extraProviders: [OrmLogger]
+    })
 }
 
 // 다음과 같이 useFactory 사용해도 된다. docs에 위와 같이 되어있었을 뿐이다.
-// TypeOrmModule.forRootAsync({
+// return TypeOrmModule.forRootAsync({
 //     imports: [ConfigModule],
 //     useFactory: (config: ConfigService) => ({
 //         type: 'mysql',
-//         host: configService.get('HOST'),
-//         port: +configService.get('PORT'),
-//         username: configService.get('USERNAME'),
-//         password: configService.get('PASSWORD'),
-//         database: configService.get('DATABASE'),
+//         host: config.get('HOST'),
+//         port: +config.get('PORT'),
+//         username: config.get('USERNAME'),
+//         password: config.get('PASSWORD'),
+//         database: config.get('DATABASE'),
 //         entities: [],
 //         synchronize: true
 //     }),
-//     inject: [ConfigService]
+//     inject: [ConfigService, OrmLogger]
 // })

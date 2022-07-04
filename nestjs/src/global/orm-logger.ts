@@ -1,46 +1,69 @@
-import 'dotenv/config'
+import { Injectable, Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { Logger as OrmLogger, QueryRunner } from 'typeorm'
 import { transports, format, Logger, createLogger } from 'winston'
 import * as DailyRotateFile from 'winston-daily-rotate-file'
 import { Path } from 'src/common'
+import { Logger as IOrmLogger, QueryRunner } from 'typeorm'
 
-export class OrmLoggerImpl implements OrmLogger {
+@Injectable()
+export default class OrmLogger implements IOrmLogger {
     private logger: Logger
+    private storagePath: string
+    private storageDays: number
 
-    constructor(config: ConfigService) {
-        const storagePath = config.get<string>('LOG_STORAGE_PATH')
-        const storageDays = config.get<number>('LOG_STORAGE_DAYS')
+    constructor(private config: ConfigService) {
+        TODO
+        // Dynamic Module, Custom Provider 다시 읽어보기
+        // orm-factory 다시 손보기
+        console.log('----------------', 'constructor(private config: ConfigService) ')
 
-        Path.mkdir(storagePath)
+        this.storagePath = this.config.get<string>('LOG_STORAGE_PATH')
+        this.storageDays = this.config.get<number>('LOG_STORAGE_DAYS')
+
+        // onModuleInit() 전에 this.logger를 호출하는 경우도 있다.
+        // 생성자에서 this.logger를 초기화 하지 않으면 에러다.
+        Path.mkdir(this.storagePath)
 
         const option = {
-            dirname: storagePath,
+            dirname: this.storagePath,
             datePattern: 'YYYY-MM-DD, HH',
             zippedArchive: true,
             maxSize: '20m',
-            maxFiles: storageDays + 'd',
+            maxFiles: this.storageDays + 'd',
             createSymlink: true,
             format: format.combine(format.timestamp(), format.prettyPrint())
         }
 
         const all = new DailyRotateFile({
             ...option,
-            filename: 'db, %DATE%.log'
+            symlinkName: 'current.log',
+            filename: '%DATE%h.log'
         })
 
         const errors = new DailyRotateFile({
             ...option,
-            filename: 'db, %DATE%.error.log',
+            datePattern: 'YYYY-MM-DD',
+            maxFiles: null,
+            symlinkName: 'errors.log',
+            filename: '%DATE%, err.log',
             level: 'error'
+        })
+
+        const dev = new transports.Console({
+            format: format.combine(format.colorize({ all: true }), format.simple())
         })
 
         this.logger = createLogger({
             level: 'info',
             format: format.json(),
-            transports: [all, errors],
+            transports: [all, errors, dev],
             exceptionHandlers: [errors]
         })
+    }
+
+    async onModuleInit() {}
+    async onModuleDestroy() {
+        await this.logger.close()
     }
 
     logQuery(query: string, parameters?: any[], queryRunner?: QueryRunner) {
