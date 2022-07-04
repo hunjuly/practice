@@ -8,9 +8,11 @@ import { Path } from 'src/common'
 export class MyLogger implements LoggerService {
     private logger: Logger
 
-    constructor(config: ConfigService) {
-        const storagePath = config.get<string>('LOG_STORAGE_PATH')
-        const storageDays = config.get<number>('LOG_STORAGE_DAYS')
+    constructor(private config: ConfigService) {}
+
+    async onModuleInit() {
+        const storagePath = this.config.get<string>('LOG_STORAGE_PATH')
+        const storageDays = this.config.get<number>('LOG_STORAGE_DAYS')
 
         Path.mkdir(storagePath)
 
@@ -43,11 +45,6 @@ export class MyLogger implements LoggerService {
             format: format.combine(format.colorize({ all: true }), format.simple())
         })
 
-        // TODO exceptionHandlers 설정하면 MaxExeed error 발생한다.
-        // clear를 호출해야 하는데...어떻게?
-
-        ref('https://stackoverflow.com/questions/63753467/how-to-close-database-connection-in-nestjs-service')
-
         this.logger = createLogger({
             level: 'info',
             format: format.json(),
@@ -55,9 +52,8 @@ export class MyLogger implements LoggerService {
             exceptionHandlers: [errors]
         })
     }
-
-    close() {
-        this.logger.clear()
+    async onModuleDestroy() {
+        await this.logger.close()
     }
 
     log(message: any, ...optionalParams: any[]) {
