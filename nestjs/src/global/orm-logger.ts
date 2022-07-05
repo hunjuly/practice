@@ -12,11 +12,6 @@ export default class OrmLogger implements IOrmLogger {
     private storageDays: number
 
     constructor(private config: ConfigService) {
-        TODO
-        // Dynamic Module, Custom Provider 다시 읽어보기
-        // orm-factory 다시 손보기
-        console.log('----------------', 'constructor(private config: ConfigService) ')
-
         this.storagePath = this.config.get<string>('LOG_STORAGE_PATH')
         this.storageDays = this.config.get<number>('LOG_STORAGE_DAYS')
 
@@ -36,21 +31,22 @@ export default class OrmLogger implements IOrmLogger {
 
         const all = new DailyRotateFile({
             ...option,
-            symlinkName: 'current.log',
-            filename: '%DATE%h.log'
+            symlinkName: 'orm-current.log',
+            filename: 'orm-%DATE%h.log'
         })
 
         const errors = new DailyRotateFile({
             ...option,
             datePattern: 'YYYY-MM-DD',
             maxFiles: null,
-            symlinkName: 'errors.log',
-            filename: '%DATE%, err.log',
+            symlinkName: 'orm-errors.log',
+            filename: 'orm-%DATE%, err.log',
             level: 'error'
         })
 
         const dev = new transports.Console({
-            format: format.combine(format.colorize({ all: true }), format.simple())
+            format: format.combine(format.colorize({ all: true }), format.simple()),
+            level: 'error'
         })
 
         this.logger = createLogger({

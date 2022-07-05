@@ -10,18 +10,20 @@ import { UserGuard } from 'src/auth/user.guard'
 import { HttpExceptionFilter } from './http-exception.filter'
 import { MyLogger } from './my-logger'
 import { createConfigModule } from './config'
-import OrmLogger from './orm-logger'
+import { ConfigService } from '@nestjs/config'
 
+// TODO
+// Dynamic Module = runtime에 config주입,
+// Custom Provider 다시 읽어보기
+// orm-factory 다시 손보기
 @Module({
     imports: [createOrmModule(), createConfigModule()],
     providers: [
-        MyLogger,
-        // useFactory로 다시 해봐라
-        // {
-        //     provide: MyLogger,
-        //     useFactory: myLoggerFactory,
-        //     inject: [ConfigService]
-        // },
+        {
+            provide: MyLogger,
+            useFactory: MyLogger.create,
+            inject: [ConfigService]
+        },
         RedisService,
         SessionService,
         {
@@ -32,6 +34,8 @@ import OrmLogger from './orm-logger'
             provide: APP_PIPE,
             useValue: new ValidationPipe({ transform: true })
         },
+        // TODO
+        //logging은 middleware로 해야 한다.
         {
             provide: APP_INTERCEPTOR,
             useClass: LoggingInterceptor

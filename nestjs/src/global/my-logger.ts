@@ -3,27 +3,28 @@ import { ConfigService } from '@nestjs/config'
 import { transports, format, Logger, createLogger } from 'winston'
 import * as DailyRotateFile from 'winston-daily-rotate-file'
 import { Path } from 'src/common'
+import OrmLogger from './orm-logger'
+
+WinstonLogger(?)로 분리하고
+const logger:Logger = WinstonLogger.create()
+
+const logger1 = new MyLogger(logger)
+const logger2 = new OrmLogger(logger)
 
 @Injectable()
 export class MyLogger implements LoggerService {
-    private logger: Logger
-    private storagePath: string
-    private storageDays: number
+    public static create(config: ConfigService) {
+        const storagePath = config.get<string>('LOG_STORAGE_PATH')
+        const storageDays = config.get<number>('LOG_STORAGE_DAYS')
 
-    constructor(private config: ConfigService) {
-        this.storagePath = this.config.get<string>('LOG_STORAGE_PATH')
-        this.storageDays = this.config.get<number>('LOG_STORAGE_DAYS')
-
-        // onModuleInit() 전에 this.logger를 호출하는 경우도 있다.
-        // 생성자에서 this.logger를 초기화 하지 않으면 에러다.
-        Path.mkdir(this.storagePath)
+        Path.mkdir(storagePath)
 
         const option = {
-            dirname: this.storagePath,
+            dirname: storagePath,
             datePattern: 'YYYY-MM-DD, HH',
             zippedArchive: true,
             maxSize: '20m',
-            maxFiles: this.storageDays + 'd',
+            maxFiles: storageDays + 'd',
             createSymlink: true,
             format: format.combine(format.timestamp(), format.prettyPrint())
         }
@@ -44,16 +45,21 @@ export class MyLogger implements LoggerService {
         })
 
         const dev = new transports.Console({
-            format: format.combine(format.colorize({ all: true }), format.simple())
+            format: format.combine(format.colorize({ all: true }), format.simple()),
+            level: 'error'
         })
 
-        this.logger = createLogger({
+        const logger = createLogger({
             level: 'info',
             format: format.json(),
             transports: [all, errors, dev],
             exceptionHandlers: [errors]
         })
+
+        return logger
     }
+
+    constructor(private logger: Logger) {}
 
     async onModuleInit() {}
     async onModuleDestroy() {
@@ -61,7 +67,6 @@ export class MyLogger implements LoggerService {
     }
 
     log(message: any, ...optionalParams: any[]) {
-        // this.logger.log('info', message, optionalParams)
         this.logger.info(message, optionalParams)
     }
 
