@@ -12,6 +12,8 @@ type SessionType = 'memory' | 'redis' | undefined
 export class SessionService {
     constructor(private config: ConfigService, private redisService: RedisService) {}
 
+    globalModule에서 this.sessionService.createOption()에서 사용하기 위해 존재한다.
+    이렇게 해야 하나? 이것부터 해결한다.
     createOption() {
         const type = this.config.get<SessionType>('SESSION_TYPE')
 
