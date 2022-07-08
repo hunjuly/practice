@@ -1,11 +1,8 @@
 import { Request, Response } from 'express'
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger } from '@nestjs/common'
 
-// @Catch(HttpException)
-@Catch(Error)
+@Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
-    private readonly logger = new Logger(HttpExceptionFilter.name)
-
     async catch(exception: HttpException, host: ArgumentsHost) {
         const ctx = host.switchToHttp()
         const response = ctx.getResponse<Response>()
@@ -19,9 +16,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             timestamp: new Date().toISOString()
         }
 
-        console.log('Exception -- ', request.method, request.url, status)
-
-        this.logger.log(JSON.stringify(body))
+        Logger.warn('Exception', request.method, request.url, status, exception.message)
 
         response.status(status).json(body)
     }

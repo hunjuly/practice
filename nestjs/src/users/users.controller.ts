@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, UseFilters } from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger'
 import { ApiPaginatedResponse, Pagination, PageQuery } from 'src/common'
 import { Public } from 'src/auth/public'
@@ -7,10 +7,8 @@ import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { ResponseUserDto as UserDto } from './dto/user.dto'
 import { entityToDto } from 'src/common'
-import { AlreadyExistsExceptionFilter } from './users.controller.filters'
 
 @Controller('users')
-@UseFilters(AlreadyExistsExceptionFilter)
 export class UsersController {
     constructor(private readonly service: UsersService) {}
 

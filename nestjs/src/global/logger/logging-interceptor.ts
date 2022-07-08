@@ -18,8 +18,7 @@ export class LoggingInterceptor implements NestInterceptor {
             Date.now() - now
         }ms`
 
-        // if (200 < response.statusCode)
-        console.log('Inter -- ', request.method, request.url, response.statusCode, response.body)
+        Logger.log('Success', request.method, request.url, response.statusCode, response.body)
 
         return next.handle().pipe(tap(() => Logger.log(message)))
     }
