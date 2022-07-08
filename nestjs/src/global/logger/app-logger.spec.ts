@@ -1,15 +1,13 @@
 import { Test } from '@nestjs/testing'
 import { Injectable, Logger } from '@nestjs/common'
-import { MyLogger } from './my-logger'
-import { ConfigService } from '@nestjs/config'
-import { ConfigModule } from '@nestjs/config'
-import * as Joi from 'joi'
+import { AppLogger } from './app-logger'
+import * as winston from 'winston'
 
 @Injectable()
 class LogService {
     private readonly logger = new Logger(LogService.name)
 
-    constructor(private doNotUse: MyLogger) {}
+    constructor(private doNotUse: AppLogger) {}
 
     printLog() {
         this.logger.log('Instance Method')
@@ -30,18 +28,24 @@ class LogService {
 
 it('create & using Logger', async () => {
     const module = await Test.createTestingModule({
-        imports: [
-            ConfigModule.forRoot({
-                validationSchema: Joi.object({
-                    LOG_STORAGE_PATH: Joi.string().default('logs'),
-                    LOG_STORAGE_DAYS: Joi.number().default(14)
-                })
-            })
-        ],
-        providers: [LogService, MyLogger, ConfigService]
+        providers: [
+            LogService,
+            {
+                provide: AppLogger,
+                useFactory: () => {
+                    const dev = new winston.transports.Console()
+
+                    const logger = winston.createLogger({
+                        transports: [dev]
+                    })
+
+                    return new AppLogger(logger)
+                }
+            }
+        ]
     }).compile()
 
-    module.useLogger(module.get(MyLogger))
+    module.useLogger(module.get(AppLogger))
 
     const service = module.get(LogService)
 

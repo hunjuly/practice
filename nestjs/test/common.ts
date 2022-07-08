@@ -2,7 +2,6 @@ import { CanActivate, ExecutionContext, INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { AppModule } from 'src/app.module'
 import { UserGuard } from 'src/auth/user.guard'
-import { AppLogger } from 'src/common/app-logger'
 import * as request from 'supertest'
 
 class MockAuthGuard implements CanActivate {
@@ -20,9 +19,6 @@ export async function createApp() {
         .compile()
 
     const app = moduleRef.createNestApplication(undefined)
-    // Logger 테스트를 따로 하나 만들고 여기서는 빼자
-    const logger = app.get(AppLogger)
-    app.useLogger(logger)
 
     await app.init()
 
