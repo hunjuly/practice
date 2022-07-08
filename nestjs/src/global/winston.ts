@@ -34,11 +34,11 @@ export function createFileLogger(storagePath: string, storageDays: number, conte
 
     const dev = new winston.transports.Console({
         format: format.combine(format.colorize({ all: true }), format.simple()),
-        level: 'error'
+        level: 'warn'
     })
 
     const logger = winston.createLogger({
-        level: 'info',
+        level: 'verbose',
         format: format.json(),
         transports: [all, errors, dev],
         exceptionHandlers: [errors]

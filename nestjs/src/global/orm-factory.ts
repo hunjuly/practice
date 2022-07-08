@@ -5,8 +5,8 @@ import { Injectable, LoggerService } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Logger } from '@nestjs/common'
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions'
-import { OrmLogger } from './orm-logger'
-import { createFileLogger } from 'src/common/winston'
+import { OrmLogger } from 'src/common/orm-logger'
+import { createFileLogger } from './winston'
 
 type DatabaseType = 'mysql' | 'sqlite' | undefined
 

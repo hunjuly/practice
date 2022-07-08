@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
 import { PaginatedResponse, getPackageInfo } from 'src/common'
-import { AppLogger } from 'src/global/app-logger'
+import { AppLogger } from 'src/common/app-logger'
 
 function setApiDocument(app: INestApplication) {
     const info = getPackageInfo()

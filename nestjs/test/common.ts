@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { AppModule } from 'src/app.module'
 import { UserGuard } from 'src/auth/user.guard'
-import { AppLogger } from 'src/global/app-logger'
+import { AppLogger } from 'src/common/app-logger'
 import * as request from 'supertest'
 
 class MockAuthGuard implements CanActivate {

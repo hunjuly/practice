@@ -39,7 +39,7 @@ export function createOption(config: ConfigService, redisService: RedisService) 
             exit(1)
         }
 
-        Logger.log('using memory session')
+        Logger.warn('using memory session')
 
         return {
             saveUninitialized: false,

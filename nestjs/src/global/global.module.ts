@@ -8,8 +8,8 @@ import { HttpExceptionFilter } from './http-exception.filter'
 import { SessionModule } from './session.module'
 import { createConfigModule } from './config'
 import { createOrmModule } from './orm-factory'
-import { createFileLogger } from 'src/common/winston'
-import { AppLogger } from './app-logger'
+import { createFileLogger } from './winston'
+import { AppLogger } from 'src/common/app-logger'
 
 @Module({
     imports: [createOrmModule(), createConfigModule(), SessionModule],
