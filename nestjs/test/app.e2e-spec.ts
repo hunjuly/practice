@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common'
+import { INestApplication, Logger } from '@nestjs/common'
 import * as request from 'supertest'
 import { createApp, closeApp } from './common'
 

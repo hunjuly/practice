@@ -1,11 +1,12 @@
 import 'dotenv/config'
 import { TypeOrmModule, TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm'
 import { exit } from 'process'
-import { Injectable } from '@nestjs/common'
+import { Injectable, LoggerService } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Logger } from '@nestjs/common'
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions'
-import OrmLogger from './orm-logger'
+import { OrmLogger } from './orm-logger'
+import { createFileLogger } from 'src/common/winston'
 
 type DatabaseType = 'mysql' | 'sqlite' | undefined
 
@@ -55,7 +56,20 @@ class TypeOrmConfigService implements TypeOrmOptionsFactory {
 export async function createOrmModule() {
     return TypeOrmModule.forRootAsync({
         useClass: TypeOrmConfigService,
-        extraProviders: [OrmLogger]
+        extraProviders: [
+            {
+                provide: OrmLogger,
+                useFactory: (config: ConfigService) => {
+                    const storagePath = config.get<string>('LOG_STORAGE_PATH')
+                    const storageDays = config.get<number>('LOG_STORAGE_DAYS')
+
+                    const winston = createFileLogger(storagePath, storageDays, 'orm')
+
+                    return new OrmLogger(winston)
+                },
+                inject: [ConfigService]
+            }
+        ]
     })
 }
 

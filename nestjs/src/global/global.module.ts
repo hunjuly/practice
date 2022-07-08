@@ -1,31 +1,37 @@
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE, APP_GUARD } from '@nestjs/core'
-import { MiddlewareConsumer, Module, NestModule, ValidationPipe } from '@nestjs/common'
-import * as passport from 'passport'
-import * as session from 'express-session'
-import { createOrmModule } from './orm-factory'
-import { SessionService } from './session'
+import { Module, ValidationPipe } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { RedisService } from './redis'
 import { LoggingInterceptor } from './logging-interceptor'
 import { UserGuard } from 'src/auth/user.guard'
 import { HttpExceptionFilter } from './http-exception.filter'
-import { MyLogger } from './my-logger'
+import { SessionModule } from './session.module'
 import { createConfigModule } from './config'
-import { ConfigService } from '@nestjs/config'
+import { createOrmModule } from './orm-factory'
+import { createFileLogger } from 'src/common/winston'
+import { AppLogger } from './app-logger'
 
-// TODO
-// Dynamic Module = runtime에 config주입,
-// Custom Provider 다시 읽어보기
-// orm-factory 다시 손보기
 @Module({
-    imports: [createOrmModule(), createConfigModule()],
+    imports: [createOrmModule(), createConfigModule(), SessionModule],
     providers: [
+        // MyLogger의 constructor 코드를 옮기면 useClass를 해도 된다.
+        // 그러나 constructor에서 해야 하는 일이 많아서 factory method를 사용함.
+        // 그러나 MyLogger는 런타임에 지속적인 생성이 이루어 지는 경우가 아니라
+        // module init에 한 번 생성되기 때문에 constructor에 넣어도 괜찮다.
+        // 결론은 그냥 해봤다.
         {
-            provide: MyLogger,
-            useFactory: MyLogger.create,
+            provide: AppLogger,
+            useFactory: (config: ConfigService) => {
+                const storagePath = config.get<string>('LOG_STORAGE_PATH')
+                const storageDays = config.get<number>('LOG_STORAGE_DAYS')
+
+                const winston = createFileLogger(storagePath, storageDays, 'app')
+
+                return new AppLogger(winston)
+            },
             inject: [ConfigService]
         },
         RedisService,
-        SessionService,
         {
             provide: APP_FILTER,
             useClass: HttpExceptionFilter
@@ -50,14 +56,6 @@ import { ConfigService } from '@nestjs/config'
         },
         UserGuard
     ],
-    exports: [RedisService]
+    exports: [RedisService, AppLogger]
 })
-export class GlobalModule implements NestModule {
-    constructor(private readonly sessionService: SessionService) {}
-
-    configure(consumer: MiddlewareConsumer) {
-        consumer
-            .apply(session(this.sessionService.createOption()), passport.initialize(), passport.session())
-            .forRoutes('*')
-    }
-}
+export class GlobalModule {}

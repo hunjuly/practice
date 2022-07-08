@@ -1,5 +1,4 @@
 import { exit } from 'process'
-import { Injectable } from '@nestjs/common'
 import * as RedisStore from 'connect-redis'
 import * as session from 'express-session'
 import { Logger } from '@nestjs/common'
@@ -8,51 +7,44 @@ import { ConfigService } from '@nestjs/config'
 
 type SessionType = 'memory' | 'redis' | undefined
 
-@Injectable()
-export class SessionService {
-    constructor(private config: ConfigService, private redisService: RedisService) {}
+export function createOption(config: ConfigService, redisService: RedisService) {
+    const type = config.get<SessionType>('SESSION_TYPE')
 
-    globalModule에서 this.sessionService.createOption()에서 사용하기 위해 존재한다.
-    이렇게 해야 하나? 이것부터 해결한다.
-    createOption() {
-        const type = this.config.get<SessionType>('SESSION_TYPE')
+    if (type === 'redis') {
+        if (redisService.isAvailable()) {
+            Logger.log('using redis session')
 
-        if (type === 'redis') {
-            if (this.redisService.isAvailable()) {
-                Logger.log('using redis session')
+            const store = new (RedisStore(session))({
+                client: redisService.getClient(),
+                logErrors: true
+            })
 
-                const store = new (RedisStore(session))({
-                    client: this.redisService.getClient(),
-                    logErrors: true
-                })
-
-                const cookie = { sameSite: true, httpOnly: false, maxAge: 60000 }
-
-                return {
-                    saveUninitialized: false,
-                    secret: 'sup3rs3cr3t',
-                    resave: false,
-                    store,
-                    cookie,
-                    pauseStream: true
-                }
-            }
-        } else if (type === 'memory') {
-            const nodeEnv = this.config.get<string>('NODE_ENV')
-
-            if (nodeEnv === 'production') {
-                Logger.error('Do not use memory session on production')
-
-                exit(1)
-            }
-
-            Logger.log('using memory session')
+            const cookie = { sameSite: true, httpOnly: false, maxAge: 60000 }
 
             return {
                 saveUninitialized: false,
                 secret: 'sup3rs3cr3t',
-                resave: false
+                resave: false,
+                store,
+                cookie,
+                pauseStream: true
             }
+        }
+    } else if (type === 'memory') {
+        const nodeEnv = config.get<string>('NODE_ENV')
+
+        if (nodeEnv === 'production') {
+            Logger.error('Do not use memory session on production')
+
+            exit(1)
+        }
+
+        Logger.log('using memory session')
+
+        return {
+            saveUninitialized: false,
+            secret: 'sup3rs3cr3t',
+            resave: false
         }
     }
 }

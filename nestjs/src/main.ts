@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
 import { PaginatedResponse, getPackageInfo } from 'src/common'
-import { MyLogger } from 'src/global/my-logger'
+import { AppLogger } from 'src/global/app-logger'
 
 function setApiDocument(app: INestApplication) {
     const info = getPackageInfo()
@@ -32,14 +32,18 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
         // Logger는 configService에 의존한다.
         // bufferLogs: true로 하면 config에 문제가 있는 경우 로그를 출력하지 못한다.
-        bufferLogs: false
+        // buffers는 true로 하고 log인 경우에 따로 console로 찍을까?
+        bufferLogs: true
     })
-    app.useLogger(app.get(MyLogger))
+
+    const logger = app.get(AppLogger)
+    app.useLogger(logger)
 
     setApiDocument(app)
 
     await app.listen(4000)
 
-    Logger.log(`Application running on port ${await app.getUrl()}`)
+    // console로 출력한다고 모두 log는 아니다. 아래는 정상적인 app 출력이다.
+    console.log(`Application running on port ${await app.getUrl()}`)
 }
 bootstrap()
