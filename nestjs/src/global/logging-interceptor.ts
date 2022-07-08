@@ -14,7 +14,12 @@ export class LoggingInterceptor implements NestInterceptor {
 
         const response = context.switchToHttp().getResponse()
 
-        const message = `${request.url}, body: ${body}, status: ${response.statusCode}  ${Date.now() - now}ms`
+        const message = `${request.method}, ${request.url}, body: ${body}, status: ${response.statusCode}  ${
+            Date.now() - now
+        }ms`
+
+        // if (200 < response.statusCode)
+        console.log('Inter -- ', request.method, request.url, response.statusCode, response.body)
 
         return next.handle().pipe(tap(() => Logger.log(message)))
     }
