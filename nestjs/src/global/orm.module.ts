@@ -9,8 +9,6 @@ import { Logger as IOrmLogger, QueryRunner } from 'typeorm'
 import * as winston from 'winston'
 import { createFileLogger } from './logger'
 
-type DatabaseType = 'mysql' | 'sqlite' | undefined
-
 export async function createOrmModule() {
     return TypeOrmModule.forRootAsync({
         useFactory: (config: ConfigService, logger: OrmLogger) => {
@@ -22,6 +20,8 @@ export async function createOrmModule() {
 
                 exit(1)
             }
+
+            type DatabaseType = 'mysql' | 'sqlite' | undefined
 
             const type = config.get<DatabaseType>('TYPEORM_TYPE')
             const database = config.get<string>('TYPEORM_DATABASE')

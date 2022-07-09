@@ -1,9 +1,6 @@
 import { Test } from '@nestjs/testing'
-import { getRepositoryToken } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
 import * as bcrypt from 'bcrypt'
 import { AuthService } from './auth.service'
-import { Authentication } from './domain/authentication.entity'
 import { User } from 'src/users/domain/user.entity'
 import { AuthRepository } from './auth.repository'
 

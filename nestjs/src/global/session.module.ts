@@ -3,29 +3,12 @@ import { MiddlewareConsumer, Module, NestModule, Logger } from '@nestjs/common'
 import * as RedisStore from 'connect-redis'
 import * as passport from 'passport'
 import * as session from 'express-session'
-import { RedisService } from './redis'
+import { RedisService } from './redis.service'
 import { ConfigService } from '@nestjs/config'
 
-@Module({
-    providers: [RedisService]
-})
-export class SessionModule implements NestModule {
-    constructor(private config: ConfigService, private redisService: RedisService) {}
+function createOption(config: ConfigService, redisService: RedisService) {
+    type SessionType = 'memory' | 'redis' | undefined
 
-    configure(consumer: MiddlewareConsumer) {
-        consumer
-            .apply(
-                session(createOption(this.config, this.redisService)),
-                passport.initialize(),
-                passport.session()
-            )
-            .forRoutes('*')
-    }
-}
-
-type SessionType = 'memory' | 'redis' | undefined
-
-export function createOption(config: ConfigService, redisService: RedisService) {
     const type = config.get<SessionType>('SESSION_TYPE')
 
     if (type === 'redis') {
@@ -64,5 +47,22 @@ export function createOption(config: ConfigService, redisService: RedisService) 
             secret: 'sup3rs3cr3t',
             resave: false
         }
+    }
+}
+
+@Module({
+    providers: [RedisService]
+})
+export class SessionModule implements NestModule {
+    constructor(private config: ConfigService, private redisService: RedisService) {}
+
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(
+                session(createOption(this.config, this.redisService)),
+                passport.initialize(),
+                passport.session()
+            )
+            .forRoutes('*')
     }
 }

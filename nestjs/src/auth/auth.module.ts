@@ -1,7 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { PassportModule } from '@nestjs/passport'
-import { Authentication } from './domain/authentication.entity'
+import { Authentication } from './domain/auth.entity'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AuthSerializer } from './auth-serializer'
 import { LocalStrategy } from 'src/auth/local.strategy'

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger'
 import { ApiPaginatedResponse, Pagination, PageQuery } from 'src/common'
-import { Public } from 'src/auth/public'
+import { Public } from 'src/auth/user.guard'
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
@@ -25,7 +25,6 @@ export class UsersController {
     }
 
     @Get()
-    @Public()
     @ApiPaginatedResponse(UserDto)
     async findAll(@PageQuery() page: Pagination) {
         const found = await this.service.findAll(page)
