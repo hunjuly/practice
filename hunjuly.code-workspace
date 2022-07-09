@@ -6,9 +6,6 @@
         {
             "path": "nestjs"
         },
-        {
-            "path": "archive"
-        }
     ],
     "extensions": {
         "recommendations": [
