@@ -52,7 +52,7 @@ export class UsersService {
             throw new NotFoundException()
         }
 
-        await this.authService.removeByUser(userId)
+        await this.authService.removeUser(userId)
     }
 
     async update(userId: string, dto: UpdateUserDto) {

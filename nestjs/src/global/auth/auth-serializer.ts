@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { PassportSerializer } from '@nestjs/passport'
-import { AuthService } from './auth.service'
 
 class Payload {
     id: string
@@ -8,7 +7,7 @@ class Payload {
 
 @Injectable()
 export class AuthSerializer extends PassportSerializer {
-    constructor(private readonly authService: AuthService) {
+    constructor() {
         super()
     }
     serializeUser(user: Payload, done: (err: Error, user: Payload) => void) {

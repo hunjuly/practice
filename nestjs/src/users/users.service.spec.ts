@@ -76,6 +76,6 @@ describe('UsersService', () => {
         await service.remove('userId#2')
 
         expect(repository.remove).toHaveBeenCalledWith('userId#2')
-        expect(authService.removeByUser).toHaveBeenCalledWith('userId#2')
+        expect(authService.removeUser).toHaveBeenCalledWith('userId#2')
     })
 })
