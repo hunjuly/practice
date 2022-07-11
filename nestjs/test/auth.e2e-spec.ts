@@ -61,7 +61,7 @@ async function getUser(userId: string, cookie: string) {
 }
 
 async function logout(cookie: string) {
-    // curl -X delete http://localhost:4000/auth --cookie "connect.sid=s%3AW263OQ3h8lMvJrqGc;"
+    // curl -X DELETE http://localhost:4000/auth --cookie "connect.sid=connect.sid=s%3AL8rdAzms8Xu-WJDC_b1KKhK4CgP2aoe8.c8%2FPvvdHZqykmLY35gE08wMVX7QwMvuoJ7A4JkBqYOg;"
     const res = await del(app, '/auth', [{ cookie: cookie }])
 
     expect(res.statusCode).toEqual(200)

@@ -32,7 +32,8 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
         // Logger는 configService에 의존한다.
         // bufferLogs: true로 하면 config에 문제가 있는 경우 로그를 출력하지 못한다.
-        bufferLogs: false
+        bufferLogs: false,
+        cors: true
     })
 
     const logger = app.get(AppLogger)
