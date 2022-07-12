@@ -2,6 +2,7 @@
 
 ## Todo
 
+1. nextjs session 개선
 1. e2e 테스트 하면 이 경고 나온다.
 
     (node:312728) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 uncaughtException listeners added to [process]. Use emitter.setMaxListeners() to increase limit
