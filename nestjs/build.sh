@@ -8,6 +8,10 @@ exit 0
 
 docker rm -f test
 docker run -d --restart always \
+    -e "NODE_ENV=production" \
+    -e "LOG_STORAGE_PATH=./logs" \
+    -e "LOG_STORAGE_DAYS=14" \
+    -e "SESSION_TYPE=redis" \
     -e "TYPEORM_TYPE=mysql" \
     -e "TYPEORM_DATABASE=test" \
     -e "TYPEORM_HOST=practice.mysql" \
@@ -20,7 +24,7 @@ docker run -d --restart always \
     -p 4000:4000 \
     --name test \
     --network vscode \
-    practice
+    practice/nestjs
 
 docker inspect test
 
