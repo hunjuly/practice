@@ -28,11 +28,11 @@ export class RequestError extends Error {
     }
 }
 
-type RequestOption = { authCookie?: string | undefined }
+type RequestOption = { cookie?: string | undefined }
 
 function makeHeaders(option?: RequestOption) {
     if (option) {
-        const headers = option.authCookie ? { cookie: option.authCookie } : undefined
+        const headers = option.cookie ? { cookie: option.cookie } : undefined
 
         return headers
     }

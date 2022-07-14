@@ -27,8 +27,9 @@ type SsrHandler<P> = (request: {
     get: <T>(path: string) => Promise<T>
     delete_: <T>(path: string) => Promise<T>
     post: <T>(path: string, body: unknown) => Promise<T>
-    req: IncomingMessage & { cookies: NextApiRequestCookies }
-    res: ServerResponse
+    // req: IncomingMessage & { cookies: NextApiRequestCookies }
+    // res: ServerResponse
+    isLoggedIn: boolean
 }) => GetServerSidePropsResult<P> | Promise<GetServerSidePropsResult<P>>
 
 export function withSessionSsr<P extends withSessionSsrType = withSessionSsrType>(handler: SsrHandler<P>) {
@@ -46,6 +47,7 @@ export function withSessionSsr<P extends withSessionSsrType = withSessionSsrType
             return serverSide.post<T>(path, body, option)
         }
 
-        return handler({ get, delete_, post, req: context.req, res: context.res })
+        // return handler({ get, delete_, post, req: context.req, res: context.res })
+        return handler({ get, delete_, post, isLoggedIn: true })
     }, option)
 }
