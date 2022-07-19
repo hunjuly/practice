@@ -29,9 +29,9 @@ export type PaginatedResponse<T> = {
     items: T[]
 }
 
-export const zeroItems = {
-    total: 0,
-    limit: 0,
-    offset: 0,
-    items: []
-}
+// export const zeroItems = {
+//     total: 0,
+//     limit: 0,
+//     offset: 0,
+//     items: []
+// }

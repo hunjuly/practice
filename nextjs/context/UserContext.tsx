@@ -70,10 +70,7 @@ export function useUserContext() {
 
         const option = {
             method: 'POST',
-            headers: {
-                credentials: 'include',
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
         }
 
