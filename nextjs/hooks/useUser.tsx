@@ -22,7 +22,7 @@ export function useUser({ redirectTo }: RedirectTo) {
                 Router.push(redirectTo.ifLoggedOut)
             }
         }
-    }, [user.isLoggedIn, user.authToken])
+    }, [user.isLoggedIn, user.authToken, redirectTo.ifLoggedIn, redirectTo.ifLoggedOut])
 
     return user
 }

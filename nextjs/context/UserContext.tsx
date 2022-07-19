@@ -51,9 +51,7 @@ export function useUserContext() {
     const register = async (body: RegisterValue) => {
         const option = {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
         }
 

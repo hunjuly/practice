@@ -5,6 +5,7 @@ const host = 'http://localhost:4000'
 export default async function route(req: NextApiRequest, res: NextApiResponse) {
     try {
         const cookie = req.headers['cookie']
+
         const headers = cookie ? { cookie } : undefined
 
         const option = { method: 'DELETE', headers }
