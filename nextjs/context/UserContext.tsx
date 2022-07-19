@@ -4,7 +4,6 @@ import { RequestError } from 'types'
 type User = {
     id: string
     email: string
-    cookie: string
 }
 
 type RegisterValue = {
@@ -14,44 +13,42 @@ type RegisterValue = {
     password: string
 }
 
-const saveUser = (value: User | null) => {
-    if (value) {
-        const jsonValue = JSON.stringify(value)
-
-        localStorage.setItem('user', jsonValue)
-    } else {
-        localStorage.removeItem('user')
-    }
-}
-
-const loadUser = () => {
-    try {
-        const jsonValue = localStorage.getItem('user')
-
-        if (jsonValue) {
-            return JSON.parse(jsonValue) as User
-        }
-    } catch (e) {}
-
-    return null
-}
-
 export function useUserContext() {
     const [user, setUser] = React.useState<User | null>(null)
 
     React.useEffect(() => {
-        const run = async () => {
-            const user = loadUser()
+        const load = async () => {
+            try {
+                const text = localStorage.getItem('user')
 
-            setUser(user)
+                if (text) {
+                    const stored = JSON.parse(text) as User
+
+                    setUser(stored)
+                }
+            } catch (e) {
+                setUser(null)
+            }
         }
 
-        run()
+        load()
     }, [])
 
-    const register = async (body: RegisterValue) => {
-        // const body = { email: userId, password }
+    React.useEffect(() => {
+        const save = async () => {
+            if (user) {
+                const jsonValue = JSON.stringify(user)
 
+                localStorage.setItem('user', jsonValue)
+            } else {
+                localStorage.removeItem('user')
+            }
+        }
+
+        save()
+    }, [user])
+
+    const register = async (body: RegisterValue) => {
         const option = {
             method: 'POST',
             headers: {
@@ -62,13 +59,8 @@ export function useUserContext() {
 
         const response = await fetch('/api/register', option)
 
-        const data = await response.json()
-
-        if (response.ok) {
-            await saveUser(user)
-
-            setUser(user)
-        } else {
+        if (!response.ok) {
+            const data = await response.json()
             throw new RequestError(data.message)
         }
     }
@@ -90,13 +82,7 @@ export function useUserContext() {
         const data = await response.json()
 
         if (response.ok) {
-            await saveUser(user)
-
-            const newUser = {
-                id: data.id,
-                email: data.email,
-                cookie: 'string'
-            }
+            const newUser = data as User
 
             setUser(newUser)
         } else {
@@ -105,15 +91,15 @@ export function useUserContext() {
     }
 
     const logout = async () => {
-        const option = { method: 'DELETE' }
+        const option = {
+            method: 'DELETE'
+        }
 
         const response = await fetch('/api/logout', option)
 
         if (!response.ok) {
             console.warn('logout failed')
         }
-
-        await saveUser(null)
 
         setUser(null)
     }

@@ -1,9 +1,4 @@
-// import { withSessionApi } from 'lib/session'
 import { NextApiRequest, NextApiResponse } from 'next'
-// import { LoginInfo } from 'lib/types'
-// import { serverSide } from 'lib/request'
-
-// export default withSessionApi(route)
 
 const host = 'http://localhost:4000'
 
@@ -13,7 +8,7 @@ export default async function route(req: NextApiRequest, res: NextApiResponse) {
 
         const option = {
             method: 'POST',
-            headers: { credentials: 'include', 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
         }
 

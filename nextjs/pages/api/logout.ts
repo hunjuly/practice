@@ -18,10 +18,10 @@ export default async function route(req: NextApiRequest, res: NextApiResponse) {
 
             if (cookie) {
                 res.setHeader('set-cookie', cookie).json({ message: 'success' })
+            } else {
+                res.json({ message: 'success' })
             }
         } else {
-            const data = await response.json()
-
             res.status(response.status).json({ message: response.statusText })
         }
     } catch (error) {
