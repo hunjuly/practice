@@ -49,7 +49,7 @@ export default function Login() {
                     <a>Don't have an account? Sign Up</a>
                 </Link>
             </div>
-            <div className="Comment">React의 usetState를 사용해서 사용자의 입력을 처리함</div>
+            <div className="Comment">React의 useState를 사용해서 사용자의 입력을 처리함</div>
         </div>
     )
 }

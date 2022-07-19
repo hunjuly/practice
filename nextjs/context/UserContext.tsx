@@ -26,7 +26,7 @@ const loadUser = () => {
 }
 
 export function useUserContext() {
-    const [user, setUser] = React.useState<User | null>()
+    const [user, setUser] = React.useState<User | null>(null)
 
     React.useEffect(() => {
         const run = async () => {
@@ -62,10 +62,14 @@ export function useUserContext() {
         setUser(null)
     }
 
-    const email = user ? user.email : null
-    const isLoggedIn = user !== null
-    const authToken = ''
-    return { email, isLoggedIn, authToken, login, logout, register }
+    return {
+        email: user ? user.email : null,
+        isLoggedIn: user !== null,
+        authToken: '',
+        register,
+        login,
+        logout
+    }
 }
 
 export type UserContextType = {

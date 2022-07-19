@@ -13,8 +13,6 @@ export function useUser({ redirectTo }: RedirectTo) {
     const user = React.useContext(UserContext)
 
     React.useEffect(() => {
-        alert(JSON.stringify(user))
-
         if (user.isLoggedIn) {
             if (redirectTo.ifLoggedIn) {
                 Router.push(redirectTo.ifLoggedIn)

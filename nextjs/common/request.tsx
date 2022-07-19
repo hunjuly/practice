@@ -42,10 +42,12 @@ export async function post<T>(path: string, body: unknown): Promise<T> {
 }
 
 // const host = 'http://localhost:4000'
-const host = 'http://hunjuly.iptime.org:4000'
+// const host = 'http://hunjuly.iptime.org:4000'
+const host = ''
 
 type ResponseType<T> = { data: T; headers: Headers }
 
+// TODO 서버에서 무조건 json 형태로 보내줘야 한다.
 async function request<T>(path: string, init?: RequestInit): Promise<ResponseType<T>> {
     const url = host + path
 
