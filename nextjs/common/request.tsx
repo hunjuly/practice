@@ -1,14 +1,4 @@
-export class RequestError extends Error {
-    constructor(message: string) {
-        super(message)
-
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, RequestError)
-        }
-
-        this.name = 'RequestError'
-    }
-}
+import { RequestError } from 'types'
 
 export async function get<T>(path: string): Promise<T> {
     const fullOption = { method: 'GET' }

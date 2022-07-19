@@ -1,4 +1,5 @@
 import React from 'react'
+import { RequestError } from 'types'
 
 type User = {
     id: string
@@ -72,8 +73,8 @@ export function useUserContext() {
         }
     }
 
-    const login = async (userId: string, password: string) => {
-        const body = { email: userId, password }
+    const login = async (email: string, password: string) => {
+        const body = { email, password }
 
         const option = {
             method: 'POST',
@@ -91,7 +92,13 @@ export function useUserContext() {
         if (response.ok) {
             await saveUser(user)
 
-            setUser(user)
+            const newUser = {
+                id: data.id,
+                email: data.email,
+                cookie: 'string'
+            }
+
+            setUser(newUser)
         } else {
             throw new RequestError(data.message)
         }
@@ -125,9 +132,9 @@ export type UserContextType = {
     email: string | null
     isLoggedIn: boolean
     authToken: string
-    register: (body: RegisterValue) => void
-    login: (userId: string, password: string) => void
-    logout: () => void
+    register: (body: RegisterValue) => Promise<void>
+    login: (email: string, password: string) => Promise<void>
+    logout: () => Promise<void>
 }
 
 const defaultValue = {
@@ -137,7 +144,7 @@ const defaultValue = {
     register: (_body: RegisterValue) => {
         alert('wrong register')
     },
-    login: (_userId: string, _password: string) => {
+    login: (_email: string, _password: string) => {
         alert('wrong login')
     },
     logout: () => {
@@ -146,15 +153,3 @@ const defaultValue = {
 } as UserContextType
 
 export const UserContext = React.createContext(defaultValue)
-
-export class RequestError extends Error {
-    constructor(message: string) {
-        super(message)
-
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, RequestError)
-        }
-
-        this.name = 'RequestError'
-    }
-}

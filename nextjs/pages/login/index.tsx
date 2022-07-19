@@ -1,7 +1,7 @@
 import * as React from 'react'
 import type { ReactElement } from 'react'
 import { useUser } from 'hooks/useUser'
-import { RequestError } from 'common/request'
+import { RequestError } from 'types'
 import Link from 'next/link'
 
 export default function Login() {

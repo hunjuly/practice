@@ -1,7 +1,7 @@
 import * as React from 'react'
 import type { ReactElement } from 'react'
 import { useUser } from 'hooks/useUser'
-import { RequestError } from 'common/request'
+import { RequestError } from 'types'
 import Link from 'next/link'
 
 export default function Register() {
@@ -12,17 +12,22 @@ export default function Register() {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
 
-        const data = new FormData(event.currentTarget)
-
-        const body = {
-            firstName: data.get('firstName') as string,
-            lastName: data.get('lastName') as string,
-            email: data.get('email') as string,
-            password: data.get('password') as string
-        }
-
         try {
+            const data = new FormData(event.currentTarget)
+
+            const email = data.get('email') as string
+            const password = data.get('password') as string
+
+            const body = {
+                firstName: data.get('firstName') as string,
+                lastName: data.get('lastName') as string,
+                email,
+                password
+            }
+
             await user.register(body)
+
+            await user.login(email, password)
         } catch (error) {
             if (error instanceof RequestError) {
                 setErrorMsg(error.message)
