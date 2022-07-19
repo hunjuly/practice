@@ -1,5 +1,4 @@
 import React from 'react'
-import { post, get, delete_ } from '../common/request'
 
 type User = {
     id: string
@@ -7,10 +6,21 @@ type User = {
     cookie: string
 }
 
-const saveUser = (value: User | null) => {
-    const jsonValue = JSON.stringify(value)
+type RegisterValue = {
+    firstName: string
+    lastName: string
+    email: string
+    password: string
+}
 
-    localStorage.setItem('user', jsonValue)
+const saveUser = (value: User | null) => {
+    if (value) {
+        const jsonValue = JSON.stringify(value)
+
+        localStorage.setItem('user', jsonValue)
+    } else {
+        localStorage.removeItem('user')
+    }
 }
 
 const loadUser = () => {
@@ -38,26 +48,65 @@ export function useUserContext() {
         run()
     }, [])
 
-    const register = async (userId: string, password: string) => {
-        const body = { email: userId, password }
+    const register = async (body: RegisterValue) => {
+        // const body = { email: userId, password }
 
-        await post('/users', body)
+        const option = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        }
+
+        const response = await fetch('/api/register', option)
+
+        const data = await response.json()
+
+        if (response.ok) {
+            await saveUser(user)
+
+            setUser(user)
+        } else {
+            throw new RequestError(data.message)
+        }
     }
 
     const login = async (userId: string, password: string) => {
         const body = { email: userId, password }
 
-        const user = await post<User>('/auth', body)
+        const option = {
+            method: 'POST',
+            headers: {
+                credentials: 'include',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        }
 
-        await saveUser(user)
+        const response = await fetch('/api/login', option)
 
-        setUser(user)
+        const data = await response.json()
+
+        if (response.ok) {
+            await saveUser(user)
+
+            setUser(user)
+        } else {
+            throw new RequestError(data.message)
+        }
     }
 
     const logout = async () => {
-        try {
-            await delete_('/auth')
-        } catch (error: any) {}
+        const option = { method: 'DELETE' }
+
+        const response = await fetch('/api/logout', option)
+
+        if (!response.ok) {
+            console.warn('logout failed')
+        }
+
+        await saveUser(null)
 
         setUser(null)
     }
@@ -76,7 +125,7 @@ export type UserContextType = {
     email: string | null
     isLoggedIn: boolean
     authToken: string
-    register: (userId: string, password: string) => void
+    register: (body: RegisterValue) => void
     login: (userId: string, password: string) => void
     logout: () => void
 }
@@ -85,7 +134,7 @@ const defaultValue = {
     email: null,
     isLoggedIn: false,
     authToken: '',
-    register: (_userId: string, _password: string) => {
+    register: (_body: RegisterValue) => {
         alert('wrong register')
     },
     login: (_userId: string, _password: string) => {
@@ -97,3 +146,15 @@ const defaultValue = {
 } as UserContextType
 
 export const UserContext = React.createContext(defaultValue)
+
+export class RequestError extends Error {
+    constructor(message: string) {
+        super(message)
+
+        if (Error.captureStackTrace) {
+            Error.captureStackTrace(this, RequestError)
+        }
+
+        this.name = 'RequestError'
+    }
+}

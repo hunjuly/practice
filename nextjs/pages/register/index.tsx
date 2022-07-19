@@ -1,11 +1,11 @@
 import * as React from 'react'
 import type { ReactElement } from 'react'
-import { useUserSession, UserSession } from 'hooks/useUserSession'
-import { clientSide, RequestError } from 'lib/request'
+import { useUser } from 'hooks/useUser'
+import { RequestError } from 'common/request'
 import Link from 'next/link'
 
 export default function Register() {
-    const { mutateUser } = useUserSession({ redirectTo: '/dashboard', redirectIfFound: true })
+    const user = useUser({ redirectTo: { ifLoggedIn: '/dashboard' } })
 
     const [errorMsg, setErrorMsg] = React.useState('')
 
@@ -15,21 +15,17 @@ export default function Register() {
         const data = new FormData(event.currentTarget)
 
         const body = {
-            firstName: data.get('firstName'),
-            lastName: data.get('lastName'),
-            email: data.get('email'),
-            password: data.get('password')
+            firstName: data.get('firstName') as string,
+            lastName: data.get('lastName') as string,
+            email: data.get('email') as string,
+            password: data.get('password') as string
         }
 
         try {
-            await clientSide.post('/api/register', body)
-
-            const data: UserSession = await clientSide.post('/api/login', body)
-
-            mutateUser(data)
+            await user.register(body)
         } catch (error) {
             if (error instanceof RequestError) {
-                setErrorMsg(error.data.message)
+                setErrorMsg(error.message)
             } else {
                 console.error('An unexpected error happened:', error)
             }

@@ -36,7 +36,7 @@ export class AuthService {
         const auth = await this.repository.get(getAuthId(userId))
 
         if (auth === undefined) {
-            throw new NotFoundException()
+            throw new NotFoundException({ message: 'user not found' }, 'ssss')
         }
 
         return bcrypt.compare(password, auth.password)
