@@ -23,7 +23,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         if (isGlobalLayout && !user.isLoggedIn) {
             Router.push('/login')
         }
-    }, [user.isLoggedIn, user.authToken])
+    }, [user.isLoggedIn, user.authToken, Component.getLayout])
 
     const getLayout =
         Component.getLayout ??

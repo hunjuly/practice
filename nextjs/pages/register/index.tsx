@@ -15,19 +15,16 @@ export default function Register() {
         try {
             const data = new FormData(event.currentTarget)
 
-            const email = data.get('email') as string
-            const password = data.get('password') as string
-
             const body = {
                 firstName: data.get('firstName') as string,
                 lastName: data.get('lastName') as string,
-                email,
-                password
+                email: data.get('email') as string,
+                password: data.get('password') as string
             }
 
             await user.register(body)
 
-            await user.login(email, password)
+            await user.login(body.email, body.password)
         } catch (error) {
             if (error instanceof RequestError) {
                 setErrorMsg(error.message)

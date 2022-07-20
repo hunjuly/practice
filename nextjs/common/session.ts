@@ -1,15 +1,16 @@
-import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
+import { GetServerSidePropsContext as PropsContext, GetServerSidePropsResult as PropsResult } from 'next'
+import { GetServerSideProps as Props } from 'next'
 
-type withSessionSsrType = {
+type PropsType = {
     [key: string]: unknown
 }
 
 type SsrHandler<P> = (request: {
     get: <T>(path: string) => Promise<T>
-}) => GetServerSidePropsResult<P> | Promise<GetServerSidePropsResult<P>>
+}) => PropsResult<P> | Promise<PropsResult<P>>
 
-export function withSessionSsr<P extends withSessionSsrType = withSessionSsrType>(handler: SsrHandler<P>) {
-    return async (context: GetServerSidePropsContext) => {
+export function getServerSideWithCookie<P extends PropsType>(handler: SsrHandler<P>): Props {
+    return async (context: PropsContext) => {
         const get = async <T>(path: string): Promise<T> => {
             const headers = context.req.headers.cookie ? { cookie: context.req.headers.cookie } : undefined
 

@@ -1,12 +1,11 @@
 import * as React from 'react'
-import { GetServerSideProps } from 'next'
 import { PaginatedResponse, User } from 'types'
-import { withSessionSsr } from 'common/session'
+import { getServerSideWithCookie } from 'common/session'
 
 type GetType = PaginatedResponse<User>
 type PropsType = { paginatedUsers: PaginatedResponse<User> }
 
-export const getServerSideProps: GetServerSideProps = withSessionSsr<PropsType>(async ({ get }) => {
+export const getServerSideProps = getServerSideWithCookie<PropsType>(async ({ get }) => {
     const data = await get('/users')
 
     const paginatedUsers = data as GetType
