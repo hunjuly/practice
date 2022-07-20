@@ -21,6 +21,8 @@ export default async function route(req: NextApiRequest, res: NextApiResponse) {
         if (response.ok) {
             const cookie = response.headers.get('set-cookie')
 
+            console.log('----------------------', cookie)
+
             if (cookie) {
                 res.setHeader('set-cookie', cookie).json(data)
             }

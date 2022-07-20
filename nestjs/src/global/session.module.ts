@@ -24,7 +24,7 @@ function createOption(config: ConfigService, redisService: RedisService) {
 
             return {
                 saveUninitialized: false,
-                secret: 'sup3rs3cr3t',
+                secret: ['sup3rs3cr3t', 'akjsdfhkladjsfh', 'sfdgkg321'],
                 resave: false,
                 store,
                 cookie,
@@ -42,10 +42,14 @@ function createOption(config: ConfigService, redisService: RedisService) {
 
         Logger.warn('using memory session')
 
+        const cookie = { sameSite: true, httpOnly: false, maxAge: 60000 }
+
         return {
             saveUninitialized: false,
-            secret: 'sup3rs3cr3t',
-            resave: false
+            secret: ['sup3rs3cr3t', 'akjsdfhkladjsfh', 'sfdgkg321'],
+            resave: false,
+            cookie,
+            pauseStream: true
         }
     }
 }

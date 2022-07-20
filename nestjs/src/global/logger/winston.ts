@@ -10,7 +10,7 @@ export function createFileLogger(storagePath: string, storageDays: number, conte
     const option = {
         dirname: storagePath,
         datePattern: 'YYYY-MM-DD, HH',
-        zippedArchive: true,
+        zippedArchive: false,
         maxSize: '20m',
         maxFiles: storageDays + 'd',
         createSymlink: true,
