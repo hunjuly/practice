@@ -3,7 +3,7 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
 import { ConfigService } from '@nestjs/config'
 import { NestModule, MiddlewareConsumer } from '@nestjs/common'
 import { AppLogger } from './app-logger'
-import { createFileLogger } from './winston'
+import { createLogger } from './winston'
 import { RequestLogger } from './request-logger'
 import { SuccessResLogger, FailResLogger } from './response-loggers'
 
@@ -22,8 +22,11 @@ import { SuccessResLogger, FailResLogger } from './response-loggers'
             useFactory: (config: ConfigService) => {
                 const storagePath = config.get<string>('LOG_STORAGE_PATH')
                 const storageDays = config.get<number>('LOG_STORAGE_DAYS')
+                const fileLevel = config.get<string>('LOG_FILE_LEVEL')
+                const consoleLevel = config.get<string>('LOG_CONSOLE_LEVEL')
+                const context = 'app'
 
-                const winston = createFileLogger(storagePath, storageDays, 'app')
+                const winston = createLogger({ storagePath, storageDays, fileLevel, consoleLevel, context })
 
                 return new AppLogger(winston)
             },

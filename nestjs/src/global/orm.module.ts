@@ -7,7 +7,7 @@ import { Logger } from '@nestjs/common'
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions'
 import { Logger as IOrmLogger, QueryRunner } from 'typeorm'
 import * as winston from 'winston'
-import { createFileLogger } from './logger'
+import { createLogger } from './logger'
 
 export async function createOrmModule() {
     return TypeOrmModule.forRootAsync({
@@ -27,16 +27,19 @@ export async function createOrmModule() {
             const database = config.get<string>('TYPEORM_DATABASE')
 
             //  | "all" | ("query" | "schema" | "error" | "warn" | "info" | "log" | "migration")[];
-            const logging = nodeEnv === 'production' ? 'all' : ['error', 'warn']
+            // const logging = nodeEnv === 'production' ? 'all' : ['error', 'warn']
+            const logging = true
 
             const common = {
                 type,
                 synchronize,
                 autoLoadEntities: true,
                 logger,
-                logging,
+                // logging,
                 database
             }
+
+            console.log('------------------', JSON.stringify(logger))
 
             if (type === 'sqlite') {
                 Logger.warn('database connection is not set. using MEMORY DB.')
@@ -60,10 +63,22 @@ export async function createOrmModule() {
                 useFactory: (config: ConfigService) => {
                     const storagePath = config.get<string>('LOG_STORAGE_PATH')
                     const storageDays = config.get<number>('LOG_STORAGE_DAYS')
+                    const fileLevel = config.get<string>('LOG_FILE_LEVEL')
+                    const consoleLevel = config.get<string>('LOG_CONSOLE_LEVEL')
+                    const context = 'orm'
 
-                    const winston = createFileLogger(storagePath, storageDays, 'orm')
+                    const winston = createLogger({
+                        storagePath,
+                        storageDays,
+                        fileLevel,
+                        consoleLevel,
+                        context
+                    })
 
-                    return new OrmLogger(winston)
+                    const logger = new OrmLogger(winston)
+                    console.log('------------------', logger)
+
+                    return logger
                 },
                 inject: [ConfigService]
             }
@@ -83,6 +98,7 @@ class OrmLogger implements IOrmLogger {
     }
 
     logQuery(query: string, parameters?: any[], queryRunner?: QueryRunner) {
+        console.log('-------------------------------')
         this.logger.verbose(query, parameters)
     }
 

@@ -4,7 +4,15 @@ import * as winston from 'winston'
 
 const format = winston.format
 
-export function createFileLogger(storagePath: string, storageDays: number, context: string) {
+type LoggerOption = {
+    storagePath: string
+    storageDays: number
+    fileLevel: string
+    consoleLevel: string
+    context: string
+}
+
+export function createLogger({ storagePath, storageDays, fileLevel, consoleLevel, context }: LoggerOption) {
     Path.mkdir(storagePath)
 
     const option = {
@@ -20,7 +28,8 @@ export function createFileLogger(storagePath: string, storageDays: number, conte
     const all = new DailyRotateFile({
         ...option,
         symlinkName: `${context}-current.log`,
-        filename: `${context}-%DATE%h.log`
+        filename: `${context}-%DATE%h.log`,
+        level: fileLevel
     })
 
     const errors = new DailyRotateFile({
@@ -32,15 +41,14 @@ export function createFileLogger(storagePath: string, storageDays: number, conte
         level: 'error'
     })
 
-    const dev = new winston.transports.Console({
+    const console = new winston.transports.Console({
         format: format.combine(format.colorize({ all: true }), format.simple()),
-        level: 'warn'
+        level: consoleLevel
     })
 
     const logger = winston.createLogger({
-        level: 'verbose',
         format: format.json(),
-        transports: [all, errors, dev],
+        transports: [all, errors, console],
         exceptionHandlers: [errors]
     })
 

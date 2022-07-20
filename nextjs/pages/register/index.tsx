@@ -39,11 +39,11 @@ export default function Register() {
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="first">First name</label>
-                    <input type="text" id="first" name="firstName" required />
+                    <input type="text" id="first" name="firstName" value="first" required />
                 </div>
                 <div>
                     <label htmlFor="last">Last name</label>
-                    <input type="text" id="last" name="lastName" required />
+                    <input type="text" id="last" name="lastName" value="last" required />
                 </div>
                 <div>
                     <label htmlFor="email">email</label>

@@ -46,8 +46,7 @@
             "type": "shell",
             "command": "sh",
             "args": [
-                "scripts/bootup_infra.sh",
-                "${input:InfraTask}"
+                "scripts/${input:InfraTask}_infra_bootup.sh"
             ]
         }
     ],
