@@ -4,9 +4,6 @@
             "path": "nextjs"
         },
         {
-            "path": "archive"
-        },
-        {
             "path": "nestjs"
         },
     ],
