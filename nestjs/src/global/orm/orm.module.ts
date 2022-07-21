@@ -4,7 +4,6 @@ import { TypeOrmModule, TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nes
 import { exit } from 'process'
 import { ConfigService } from '@nestjs/config'
 import { Logger } from '@nestjs/common'
-import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions'
 import { createLogger } from '../logger'
 import { OrmLogger } from './orm-logger'
 
@@ -54,14 +53,14 @@ class TypeOrmConfigService implements TypeOrmOptionsFactory {
         if (common.type === 'sqlite') {
             Logger.warn('database connection is not set. using MEMORY DB.')
 
-            return common as TypeOrmModuleOptions
+            return common
         } else if (common.type === 'mysql') {
             const host = this.config.get<string>('TYPEORM_HOST')
             const port = this.config.get<number>('TYPEORM_PORT')
             const username = this.config.get<string>('TYPEORM_USERNAME')
             const password = this.config.get<string>('TYPEORM_PASSWORD')
 
-            return { ...common, host, port, username, password } as MysqlConnectionOptions
+            return { ...common, host, port, username, password }
         }
 
         throw new Error(`unknown TYPEORM_TYPE(${common.type})`)

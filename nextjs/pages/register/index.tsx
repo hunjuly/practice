@@ -51,13 +51,14 @@ export default function Register() {
                         type="text"
                         id="email"
                         name="email"
+                        value="test@mail.com"
                         pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
                         required
                     />
                 </div>
                 <div>
                     <label htmlFor="password">password</label>
-                    <input type="password" id="password" name="password" required />
+                    <input type="password" id="password" name="password" value="\" required />
                 </div>
                 <div hidden={errorMsg === undefined}>Error: {errorMsg}</div>
                 <input type="submit" value="Submit" />

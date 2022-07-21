@@ -9,8 +9,8 @@ export default function Login() {
 
     const [errorMsg, setErrorMsg] = React.useState<string>()
 
-    const [email, setEmail] = React.useState('')
-    const [password, setPassword] = React.useState('')
+    const [email, setEmail] = React.useState('test@mail.com')
+    const [password, setPassword] = React.useState('\\')
 
     const handleEmailChange = (event: React.FormEvent<HTMLInputElement>) => {
         setEmail(event.currentTarget.value)
