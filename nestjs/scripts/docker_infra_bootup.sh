@@ -8,8 +8,8 @@ mysql() (
     docker rm -f $MYSQL_CONTAINER
     docker volume rm -f $MYSQL_CONTAINER
 
+    # --platform linux/amd64 \
     docker run \
-        --platform linux/amd64 \
         -d --name ${MYSQL_CONTAINER} --network vscode \
         -p ${TYPEORM_PORT}:${TYPEORM_PORT} \
         -e MYSQL_ROOT_PASSWORD=${TYPEORM_PASSWORD} \
@@ -25,10 +25,12 @@ mysql() (
         if [ $found -gt 0 ]; then
             docker exec ${MYSQL_CONTAINER} mysql -p$TYPEORM_PASSWORD -e "drop database if exists ${TYPEORM_DATABASE};create database ${TYPEORM_DATABASE};"
 
+            #
             echo 'mysql booting success.('$i's)'
             echo ""
             echo "---- MYSQL CLI ----"
             echo "docker exec -it $MYSQL_CONTAINER mysql -p$TYPEORM_PASSWORD"
+            echo "docker exec -it $MYSQL_CONTAINER mysqldump --no-data --skip-comments -u root -p$TYPEORM_PASSWORD --all-databases"
             echo "-------------------"
             echo ""
             return 0
