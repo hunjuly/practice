@@ -2,6 +2,8 @@
 
 ## Todo
 
+TYPEORM CLI 사용해서 db init해야 한다. 이게 안 되면 nestjs docker bootup도 안 된다.
+
 1. docker-compose 적용
     - 환경 설정 .env.production으로 설정하게 한다.
 1. session timeout env 추가
