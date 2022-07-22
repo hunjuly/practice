@@ -6,10 +6,9 @@ import {
     VersionColumn,
     PrimaryGeneratedColumn
 } from 'typeorm'
-import { BaseEntity } from 'src/common'
 
 @Entity()
-export class User extends BaseEntity {
+export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string
 

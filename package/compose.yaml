@@ -1,0 +1,124 @@
+# https://docs.docker.com/compose/compose-file/
+# build rm up/down
+services:
+  frontend:
+    image: practice/nextjs
+    container_name: nextjs
+    ports:
+      - "3000:3000"
+    networks:
+      - front-tier
+      - back-tier
+    build:
+      context: ../nextjs
+
+  backend:
+    image: practice/nestjs
+    container_name: nestjs
+    # restart: always
+    environment:
+      NODE_ENV: production
+      LOG_STORAGE_PATH: "./logs"
+      LOG_STORAGE_DAYS: 1
+      LOG_FILE_LEVEL: "verbose"
+      LOG_CONSOLE_LEVEL: "info"
+      TYPEORM_TYPE: "mysql"
+      TYPEORM_DATABASE: "test"
+      TYPEORM_ENABLE_SYNC: "true"
+      TYPEORM_HOST: "practice.mysql"
+      TYPEORM_PORT: 3306
+      TYPEORM_USERNAME: "root"
+      TYPEORM_PASSWORD: "password"
+      SESSION_TYPE: "redis"
+      REDIS_HOST: "practice.redis"
+      REDIS_PORT: 6379
+    ports:
+      - "4000:4000"
+    networks:
+      - back-tier
+    volumes:
+      - type: volume
+        source: nestjs-data
+        target: /var/lib/mysql
+      # - type: bind
+      #   source: ./nestjs/logs
+      #   target: /workspaces/practice/logs
+    depends_on:
+      - mysql
+      - redis
+  mysql:
+    image: mysql
+    container_name: practice.mysql
+    platform: linux/amd64
+    environment:
+      MYSQL_ROOT_PASSWORD: "password"
+    ports:
+      - "3306:3306"
+    networks:
+      - back-tier
+    volumes:
+      - type: volume
+        source: mysql-data
+        target: /var/lib/mysql
+  redis:
+    image: redis
+    container_name: practice.redis
+    environment:
+      MYSQL_ROOT_PASSWORD: "password"
+    ports:
+      - "6379:6379"
+    networks:
+      - back-tier
+    volumes:
+      - type: volume
+        source: redis-data
+        target: /data
+
+volumes:
+  nestjs-data:
+  mysql-data:
+  redis-data:
+
+networks:
+  front-tier: {}
+  back-tier: {}
+
+
+# services:
+#   frontend:
+#     image: awesome/webapp
+#     ports:
+#       - "443:8043"
+#     networks:
+#       - front-tier
+#       - back-tier
+#     configs:
+#       - httpd-config
+#     secrets:
+#       - server-certificate
+
+#   backend:
+#     image: awesome/database
+#     volumes:
+#       - db-data:/etc/data
+#     networks:
+#       - back-tier
+
+# volumes:
+#   db-data:
+#     driver: flocker
+#     driver_opts:
+#       size: "10GiB"
+
+# configs:
+#   httpd-config:
+#     external: true
+
+# secrets:
+#   server-certificate:
+#     external: true
+
+# networks:
+#   # The presence of these objects is sufficient to define them
+#   front-tier: {}
+#   back-tier: {}

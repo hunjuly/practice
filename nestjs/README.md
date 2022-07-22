@@ -2,23 +2,12 @@
 
 ## Todo
 
-1. nextjs session 개선
-   // 서버에서 설정한 것은 서버에서 지운다 set-cookie
-   // local에서 설정한 것은 local에서 지운다. localstorage
-   유효하지 않은 세션은 set-cookie:'token=' 해야 한다.
-1. e2e 테스트 하면 이 경고 나온다.
-
-    (node:312728) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 uncaughtException listeners added to [process]. Use emitter.setMaxListeners() to increase limit
-
 1. docker-compose 적용
-1. log 환경설정
-1. docker build
-1. .env 설정
-1. middleware로 logging 구현
-1. interceptor는 뭐에 쓰나? middleware/interceptor 다시 보기
+    - 환경 설정 .env.production으로 설정하게 한다.
+1. session timeout env 추가
 1. logstash, elastic search, kibana 적용
 1. 테스트 상세하게
-1. 환경 설정 .env.production으로 설정하게 한다.
+1. README 정리
 
 ## Debugging
 

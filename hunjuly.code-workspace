@@ -6,6 +6,9 @@
         {
             "path": "nestjs"
         },
+        {
+            "path": "package"
+        },
     ],
     "extensions": {
         "recommendations": [
