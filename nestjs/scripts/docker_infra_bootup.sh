@@ -30,7 +30,7 @@ mysql() (
             echo ""
             echo "---- MYSQL CLI ----"
             echo "docker exec -it $MYSQL_CONTAINER mysql -p$TYPEORM_PASSWORD"
-            echo "docker exec -it $MYSQL_CONTAINER mysqldump --no-data --skip-comments -u root -p$TYPEORM_PASSWORD --all-databases"
+            echo "docker exec -it $MYSQL_CONTAINER mysqldump --no-data --skip-comments -u root -p$TYPEORM_PASSWORD --all-databases >create.sql"
             echo "-------------------"
             echo ""
             return 0
