@@ -16,10 +16,10 @@
         "test:unit": "jest --coverage",
         "test:e2e": "node --trace-warnings node_modules/.bin/jest --no-cache --config ./test/jest-e2e.json",
         "test:e2e:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --config ./test/jest-e2e.json",
-        "typeorm:generate": "typeorm-ts-node-commonjs migration:generate dist/typeorm/migration/mig -d typeorm/data-source.ts",
-        "typeorm:migration:run": "typeorm migration:run -d dist/typeorm/data-source.js",
-        "typeorm:migration:revert": "typeorm migration:revert -d dist/typeorm/data-source.js",
-        "typeorm:show": "typeorm migration:show -d dist/typeorm/data-source.js"
+        "typeorm:generate": "typeorm-ts-node-commonjs   migration:generate  -d typeorm/data-source.ts   typeorm/migration/mig ",
+        "typeorm:migration:run": "            typeorm   migration:run       -d dist/typeorm/data-source.js",
+        "typeorm:migration:revert": "         typeorm   migration:revert    -d dist/typeorm/data-source.js",
+        "typeorm:show": "                     typeorm   migration:show      -d dist/typeorm/data-source.js"
     },
     "dependencies": {
         "@nestjs/common": "^9.0.0",

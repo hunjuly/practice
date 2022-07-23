@@ -9,6 +9,7 @@ services:
     networks:
       - front-tier
       - back-tier
+      - vscode
 
   backend:
     image: practice/nestjs
@@ -34,6 +35,7 @@ services:
       - "4000:4000"
     networks:
       - back-tier
+      - vscode
     volumes:
       - type: volume
         source: nestjs-data
@@ -53,6 +55,7 @@ services:
       - "3306:3306"
     networks:
       - back-tier
+      - vscode
     volumes:
       - type: volume
         source: mysql-data
@@ -66,6 +69,7 @@ services:
       - "6379:6379"
     networks:
       - back-tier
+      - vscode
     volumes:
       - type: volume
         source: redis-data
@@ -75,45 +79,8 @@ volumes:
   nestjs-data:
   mysql-data:
   redis-data:
-
 networks:
   front-tier: {}
   back-tier: {}
-# services:
-#   frontend:
-#     image: awesome/webapp
-#     ports:
-#       - "443:8043"
-#     networks:
-#       - front-tier
-#       - back-tier
-#     configs:
-#       - httpd-config
-#     secrets:
-#       - server-certificate
-
-#   backend:
-#     image: awesome/database
-#     volumes:
-#       - db-data:/etc/data
-#     networks:
-#       - back-tier
-
-# volumes:
-#   db-data:
-#     driver: flocker
-#     driver_opts:
-#       size: "10GiB"
-
-# configs:
-#   httpd-config:
-#     external: true
-
-# secrets:
-#   server-certificate:
-#     external: true
-
-# networks:
-#   # The presence of these objects is sufficient to define them
-#   front-tier: {}
-#   back-tier: {}
+  vscode:
+    external: true
