@@ -13,7 +13,7 @@ describe('AppController', () => {
         }).compile()
 
         controller = app.get<AppController>(AppController)
-        service = app.get<AppController>(AppController)
+        service = app.get(AppService)
     })
 
     it('"Hello World!"', () => {

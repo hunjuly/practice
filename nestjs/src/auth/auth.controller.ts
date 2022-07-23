@@ -1,4 +1,4 @@
-import { Controller, Request, Post, Delete, UseGuards } from '@nestjs/common'
+import { Controller, Request, Post, Delete, UseGuards, Logger } from '@nestjs/common'
 import { ApiBody } from '@nestjs/swagger'
 import { Public } from 'src/global/auth'
 import { LocalAuthGuard } from 'src/global/auth'
@@ -16,9 +16,14 @@ export class AuthController {
         return { id: req.user.id, email: req.user.email }
     }
 
+    @Public()
     @Delete()
     async logout(@Request() req) {
-        await req.logOut()
+        await req.logout((err) => {
+            if (err) {
+                Logger.error(err)
+            }
+        })
 
         return {}
     }

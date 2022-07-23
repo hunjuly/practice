@@ -4,7 +4,7 @@ import { TypeOrmModule, TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nes
 import { exit } from 'process'
 import { ConfigService } from '@nestjs/config'
 import { Logger } from '@nestjs/common'
-import { createLogger } from '../logger'
+import { createLogger } from 'src/common'
 import { OrmLogger } from './orm-logger'
 
 @Injectable()

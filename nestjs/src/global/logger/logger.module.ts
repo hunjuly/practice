@@ -2,20 +2,20 @@ import { Module, RequestMethod } from '@nestjs/common'
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
 import { ConfigService } from '@nestjs/config'
 import { NestModule, MiddlewareConsumer } from '@nestjs/common'
-import { AppLogger } from './app-logger'
-import { createLogger } from './winston'
+import { AppLogger, createLogger } from 'src/common'
 import { RequestLogger } from './request-logger'
-import { SuccessResLogger, FailResLogger } from './response-loggers'
+import { ExceptionLogger } from './exception-loggers'
+import { SuccessLogger } from './success-logger'
 
 @Module({
     providers: [
         {
             provide: APP_FILTER,
-            useClass: FailResLogger
+            useClass: ExceptionLogger
         },
         {
             provide: APP_INTERCEPTOR,
-            useClass: SuccessResLogger
+            useClass: SuccessLogger
         },
         {
             provide: AppLogger,

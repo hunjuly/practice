@@ -55,14 +55,14 @@ async function login() {
 
 async function getUser(userId: string, cookie: string) {
     // curl http://localhost:4000/users --cookie "connect.sid=s%3AgG58r3EKXC5qaUhqGXyO8040PezYsuoN.OYCMovyhtUQPdBv0da6HvFzmaRoD%2BARpJRXfeGMuks0;"
-    const res = await get(app, `/users/${userId}`, [{ cookie: cookie }])
+    const res = await get(app, `/users/${userId}`, [{ cookie }])
 
     return res
 }
 
 async function logout(cookie: string) {
     // curl -X DELETE http://localhost:4000/auth --cookie "connect.sid=connect.sid=s%3AL8rdAzms8Xu-WJDC_b1KKhK4CgP2aoe8.c8%2FPvvdHZqykmLY35gE08wMVX7QwMvuoJ7A4JkBqYOg;"
-    const res = await del(app, '/auth', [{ cookie: cookie }])
+    const res = await del(app, '/auth', [{ cookie }])
 
     expect(res.statusCode).toEqual(200)
 }

@@ -8,11 +8,11 @@ export class OrmLogger implements IOrmLogger {
         await this.logger.close()
     }
 
-    logQuery(query: string, parameters?: any[], queryRunner?: QueryRunner) {
+    logQuery(query: string, parameters?: any[], _queryRunner?: QueryRunner) {
         this.logger.verbose(query, parameters)
     }
 
-    logQueryError(error: string | Error, query: string, parameters?: any[], queryRunner?: QueryRunner) {
+    logQueryError(error: string | Error, query: string, parameters?: any[], _queryRunner?: QueryRunner) {
         if (error instanceof Error) {
             this.logger.error(error.message, query, parameters)
         } else {
@@ -20,19 +20,19 @@ export class OrmLogger implements IOrmLogger {
         }
     }
 
-    logQuerySlow(time: number, query: string, parameters?: any[], queryRunner?: QueryRunner) {
+    logQuerySlow(time: number, query: string, parameters?: any[], _queryRunner?: QueryRunner) {
         this.logger.warn(query, time, parameters)
     }
 
-    logSchemaBuild(message: string, queryRunner?: QueryRunner) {
+    logSchemaBuild(message: string, _queryRunner?: QueryRunner) {
         this.logger.info(message)
     }
 
-    logMigration(message: string, queryRunner?: QueryRunner) {
+    logMigration(message: string, _queryRunner?: QueryRunner) {
         this.logger.info(message)
     }
 
-    log(level: 'warn' | 'info' | 'log', message: any, queryRunner?: QueryRunner) {
+    log(level: 'warn' | 'info' | 'log', message: any, _queryRunner?: QueryRunner) {
         this.logger.log(level, message)
     }
 }
