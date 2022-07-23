@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import * as bcrypt from 'bcrypt'
-import { Authentication } from './domain/auth.entity'
+import { Authentication } from 'typeorm/entity/Authentication'
 import { AuthRepository } from './auth.repository'
 
 function getAuthId(userId: string) {

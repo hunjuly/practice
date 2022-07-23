@@ -6,7 +6,7 @@
     "private": true,
     "license": "UNLICENSED",
     "scripts": {
-        "start": "node dist/main",
+        "start": "node dist/src/main",
         "prebuild": "rimraf dist",
         "build": "nest build",
         "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -16,11 +16,10 @@
         "test:unit": "jest --coverage",
         "test:e2e": "node --trace-warnings node_modules/.bin/jest --no-cache --config ./test/jest-e2e.json",
         "test:e2e:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --config ./test/jest-e2e.json",
-        "typeorm": "typeorm-ts-node-commonjs",
-        "typeorm:generate": "typeorm-ts-node-commonjs migration:generate ./typeorm/migration/mig -d typeorm/data-source.ts",
-        "typeorm:migration": "typeorm-ts-node-commonjs migration:run -d typeorm/data-source.ts",
-        "typeorm:migration:revert": "typeorm-ts-node-commonjs migration:revert -d typeorm/data-source.ts",
-        "typeorm:show": "typeorm-ts-node-commonjs migration:show -d typeorm/data-source.ts"
+        "typeorm:generate": "typeorm-ts-node-commonjs migration:generate dist/typeorm/migration/mig -d typeorm/data-source.ts",
+        "typeorm:migration:run": "typeorm migration:run -d dist/typeorm/data-source.js",
+        "typeorm:migration:revert": "typeorm migration:revert -d dist/typeorm/data-source.js",
+        "typeorm:show": "typeorm migration:show -d dist/typeorm/data-source.js"
     },
     "dependencies": {
         "@nestjs/common": "^9.0.0",

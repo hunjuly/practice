@@ -1,4 +1,4 @@
-import { User } from './user.entity'
+import { User } from 'typeorm/entity/User'
 
 export type UserQuery = {
     email?: string

@@ -1,5 +1,5 @@
 import { CreateUserDto } from '../dto/create-user.dto'
-import { User } from './user.entity'
+import { User } from 'typeorm/entity/User'
 import { AlreadyExistsException } from './exceptions'
 import { IUsersRepository } from './interfaces'
 

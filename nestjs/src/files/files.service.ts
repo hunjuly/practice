@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { UpdateFileDto } from './dto/update-file.dto'
 import { CreateFileDto } from './dto/create-file.dto'
-import { File } from './entities/file.entity'
+import { File } from 'typeorm/entity/File'
 
 @Injectable()
 export class FilesService {

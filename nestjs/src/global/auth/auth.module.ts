@@ -7,8 +7,14 @@ import { UserGuard } from './user.guard'
 import { UsersModule } from 'src/users/users.module'
 import { AuthModule as AuthServiceModule } from 'src/auth/auth.module'
 
+// dev로 돌리면 문제가 없으나 build해서 npm start하면 순환참조 문제가 발생한다.
+// 그래서 forwardRef을 사용함
 @Module({
-    imports: [PassportModule.register({ session: true }), forwardRef(() => UsersModule), AuthServiceModule],
+    imports: [
+        PassportModule.register({ session: true }),
+        forwardRef(() => UsersModule),
+        forwardRef(() => AuthServiceModule)
+    ],
     providers: [
         AuthSerializer,
         LocalStrategy,

@@ -2,13 +2,16 @@
 set -e
 cd "$(dirname "$0")"
 
+docker rmi -f practice/nestjs
 npm run build --prefix ../nestjs
 docker build -t practice/nestjs ../nestjs
 
+docker rmi -f practice/nextjs
 npm run build --prefix ../nextjs
 docker build -t practice/nextjs ../nextjs
 
-typeorm 직접 생성
+docker-compose up
+# typeorm 직접 생성
 # tanceLoader] ConfigModule dependencies initialized +0ms
 # nestjs      | [Nest] 19  - 07/22/2022, 12:41:46 AM   ERROR Do not use synchronize(TYPEORM_ENABLE_SYNC) on production
 
