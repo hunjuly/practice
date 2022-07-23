@@ -1,5 +1,5 @@
 import { APP_GUARD } from '@nestjs/core'
-import { Module } from '@nestjs/common'
+import { Module, forwardRef } from '@nestjs/common'
 import { PassportModule } from '@nestjs/passport'
 import { AuthSerializer } from './auth-serializer'
 import { LocalStrategy } from './local.strategy'
@@ -8,7 +8,7 @@ import { UsersModule } from 'src/users/users.module'
 import { AuthModule as AuthServiceModule } from 'src/auth/auth.module'
 
 @Module({
-    imports: [PassportModule.register({ session: true }), UsersModule, AuthServiceModule],
+    imports: [PassportModule.register({ session: true }), forwardRef(() => UsersModule), AuthServiceModule],
     providers: [
         AuthSerializer,
         LocalStrategy,

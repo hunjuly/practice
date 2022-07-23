@@ -18,7 +18,7 @@ export async function createApp() {
         .useClass(MockAuthGuard)
         .compile()
 
-    const app = moduleRef.createNestApplication(undefined)
+    const app = moduleRef.createNestApplication()
 
     await app.init()
 
