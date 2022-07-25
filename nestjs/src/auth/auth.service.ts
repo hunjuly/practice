@@ -1,44 +1,46 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import * as bcrypt from 'bcrypt'
-import { Authentication } from './entities/Authentication'
 import { AuthRepository } from './auth.repository'
-
-function getAuthId(userId: string) {
-    return userId + '_local'
-}
+import { AuthCreatingService } from './domain/auth.creating.service'
+import { AuthQuery } from './domain/interfaces'
+import { CreateAuthDto } from './dto/create-auth.dto'
 
 @Injectable()
 export class AuthService {
     constructor(private repository: AuthRepository) {}
 
-    async add(userId: string, password: string) {
-        // 7을 선택한 이유는 없다. 적당히 골랐다.
-        const saltOrRounds = 7
-        const hashed = await bcrypt.hash(password, saltOrRounds)
+    async add(dto: CreateAuthDto) {
+        const service = new AuthCreatingService(this.repository)
 
-        const auth = new Authentication()
-        auth.id = getAuthId(userId)
-        auth.userId = userId
-        auth.password = hashed
-
-        await this.repository.add(auth)
+        const auth = await service.create(dto)
+        return auth
     }
 
-    async removeUser(userId: string) {
-        const count = await this.repository.removeByUser(getAuthId(userId))
+    async remove(userId: string) {
+        const count = await this.repository.remove(userId)
 
         if (count === 0) {
             throw new NotFoundException()
         }
     }
 
-    async validate(userId: string, password: string) {
-        const auth = await this.repository.get(getAuthId(userId))
+    async validate(email: string, password: string) {
+        const auth = await this.repository.findOne({ email })
 
         if (auth === undefined) {
-            throw new NotFoundException({ message: 'user not found' }, 'ssss')
+            throw new NotFoundException({ message: 'user not found' }, 'description')
         }
 
         return bcrypt.compare(password, auth.password)
+    }
+
+    async findOne(query: AuthQuery) {
+        const user = await this.repository.findOne(query)
+
+        if (user === null) {
+            throw new NotFoundException()
+        }
+
+        return user
     }
 }

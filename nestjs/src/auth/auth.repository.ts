@@ -2,27 +2,32 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Authentication } from './entities/Authentication'
+import { AuthQuery, IAuthRepository } from './domain/interfaces'
 
 @Injectable()
-export class AuthRepository {
+export class AuthRepository implements IAuthRepository {
     constructor(
         @InjectRepository(Authentication)
         private repository: Repository<Authentication>
     ) {}
 
-    async add(auth: Authentication) {
+    async create(auth: Authentication) {
         return this.repository.save(auth)
     }
 
-    async removeByUser(authId: string) {
+    async remove(authId: string) {
         const res = await this.repository.delete(authId)
 
         return res.affected
     }
 
-    async get(authId: string) {
-        const user = await this.repository.findOneBy({ id: authId })
+    async get(userId: string) {
+        const user = await this.repository.findOneBy({ userId })
 
         return user
+    }
+
+    async findOne(where: AuthQuery) {
+        return this.repository.findOne({ where })
     }
 }

@@ -16,7 +16,13 @@ export class UsersService {
 
         const user = await service.create(dto)
 
-        await this.authService.add(user.id, dto.password)
+        const authDto = {
+            userId: user.id,
+            email: user.email,
+            password: dto.password
+        }
+
+        await this.authService.add(authDto)
 
         return user
     }
@@ -52,7 +58,7 @@ export class UsersService {
             throw new NotFoundException()
         }
 
-        await this.authService.removeUser(userId)
+        await this.authService.remove(userId)
     }
 
     async update(userId: string, dto: UpdateUserDto) {

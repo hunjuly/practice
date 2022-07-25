@@ -1,5 +1,5 @@
 import { APP_GUARD } from '@nestjs/core'
-import { Module, forwardRef } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { Authentication } from './entities/Authentication'
@@ -9,15 +9,13 @@ import { AuthRepository } from './auth.repository'
 import { AuthSerializer } from './auth-serializer'
 import { LocalStrategy } from './local.strategy'
 import { UserGuard } from './user.guard'
-import { UsersModule } from 'src/users/users.module'
 import { SessionModule } from './session.module'
 
 @Module({
     imports: [
         PassportModule.register({ session: true }),
         SessionModule,
-        TypeOrmModule.forFeature([Authentication]),
-        forwardRef(() => UsersModule)
+        TypeOrmModule.forFeature([Authentication])
     ],
     providers: [
         AuthService,

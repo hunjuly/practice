@@ -3,10 +3,10 @@ import { Entity, Column, UpdateDateColumn, PrimaryColumn } from 'typeorm'
 @Entity()
 export class Authentication {
     @PrimaryColumn()
-    id: string
+    userId: string
 
     @Column()
-    userId: string
+    email: string
 
     @Column()
     password: string
