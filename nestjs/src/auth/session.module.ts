@@ -10,48 +10,44 @@ function createOption(config: ConfigService, redisService: RedisService) {
     type SessionType = 'memory' | 'redis' | undefined
 
     const type = config.get<SessionType>('SESSION_TYPE')
-    const timeout = config.get<number>('SESSION_TIMEOUT')
+    const maxAge = config.get<number>('SESSION_MAXAGE_SEC')
+    const cookie = { sameSite: true, httpOnly: false, maxAge }
+
+    const common = {
+        saveUninitialized: false,
+        secret: ['sup3rs3cr3t', 'akjsdfhkladjsfh', 'sfdgkg321'],
+        resave: false,
+        cookie,
+        pauseStream: true
+    }
 
     if (type === 'redis') {
-        if (redisService.isAvailable()) {
-            Logger.log('using redis session')
-
-            const store = new (RedisStore(session))({
-                client: redisService.getClient(),
-                logErrors: true
-            })
-
-            const cookie = { sameSite: true, httpOnly: false, maxAge: 60000 }
-
-            return {
-                saveUninitialized: false,
-                secret: ['sup3rs3cr3t', 'akjsdfhkladjsfh', 'sfdgkg321'],
-                resave: false,
-                store,
-                cookie,
-                pauseStream: true
-            }
-        }
-    } else if (type === 'memory') {
-        const nodeEnv = config.get<string>('NODE_ENV')
-
-        if (nodeEnv === 'production') {
-            Logger.error('Do not use memory session on production')
+        if (!redisService.isAvailable()) {
+            Logger.error('Redis not available.')
 
             exit(1)
         }
 
-        Logger.warn('using memory session')
+        const store = new (RedisStore(session))({
+            client: redisService.getClient(),
+            logErrors: true
+        })
 
-        const cookie = { sameSite: true, httpOnly: false, maxAge: 60000 }
+        Logger.log('using redis session.')
 
-        return {
-            saveUninitialized: false,
-            secret: ['sup3rs3cr3t', 'akjsdfhkladjsfh', 'sfdgkg321'],
-            resave: false,
-            cookie,
-            pauseStream: true
+        return { ...common, store }
+    } else if (type === 'memory') {
+        const nodeEnv = config.get<string>('NODE_ENV')
+
+        if (nodeEnv === 'production') {
+            Logger.error('Do not use memory session on production.')
+
+            exit(1)
         }
+
+        Logger.warn('using memory session.')
+
+        return common
     }
 }
 
