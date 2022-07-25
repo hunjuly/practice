@@ -3,6 +3,10 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nes
 import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
 
+// Guard에서 필터링 되는 request는 여기까지 오지 못한다.
+// 그래서 실행 후 성공 결과만 기록한다.
+// 모든 요청을 기록하려면 NestMiddleware로 만들어야 한다. 단, 이것은 결과는 기록하지 못함
+
 @Injectable()
 export class SuccessLogger implements NestInterceptor {
     async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
@@ -14,12 +18,15 @@ export class SuccessLogger implements NestInterceptor {
 
         const response = context.switchToHttp().getResponse()
 
-        const message = `${request.method}, ${request.url}, body: ${body}, status: ${response.statusCode}  ${
-            Date.now() - now
-        }ms`
-
-        Logger.log('Success', request.method, request.url, response.statusCode, response.body)
-
-        return next.handle().pipe(tap(() => Logger.log(message)))
+        return next.handle().pipe(
+            tap({
+                complete: () =>
+                    Logger.log(
+                        `${request.method} ${request.url}, ${Date.now() - now}ms, ${
+                            response.statusCode
+                        }, ${body}`
+                    )
+            })
+        )
     }
 }

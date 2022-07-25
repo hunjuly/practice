@@ -1,5 +1,5 @@
 import { ApiProperty, PickType } from '@nestjs/swagger'
-import { User } from 'typeorm/entity/User'
+import { User } from 'src/typeorm/entity/User'
 
 const keys = ['id', 'email', 'isActive', 'role', 'createDate', 'updateDate', 'version'] as (keyof User)[]
 

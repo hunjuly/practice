@@ -11,15 +11,17 @@
         "build": "nest build",
         "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-        "dev": "nest start --debug --watch",
+        "dev:comment": "npm run build로 생성된 dist가 존재하면 제대로 동작하지 않기 때문에 무조건 삭제한다.",
+        "dev": "rimraf dist && nest start --debug --watch",
         "test": "npm run test:unit;npm run test:e2e",
         "test:unit": "jest --coverage",
         "test:e2e": "node --trace-warnings node_modules/.bin/jest --no-cache --config ./test/jest-e2e.json",
         "test:e2e:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --config ./test/jest-e2e.json",
-        "typeorm:generate": "typeorm-ts-node-commonjs   migration:generate  -d typeorm/data-source.ts   typeorm/migration/mig ",
-        "typeorm:migration:run": "            typeorm   migration:run       -d dist/typeorm/data-source.js",
-        "typeorm:migration:revert": "         typeorm   migration:revert    -d dist/typeorm/data-source.js",
-        "typeorm:show": "                     typeorm   migration:show      -d dist/typeorm/data-source.js"
+        "typeorm:generate": "typeorm-ts-node-commonjs   migration:generate  -d src/typeorm/data-source.ts   src/typeorm/migration/mig ",
+        "typeorm:comment": "dependencies에 typescript 패키지를 추가하는 것을 피하기 위해서 data-source.js를 사용함",
+        "typeorm:migration:run": "            typeorm   migration:run       -d dist/src/typeorm/data-source.js",
+        "typeorm:migration:revert": "         typeorm   migration:revert    -d dist/src/typeorm/data-source.js",
+        "typeorm:show": "                     typeorm   migration:show      -d dist/src/typeorm/data-source.js"
     },
     "dependencies": {
         "@nestjs/common": "^9.0.0",

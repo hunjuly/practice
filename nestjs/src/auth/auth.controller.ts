@@ -1,7 +1,7 @@
 import { Controller, Request, Post, Delete, UseGuards, Logger } from '@nestjs/common'
 import { ApiBody } from '@nestjs/swagger'
-import { Public } from 'src/global/auth'
-import { LocalAuthGuard } from 'src/global/auth'
+import { Public } from './public.metadata'
+import { LocalAuthGuard } from './local-auth.guard'
 import { LoginUserDto } from './dto/login-user.dto'
 
 @Controller('auth')

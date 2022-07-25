@@ -4,10 +4,9 @@ import { SessionModule } from './session.module'
 import { createConfigModule } from './config.module'
 import { createOrmModule } from './orm'
 import { LoggerModule } from './logger'
-import { AuthModule } from './auth'
 
 @Module({
-    imports: [createOrmModule(), createConfigModule(), SessionModule, LoggerModule, AuthModule],
+    imports: [createOrmModule(), createConfigModule(), SessionModule, LoggerModule],
     providers: [
         {
             provide: APP_PIPE,

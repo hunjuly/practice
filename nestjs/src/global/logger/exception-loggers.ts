@@ -18,7 +18,7 @@ export class ExceptionLogger implements ExceptionFilter {
                 timestamp: new Date().toISOString()
             }
 
-            Logger.warn('HttpException', request.method, request.url, status, exception.message)
+            Logger.warn(`${request.method} ${request.url}, ${status}, ${exception.message}`)
 
             response.status(status).json(body)
         } else if (exception instanceof Error) {
@@ -29,7 +29,7 @@ export class ExceptionLogger implements ExceptionFilter {
                 timestamp: new Date().toISOString()
             }
 
-            Logger.error('Error', exception.message, exception.stack)
+            Logger.error(`${request.method} ${request.url}, 500, ${exception.message}, ${exception.stack}`)
 
             response.status(500).json(body)
         } else {
@@ -40,7 +40,7 @@ export class ExceptionLogger implements ExceptionFilter {
                 timestamp: new Date().toISOString()
             }
 
-            Logger.error('ERROR', 'UNKNOWN ERROR!')
+            Logger.error(body)
 
             response.status(500).json(body)
         }

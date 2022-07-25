@@ -22,7 +22,7 @@ export function createLogger({ storagePath, storageDays, fileLevel, consoleLevel
         maxSize: '20m',
         maxFiles: storageDays + 'd',
         createSymlink: true,
-        format: format.combine(format.timestamp(), format.prettyPrint())
+        format: format.combine(format.timestamp({ format: 'HH:mm:ss.SSS' }), format.prettyPrint())
     }
 
     const all = new DailyRotateFile({
@@ -42,7 +42,11 @@ export function createLogger({ storagePath, storageDays, fileLevel, consoleLevel
     })
 
     const console = new winston.transports.Console({
-        format: format.combine(format.colorize({ all: true }), format.simple()),
+        format: format.combine(
+            format.colorize({ all: true }),
+            format.timestamp({ format: 'HH:mm:ss.SSS' }),
+            format.simple()
+        ),
         level: consoleLevel
     })
 
