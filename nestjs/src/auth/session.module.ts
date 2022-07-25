@@ -3,13 +3,14 @@ import { MiddlewareConsumer, Module, NestModule, Logger } from '@nestjs/common'
 import * as RedisStore from 'connect-redis'
 import * as passport from 'passport'
 import * as session from 'express-session'
-import { RedisService } from './redis.service'
+import { RedisService } from 'src/common/redis.service'
 import { ConfigService } from '@nestjs/config'
 
 function createOption(config: ConfigService, redisService: RedisService) {
     type SessionType = 'memory' | 'redis' | undefined
 
     const type = config.get<SessionType>('SESSION_TYPE')
+    const timeout = config.get<number>('SESSION_TIMEOUT')
 
     if (type === 'redis') {
         if (redisService.isAvailable()) {

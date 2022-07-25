@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { TypeOrmModule, TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm'
 import { ConfigService } from '@nestjs/config'
 import { createLogger } from 'src/common'
-import { createOptions } from 'src/typeorm/data-source'
+import { createOptions } from './data-source'
 import { OrmLogger } from './orm-logger'
 
 @Injectable()
@@ -17,10 +17,10 @@ class TypeOrmConfigService implements TypeOrmOptionsFactory {
 
     constructor(private config: ConfigService) {
         const option = {
-            storagePath: config.get<string>('LOG_STORAGE_PATH'),
-            storageDays: config.get<number>('LOG_STORAGE_DAYS'),
-            fileLevel: config.get<string>('LOG_FILE_LEVEL'),
-            consoleLevel: config.get<string>('LOG_CONSOLE_LEVEL'),
+            storagePath: config.get<string>('TYPEORM_LOG_STORAGE_PATH'),
+            storageDays: config.get<number>('TYPEORM_LOG_STORAGE_DAYS'),
+            fileLevel: config.get<string>('TYPEORM_LOG_FILE_LEVEL'),
+            consoleLevel: config.get<string>('TYPEORM_LOG_CONSOLE_LEVEL'),
             context: 'orm'
         }
 

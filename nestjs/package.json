@@ -17,11 +17,11 @@
         "test:unit": "jest --coverage",
         "test:e2e": "node --trace-warnings node_modules/.bin/jest --no-cache --config ./test/jest-e2e.json",
         "test:e2e:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --config ./test/jest-e2e.json",
-        "typeorm:generate": "typeorm-ts-node-commonjs   migration:generate  -d src/typeorm/data-source.ts   src/typeorm/migration/mig ",
-        "typeorm:comment": "dependencies에 typescript 패키지를 추가하는 것을 피하기 위해서 data-source.js를 사용함",
-        "typeorm:migration:run": "            typeorm   migration:run       -d dist/src/typeorm/data-source.js",
-        "typeorm:migration:revert": "         typeorm   migration:revert    -d dist/src/typeorm/data-source.js",
-        "typeorm:show": "                     typeorm   migration:show      -d dist/src/typeorm/data-source.js"
+        "typeorm:comment": "          -- 실행하기 전에 num run build 해야 한다. --",
+        "typeorm:generate": "         typeorm migration:generate  -d dist/@typeorm  @typeorm/migrations/mig",
+        "typeorm:migration:run": "    typeorm migration:run       -d dist/@typeorm",
+        "typeorm:migration:revert": " typeorm migration:revert    -d dist/@typeorm",
+        "typeorm:show": "             typeorm migration:show      -d dist/@typeorm"
     },
     "dependencies": {
         "@nestjs/common": "^9.0.0",

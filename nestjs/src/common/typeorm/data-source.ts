@@ -1,18 +1,13 @@
 import { exit } from 'process'
 import 'dotenv/config'
 import 'reflect-metadata'
-import { DataSource, DataSourceOptions, Logger } from 'typeorm'
+import { DataSourceOptions, Logger } from 'typeorm'
 
-// entities
-import { User } from './entity/User'
-import { Authentication } from './entity/Authentication'
-import { File } from './entity/File'
-
-// migrations
-import { mig1658604911087 } from './migration/1658604911087-mig'
+import { User } from 'src/users/entities/User'
+import { Authentication } from 'src/auth/entities/Authentication'
+import { File } from 'src/files/entities/File'
 
 const entities = [User, Authentication, File]
-const migrations = [mig1658604911087]
 const subscribers = []
 
 export function createOptions(logger?: Logger): DataSourceOptions {
@@ -21,7 +16,7 @@ export function createOptions(logger?: Logger): DataSourceOptions {
 
     checkProduction(synchronize, type)
 
-    const common = { type, synchronize, logger, entities, migrations, subscribers }
+    const common = { type, synchronize, logger, entities, subscribers }
 
     if (common.type === 'sqlite') {
         console.log('using MEMORY DB.')
@@ -41,8 +36,6 @@ export function createOptions(logger?: Logger): DataSourceOptions {
 
     throw new Error(`unknown TYPEORM_TYPE(${common.type})`)
 }
-
-export const AppDataSource = new DataSource(createOptions())
 
 type DatabaseType = 'mysql' | 'sqlite' | undefined
 

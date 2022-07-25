@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { Authentication } from 'src/typeorm/entity/Authentication'
+import { Authentication } from './entities/Authentication'
 
 @Injectable()
 export class AuthRepository {
