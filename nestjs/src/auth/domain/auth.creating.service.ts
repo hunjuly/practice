@@ -22,7 +22,8 @@ export class AuthCreatingService {
         candidate.password = hashed
 
         const newUser = await this.repo.create(candidate)
+        const { password, ...value } = newUser
 
-        return newUser
+        return value
     }
 }
