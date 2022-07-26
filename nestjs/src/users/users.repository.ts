@@ -10,19 +10,19 @@ import { IUsersRepository, UserQuery } from './domain/interfaces'
 export class UsersRepository implements IUsersRepository {
     constructor(
         @InjectRepository(User)
-        private repository: Repository<User>
+        private typeorm: Repository<User>
     ) {}
 
     async get(userId: string) {
-        return this.repository.findOneBy({ id: userId })
+        return this.typeorm.findOneBy({ id: userId })
     }
 
     async findOne(where: UserQuery) {
-        return this.repository.findOne({ where })
+        return this.typeorm.findOne({ where })
     }
 
     async findAll(page: Pagination) {
-        const [items, total] = await this.repository.findAndCount({
+        const [items, total] = await this.typeorm.findAndCount({
             skip: page.offset,
             take: page.limit,
             order: {
@@ -34,19 +34,19 @@ export class UsersRepository implements IUsersRepository {
     }
 
     async create(candidate: User) {
-        const newUser = await this.repository.save(candidate)
+        const newUser = await this.typeorm.save(candidate)
 
         return newUser
     }
 
     async remove(userId: string) {
-        const res = await this.repository.delete(userId)
+        const res = await this.typeorm.delete(userId)
 
         return res.affected === 1
     }
 
     async update(userId: string, dto: UpdateUserDto) {
-        const res = await this.repository.update(userId, dto)
+        const res = await this.typeorm.update(userId, dto)
 
         return res.affected === 1
     }

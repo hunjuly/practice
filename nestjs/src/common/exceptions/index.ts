@@ -1,4 +1,5 @@
 import { NotFoundException } from '@nestjs/common'
+import { isObject } from 'class-validator'
 import { InternalError } from './internal-error'
 
 export class Expect {
@@ -46,7 +47,11 @@ type FixtureDefine = { object: any; method: string; args: any[]; return: any }
 
 export function fixture(opt: FixtureDefine) {
     jest.spyOn(opt.object, opt.method).mockImplementation(async (...args) => {
-        expect(opt.args).toEqual(args)
+        // if (Array.isArray(args)) {
+        //     expect(args).toMatchArray(opt.args)
+        // } else {
+        expect(args).toEqual(opt.args)
+        // }
 
         return opt.return
     })

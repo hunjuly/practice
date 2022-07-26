@@ -95,7 +95,7 @@ describe('UsersService', () => {
         expect(recv).toMatchObject(user)
     })
 
-    it('remove the user', async () => {
+    it('remove a user', async () => {
         fixture({
             object: repository,
             method: 'get',
@@ -114,4 +114,6 @@ describe('UsersService', () => {
 
         expect(recv).toMatchObject({ id: userId })
     })
+
+    it('update a user', async () => {})
 })

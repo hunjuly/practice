@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
 import { User } from './entities/user.entity'
-import { DeleteResult, Repository } from 'typeorm'
+import { Repository } from 'typeorm'
 import { UsersRepository } from './users.repository'
 import { fixture } from 'src/common'
 
@@ -21,7 +21,8 @@ describe('UsersRepository', () => {
                         findAndCount: jest.fn(),
                         count: jest.fn(),
                         delete: jest.fn(),
-                        save: jest.fn()
+                        save: jest.fn(),
+                        update: jest.fn()
                     }
                 }
             ]
@@ -35,61 +36,92 @@ describe('UsersRepository', () => {
         expect(repository).toBeDefined()
     })
 
+    const userId = 'uuid#1'
+    const email = 'user@mail.com'
+
+    const user = { id: userId, email } as User
+
+    const users = [
+        { id: 'uuid#1', email: 'user1@test.com' },
+        { id: 'uuid#2', email: 'user2@test.com' }
+    ] as User[]
+
     it('create', async () => {
-        const candidateUser = { email: 'newuser@test.com' } as User
-        const createdUser = { ...candidateUser, id: 'uuid#1' } as User
+        const userCandidate = { id: undefined, email } as User
 
         fixture({
             object: typeorm,
             method: 'save',
-            args: [candidateUser],
-            return: createdUser
+            args: [userCandidate],
+            return: user
         })
 
         fixture({
             object: typeorm,
             method: 'findOne',
             args: [],
-            return: undefined
+            return: null
         })
 
-        const recv = await repository.create(candidateUser)
+        const recv = await repository.create(userCandidate)
 
-        expect(recv).toEqual(createdUser)
+        expect(recv).toEqual(user)
     })
 
     it('findAll', async () => {
-        const users = [{ id: 'uuid#1' }, { id: 'uuid#2' }] as User[]
+        const page = { offset: 0, limit: 10 }
 
-        jest.spyOn(typeorm, 'findAndCount').mockResolvedValue([users, 2])
+        fixture({
+            object: typeorm,
+            method: 'findAndCount',
+            args: [{ skip: 0, take: 10, order: { id: 'DESC' } }],
+            return: [users, 4]
+        })
 
-        const recv = await repository.findAll({ offset: 0, limit: 10 })
+        const recv = await repository.findAll(page)
 
-        expect(recv.total).toEqual(2)
+        expect(recv.total).toEqual(4)
         expect(recv.items).toEqual(users)
-        expect(typeorm.findAndCount).toHaveBeenCalled()
     })
 
     it('get', async () => {
-        const user = { id: 'uuid#1' } as User
+        fixture({
+            object: typeorm,
+            method: 'findOneBy',
+            args: [{ id: userId }],
+            return: user
+        })
 
-        jest.spyOn(typeorm, 'findOneBy').mockResolvedValue(user)
-
-        const recv = await repository.get('userId#1')
+        const recv = await repository.get(userId)
 
         expect(recv).toEqual(user)
-        expect(typeorm.findOneBy).toHaveBeenCalled()
     })
 
     it('remove', async () => {
-        const user = { id: 'uuid#1' } as User
-        const deleteResult = { affected: 1 } as DeleteResult
+        fixture({
+            object: typeorm,
+            method: 'delete',
+            args: [userId],
+            return: { affected: 1 }
+        })
 
-        jest.spyOn(typeorm, 'findOne').mockResolvedValue(user)
-        jest.spyOn(typeorm, 'delete').mockResolvedValue(deleteResult)
+        const recv = await repository.remove(userId)
 
-        await repository.remove(user.id)
+        expect(recv).toBeTruthy()
+    })
 
-        expect(typeorm.delete).toHaveBeenCalledWith(user.id)
+    it('update', async () => {
+        const updateDto = { password: 'newpass' }
+
+        fixture({
+            object: typeorm,
+            method: 'update',
+            args: [userId, updateDto],
+            return: { affected: 1 }
+        })
+
+        const recv = await repository.update(userId, updateDto)
+
+        expect(recv).toBeTruthy()
     })
 })
