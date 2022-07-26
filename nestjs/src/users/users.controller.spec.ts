@@ -1,15 +1,28 @@
 import { Test } from '@nestjs/testing'
 import { fixture } from 'src/common'
-import { CreateUserDto } from './dto/create-user.dto'
 import { User } from './entities/user.entity'
 import { UsersController } from './users.controller'
 import { UsersService } from './users.service'
 
 jest.mock('./users.service')
 
+// TODO description을 REST 형식으로 하는 것은 오류.
+// 이것은 e2e에서 해야 한다.
+// controller도 함수명으로 한다.
 describe('UsersController', () => {
     let controller: UsersController
     let service: UsersService
+
+    const userId = 'uuid#1'
+    const email = 'user@mail.com'
+    const password = 'pass#001'
+
+    const user = { id: userId, email } as User
+
+    const users = [
+        { id: 'uuid#1', email: 'user1@test.com' },
+        { id: 'uuid#2', email: 'user2@test.com' }
+    ] as User[]
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
@@ -26,94 +39,76 @@ describe('UsersController', () => {
     })
 
     it('POST /users', async () => {
-        const id = 'uuid#1'
-        const email = 'user@mail.com'
-        const password = 'pass#001'
-
-        const arg = { email, password }
-        const retval = { id, email } as User
+        const createDto = { email, password }
 
         fixture({
             object: service,
             method: 'create',
-            args: [arg],
-            return: retval
+            args: [createDto],
+            return: user
         })
 
-        const recv = await controller.create(arg)
+        const recv = await controller.create(createDto)
 
-        expect(recv).toMatchObject(retval)
+        expect(recv).toMatchObject(user)
     })
 
     it('GET /users', async () => {
-        const items = [
-            { id: 'uuid#1', email: 'user1@test.com' },
-            { id: 'uuid#2', email: 'user2@test.com' }
-        ] as User[]
-
-        const arg = { offset: 0, limit: 10 }
+        const page = { offset: 0, limit: 10 }
 
         fixture({
             object: service,
             method: 'findAll',
-            args: [arg],
-            return: { ...arg, total: 2, items }
+            args: [page],
+            return: { ...page, total: 2, items: users }
         })
 
-        const recv = await controller.findAll(arg)
+        const recv = await controller.findAll(page)
 
-        expect(recv.items).toMatchArray(items)
+        expect(recv.items).toMatchArray(users)
     })
 
     it('GET /users/:id', async () => {
-        const id = 'uuid#1'
-        const email = 'user@mail.com'
-
-        const retval = { id, email } as User
-
         fixture({
             object: service,
             method: 'get',
-            args: [id],
-            return: retval
+            args: [userId],
+            return: user
         })
 
-        const recv = await controller.findOne(id)
+        const recv = await controller.findOne(userId)
 
-        expect(recv).toMatchObject(retval)
+        expect(recv).toMatchObject(user)
     })
 
     it('DELETE /users/:id', async () => {
-        const id = 'uuid#1'
-
-        const retval = { id, status: 'removed' }
+        const result = { id: userId, status: 'removed' }
 
         fixture({
             object: service,
             method: 'remove',
-            args: [id],
-            return: retval
+            args: [userId],
+            return: result
         })
 
-        const recv = await controller.remove(id)
+        const recv = await controller.remove(userId)
 
-        expect(recv).toMatchObject(retval)
+        expect(recv).toMatchObject(result)
     })
 
     it('PATCH /users/:id', async () => {
         const id = 'uuid#1'
-        const dto = { password: 'newpass' } as CreateUserDto
-        const retval = { id, email: 'user@mail.com' } as User
+        const updateDto = { password: 'newpass' }
 
         fixture({
             object: service,
             method: 'update',
-            args: [id, dto],
-            return: retval
+            args: [id, updateDto],
+            return: user
         })
 
-        const recv = await controller.update(id, dto)
+        const recv = await controller.update(id, updateDto)
 
-        expect(recv).toMatchObject(retval)
+        expect(recv).toMatchObject(user)
     })
 })

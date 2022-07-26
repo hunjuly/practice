@@ -9,6 +9,9 @@ import { fixture } from 'src/common'
 jest.mock('src/auth/auth.service')
 jest.mock('./users.repository')
 
+// TODO service는 다양한 조건을 검증하기 적당하다.
+// 단순 함수명이 아니라 서비스 내용을 언급한다.
+// 단순 함수명의 케이스도 있어야 한다.
 describe('UsersService', () => {
     let service: UsersService
     let repository: UsersRepository

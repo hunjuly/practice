@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm'
 import { User } from './entities/user.entity'
 import { DeleteResult, Repository } from 'typeorm'
 import { UsersRepository } from './users.repository'
+import { fixture } from 'src/common'
 
 describe('UsersRepository', () => {
     let repository: UsersRepository
@@ -34,43 +35,53 @@ describe('UsersRepository', () => {
         expect(repository).toBeDefined()
     })
 
-    it('create a user', async () => {
-        const candidate = { email: 'newuser@test.com' } as User
-        const user = { id: 'uuid#1' } as User
+    it('create', async () => {
+        const candidateUser = { email: 'newuser@test.com' } as User
+        const createdUser = { ...candidateUser, id: 'uuid#1' } as User
 
-        jest.spyOn(typeorm, 'findOne').mockResolvedValue(undefined)
-        jest.spyOn(typeorm, 'save').mockResolvedValue(user)
+        fixture({
+            object: typeorm,
+            method: 'save',
+            args: [candidateUser],
+            return: createdUser
+        })
 
-        const actual = await repository.create(candidate)
+        fixture({
+            object: typeorm,
+            method: 'findOne',
+            args: [],
+            return: undefined
+        })
 
-        expect(actual).toEqual(user)
-        expect(typeorm.save).toHaveBeenCalledWith({ email: 'newuser@test.com' })
+        const recv = await repository.create(candidateUser)
+
+        expect(recv).toEqual(createdUser)
     })
 
-    it('find all users ', async () => {
+    it('findAll', async () => {
         const users = [{ id: 'uuid#1' }, { id: 'uuid#2' }] as User[]
 
         jest.spyOn(typeorm, 'findAndCount').mockResolvedValue([users, 2])
 
-        const actual = await repository.findAll({ offset: 0, limit: 10 })
+        const recv = await repository.findAll({ offset: 0, limit: 10 })
 
-        expect(actual.total).toEqual(2)
-        expect(actual.items).toEqual(users)
+        expect(recv.total).toEqual(2)
+        expect(recv.items).toEqual(users)
         expect(typeorm.findAndCount).toHaveBeenCalled()
     })
 
-    it('find a user', async () => {
+    it('get', async () => {
         const user = { id: 'uuid#1' } as User
 
         jest.spyOn(typeorm, 'findOneBy').mockResolvedValue(user)
 
-        const actual = await repository.get('userId#1')
+        const recv = await repository.get('userId#1')
 
-        expect(actual).toEqual(user)
+        expect(recv).toEqual(user)
         expect(typeorm.findOneBy).toHaveBeenCalled()
     })
 
-    it('remove the user', async () => {
+    it('remove', async () => {
         const user = { id: 'uuid#1' } as User
         const deleteResult = { affected: 1 } as DeleteResult
 

@@ -44,11 +44,13 @@ describe('AuthService', () => {
 
     it('create a user', async () => {
         const user = new User()
-        user.id = 'userId#1'
+        const userId = 'userId#1'
+        const email = 'user@mail.com'
+        const password = 'testpass'
 
-        await service.add(user.id, 'testpass')
+        await service.create({ userId, email, password })
 
-        expect(repository.add).toHaveBeenCalledWith({
+        expect(repository.create).toHaveBeenCalledWith({
             id: user.id + '_local',
             userId: user.id,
             password: expect.not.stringMatching('testpass')
