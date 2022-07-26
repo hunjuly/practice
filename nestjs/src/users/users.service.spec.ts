@@ -4,6 +4,7 @@ import { UsersService } from './users.service'
 import { AuthService } from 'src/auth/auth.service'
 import { UsersRepository } from './users.repository'
 import { Authentication } from 'src/auth/entities/authentication.entity'
+import { fixture } from 'src/common'
 
 jest.mock('src/auth/auth.service')
 jest.mock('./users.repository')
@@ -28,79 +29,90 @@ describe('UsersService', () => {
     })
 
     it('create a user', async () => {
-        const userId = 'uuid#1'
+        const id = 'uuid#1'
+        const userId = id
         const email = 'user@mail.com'
         const password = 'pass#001'
 
-        const fixtures = {
-            repo: { id: userId, email } as User,
-            auth: { userId } as Authentication
-        }
+        fixture({
+            object: repository,
+            method: 'create',
+            args: [{ email }],
+            return: { id, email } as User
+        })
 
-        jest.spyOn(repository, 'create').mockResolvedValue(fixtures.repo)
-        jest.spyOn(authService, 'create').mockResolvedValue(fixtures.auth)
+        fixture({
+            object: authService,
+            method: 'create',
+            args: [{ userId, email, password }],
+            return: { userId, email } as Authentication
+        })
 
-        const sut = { email, password }
+        const recv = await service.create({ email, password })
 
-        const actual = await service.create(sut)
-
-        expect(actual).toMatchObject(fixtures.repo)
-
-        expect(repository.create).toHaveBeenCalledWith({ email })
-        expect(authService.create).toHaveBeenCalledWith({ userId, email, password })
+        expect(recv).toMatchObject({ id, email })
     })
 
     it('find all users ', async () => {
-        const fixture = {
-            items: [{ id: 'uuid#1' }, { id: 'uuid#2' }] as User[],
-            total: 2,
-            offset: 0,
-            limit: 10
-        }
+        const items = [
+            { id: 'uuid#1', email: 'user1@test.com' },
+            { id: 'uuid#2', email: 'user2@test.com' }
+        ] as User[]
 
-        jest.spyOn(repository, 'findAll').mockResolvedValue(fixture)
+        const arg = { offset: 0, limit: 10 }
 
-        const sut = { offset: 0, limit: 0 }
+        fixture({
+            object: repository,
+            method: 'findAll',
+            args: [arg],
+            return: { ...arg, total: 2, items }
+        })
 
-        const actual = await service.findAll(sut)
+        const recv = await service.findAll(arg)
 
-        expect(actual.items).toMatchArray(fixture.items)
-
-        expect(repository.findAll).toHaveBeenCalledWith(sut)
+        expect(recv.items).toMatchArray(items)
     })
 
     it('find a user', async () => {
-        const fixture = { id: 'uuid#1' } as User
+        const id = 'uuid#1'
+        const email = 'user@mail.com'
 
-        jest.spyOn(repository, 'get').mockResolvedValue(fixture)
+        const retval = { id, email } as User
 
-        const sut = 'userId#1'
+        fixture({
+            object: repository,
+            method: 'get',
+            args: [id],
+            return: retval
+        })
 
-        const actual = await service.get(sut)
+        const recv = await service.get(id)
 
-        expect(actual).toMatchObject(fixture)
-
-        expect(repository.get).toHaveBeenCalledWith(sut)
+        expect(recv).toMatchObject(retval)
     })
 
     it('remove the user', async () => {
-        const userId = 'uuid#1'
+        const id = 'uuid#1'
 
-        const fixtures = {
-            get: { id: userId } as User,
-            remove: true
-        }
+        const arg = id
+        const retval = { id } as User
 
-        jest.spyOn(repository, 'get').mockResolvedValue(fixtures.get)
-        jest.spyOn(repository, 'remove').mockResolvedValue(fixtures.remove)
+        fixture({
+            object: repository,
+            method: 'get',
+            args: [arg],
+            return: retval
+        })
 
-        const sut = userId
+        fixture({
+            object: repository,
+            method: 'remove',
+            args: [arg],
+            return: true
+        })
 
-        const actual = await service.remove(sut)
+        const recv = await service.remove(arg)
 
-        expect(actual).toMatchObject({ ...fixtures.get, status: 'removed' })
-
-        expect(repository.remove).toHaveBeenCalledWith(sut)
-        expect(authService.remove).toHaveBeenCalledWith(sut)
+        expect(recv).toMatchObject({ ...retval, status: 'removed' })
     })
 })

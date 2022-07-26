@@ -41,3 +41,13 @@ expect.extend({
         }
     }
 })
+
+type FixtureDefine = { object: any; method: string; args: any[]; return: any }
+
+export function fixture(opt: FixtureDefine) {
+    jest.spyOn(opt.object, opt.method).mockImplementation(async (...args) => {
+        expect(opt.args).toEqual(args)
+
+        return opt.return
+    })
+}

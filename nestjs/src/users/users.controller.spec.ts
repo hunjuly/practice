@@ -1,4 +1,6 @@
 import { Test } from '@nestjs/testing'
+import { fixture } from 'src/common'
+import { CreateUserDto } from './dto/create-user.dto'
 import { User } from './entities/user.entity'
 import { UsersController } from './users.controller'
 import { UsersService } from './users.service'
@@ -24,80 +26,94 @@ describe('UsersController', () => {
     })
 
     it('POST /users', async () => {
-        const fixture = { id: 'uuid#1', email: 'return@test.com' } as User
+        const id = 'uuid#1'
+        const email = 'user@mail.com'
+        const password = 'pass#001'
 
-        jest.spyOn(service, 'create').mockResolvedValue(fixture)
+        const arg = { email, password }
+        const retval = { id, email } as User
 
-        const sut = { email: 'request@test.com', password: 'pass#001' }
+        fixture({
+            object: service,
+            method: 'create',
+            args: [arg],
+            return: retval
+        })
 
-        const actual = await controller.create(sut)
+        const recv = await controller.create(arg)
 
-        expect(actual).toMatchObject(fixture)
-
-        expect(service.create).toHaveBeenCalledWith(sut)
+        expect(recv).toMatchObject(retval)
     })
 
     it('GET /users', async () => {
-        const fixture = {
-            offset: 0,
-            limit: 10,
-            items: [
-                { id: 'uuid#1', email: 'user1@test.com' },
-                { id: 'uuid#2', email: 'user2@test.com' }
-            ] as User[],
-            total: 2
-        }
+        const items = [
+            { id: 'uuid#1', email: 'user1@test.com' },
+            { id: 'uuid#2', email: 'user2@test.com' }
+        ] as User[]
 
-        jest.spyOn(service, 'findAll').mockResolvedValue(fixture)
+        const arg = { offset: 0, limit: 10 }
 
-        const sut = { offset: 0, limit: 0 }
+        fixture({
+            object: service,
+            method: 'findAll',
+            args: [arg],
+            return: { ...arg, total: 2, items }
+        })
 
-        const actual = await controller.findAll(sut)
+        const recv = await controller.findAll(arg)
 
-        expect(actual.items).toMatchArray(fixture.items)
-
-        expect(service.findAll).toHaveBeenCalledWith(sut)
+        expect(recv.items).toMatchArray(items)
     })
 
     it('GET /users/:id', async () => {
-        const fixture = { id: 'uuid#1', email: 'user1@test.com' } as User
+        const id = 'uuid#1'
+        const email = 'user@mail.com'
 
-        jest.spyOn(service, 'get').mockResolvedValue(fixture)
+        const retval = { id, email } as User
 
-        const sut = 'userId#1'
+        fixture({
+            object: service,
+            method: 'get',
+            args: [id],
+            return: retval
+        })
 
-        const actual = await controller.findOne(sut)
+        const recv = await controller.findOne(id)
 
-        expect(actual).toMatchObject(fixture)
-
-        expect(service.get).toHaveBeenCalledWith(sut)
+        expect(recv).toMatchObject(retval)
     })
 
     it('DELETE /users/:id', async () => {
-        const fixture = { id: 'uuid#1', status: 'removed' }
+        const id = 'uuid#1'
 
-        jest.spyOn(service, 'remove').mockResolvedValue(fixture)
+        const retval = { id, status: 'removed' }
 
-        const sut = 'userId#2'
+        fixture({
+            object: service,
+            method: 'remove',
+            args: [id],
+            return: retval
+        })
 
-        const actual = await controller.remove(sut)
+        const recv = await controller.remove(id)
 
-        expect(actual).toMatchObject(fixture)
-
-        expect(service.remove).toHaveBeenCalledWith(sut)
+        expect(recv).toMatchObject(retval)
     })
 
     it('PATCH /users/:id', async () => {
-        const fixture = { id: 'uuid#1', email: 'user1@test.com' } as User
+        const id = 'uuid#1'
+        const dto = { password: 'newpass' } as CreateUserDto
+        const retval = { id, email: 'user@mail.com' } as User
 
-        jest.spyOn(service, 'update').mockResolvedValue(fixture)
+        fixture({
+            object: service,
+            method: 'update',
+            args: [id, dto],
+            return: retval
+        })
 
-        const sut: any[] = ['userId#2', { password: 'newpass' }]
+        const recv = await controller.update(id, dto)
 
-        const actual = await controller.update(sut[0], sut[1])
-
-        expect(actual).toMatchObject(fixture)
-
-        expect(service.update).toHaveBeenCalledWith(...sut)
+        expect(recv).toMatchObject(retval)
     })
 })
