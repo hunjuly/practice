@@ -23,61 +23,81 @@ describe('UsersController', () => {
         expect(controller).toBeDefined()
     })
 
-    it('create a user', async () => {
-        const oneUser = { id: 'uuid#1', email: 'user1@test.com' } as User
+    it('POST /users', async () => {
+        const fixture = { id: 'uuid#1', email: 'return@test.com' } as User
 
-        jest.spyOn(service, 'create').mockResolvedValue(oneUser)
+        jest.spyOn(service, 'create').mockResolvedValue(fixture)
 
-        const dto = {
-            email: 'user1@test.com',
-            password: 'pass#001'
-        }
+        const sut = { email: 'request@test.com', password: 'pass#001' }
 
-        const actual = await controller.create(dto)
-        const expected = expect.objectContaining(oneUser)
+        const actual = await controller.create(sut)
 
-        expect(actual).toEqual(expected)
-        expect(service.create).toHaveBeenCalledWith(dto)
+        expect(actual).toMatchObject(fixture)
+
+        expect(service.create).toHaveBeenCalledWith(sut)
     })
 
-    it('find all users ', async () => {
-        const userArray = [
-            { id: 'uuid#1', email: 'user1@test.com' },
-            { id: 'uuid#2', email: 'user2@test.com' }
-        ] as User[]
-
-        jest.spyOn(service, 'findAll').mockResolvedValue({
+    it('GET /users', async () => {
+        const fixture = {
             offset: 0,
             limit: 10,
-            items: userArray,
+            items: [
+                { id: 'uuid#1', email: 'user1@test.com' },
+                { id: 'uuid#2', email: 'user2@test.com' }
+            ] as User[],
             total: 2
-        })
+        }
 
-        const actual = await controller.findAll({ offset: 0, limit: 10 })
-        const expected1 = expect.objectContaining(userArray[0])
-        const expected2 = expect.objectContaining(userArray[1])
+        jest.spyOn(service, 'findAll').mockResolvedValue(fixture)
 
-        expect(actual.items[0]).toEqual(expected1)
-        expect(actual.items[1]).toEqual(expected2)
-        expect(service.findAll).toHaveBeenCalled()
+        const sut = { offset: 0, limit: 0 }
+
+        const actual = await controller.findAll(sut)
+
+        expect(actual.items).toMatchArray(fixture.items)
+
+        expect(service.findAll).toHaveBeenCalledWith(sut)
     })
 
-    it('find a user', async () => {
-        const oneUser = { id: 'uuid#1', email: 'user1@test.com' } as User
+    it('GET /users/:id', async () => {
+        const fixture = { id: 'uuid#1', email: 'user1@test.com' } as User
 
-        jest.spyOn(service, 'get').mockResolvedValue(oneUser)
+        jest.spyOn(service, 'get').mockResolvedValue(fixture)
 
-        const actual = await controller.findOne('userId#1')
-        const expected = expect.objectContaining(oneUser)
+        const sut = 'userId#1'
 
-        expect(actual).toEqual(expected)
-        expect(service.get).toHaveBeenCalledWith('userId#1')
+        const actual = await controller.findOne(sut)
+
+        expect(actual).toMatchObject(fixture)
+
+        expect(service.get).toHaveBeenCalledWith(sut)
     })
 
-    it('remove the user', async () => {
-        const actual = await controller.remove('userId#2')
+    it('DELETE /users/:id', async () => {
+        const fixture = { id: 'uuid#1', status: 'removed' }
 
-        expect(actual).toBeUndefined()
-        expect(service.remove).toHaveBeenCalledWith('userId#2')
+        jest.spyOn(service, 'remove').mockResolvedValue(fixture)
+
+        const sut = 'userId#2'
+
+        const actual = await controller.remove(sut)
+
+        expect(actual).toMatchObject(fixture)
+
+        expect(service.remove).toHaveBeenCalledWith(sut)
+    })
+
+    it('PATCH /users/:id', async () => {
+        const fixture = { id: 'uuid#1', email: 'user1@test.com' } as User
+
+        jest.spyOn(service, 'update').mockResolvedValue(fixture)
+
+        const sut: any[] = ['userId#2', { password: 'newpass' }]
+
+        const actual = await controller.update(sut[0], sut[1])
+
+        expect(actual).toMatchObject(fixture)
+
+        expect(service.update).toHaveBeenCalledWith(...sut)
     })
 })

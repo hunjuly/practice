@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { AuthService } from 'src/auth/auth.service'
@@ -6,6 +6,7 @@ import { Pagination } from 'src/common/pagination'
 import { UsersRepository } from './users.repository'
 import { UserCreatingService } from './domain/user.creating.service'
 import { UserQuery } from './domain/interfaces'
+import { Assert, Expect } from 'src/common'
 
 @Injectable()
 export class UsersService {
@@ -23,16 +24,16 @@ export class UsersService {
         }
 
         const auth = await this.authService.create(authDto)
-        // auth가 맞는지 여기서 확인해야 한다. 아니면 user 생성 실패로 해야 한다.
+
+        Assert.truthy(auth.userId === user.id, `${auth.userId}, ${user.id} not equals.`)
+
         return user
     }
 
     async get(userId: string) {
         const user = await this.repository.get(userId)
 
-        if (!user) {
-            throw new NotFoundException()
-        }
+        Expect.found(user)
 
         return user
     }
@@ -40,9 +41,7 @@ export class UsersService {
     async findOne(query: UserQuery) {
         const user = await this.repository.findOne(query)
 
-        if (!user) {
-            throw new NotFoundException()
-        }
+        Expect.found(user)
 
         return user
     }
@@ -52,20 +51,29 @@ export class UsersService {
     }
 
     async remove(userId: string) {
+        // TODO 이것도 domain service로 분리
+        const user = await this.repository.get(userId)
+
+        Expect.found(user)
+
         const success = await this.repository.remove(userId)
 
-        if (!success) {
-            throw new NotFoundException()
-        }
+        Assert.truthy(success, `${userId} remove failed.`)
 
         await this.authService.remove(userId)
+
+        return { id: userId, status: 'removed' }
     }
 
     async update(userId: string, dto: UpdateUserDto) {
         const success = await this.repository.update(userId, dto)
 
-        if (!success) {
-            throw new NotFoundException()
-        }
+        Expect.found(success)
+
+        const user = await this.repository.get(userId)
+
+        Assert.truthy(user, `${userId} get failed.`)
+
+        return user
     }
 }

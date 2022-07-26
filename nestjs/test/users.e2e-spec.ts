@@ -16,6 +16,7 @@ describe('UsersController (e2e)', () => {
         return post(app, '/users', { email, password })
     }
 
+    // TODO e2e는 REST API가 아니라 description이 되어야 한다.
     it('/users (POST)', async () => {
         const res = await createUser('test@mail.com')
 

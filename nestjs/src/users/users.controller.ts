@@ -44,11 +44,11 @@ export class UsersController {
 
     @Patch(':id')
     async update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateUserDto) {
-        await this.service.update(id, dto)
+        return this.service.update(id, dto)
     }
 
     @Delete(':id')
     async remove(@Param('id', ParseUUIDPipe) id: string) {
-        await this.service.remove(id)
+        return this.service.remove(id)
     }
 }
