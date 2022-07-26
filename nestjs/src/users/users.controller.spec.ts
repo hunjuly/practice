@@ -6,23 +6,9 @@ import { UsersService } from './users.service'
 
 jest.mock('./users.service')
 
-// TODO description을 REST 형식으로 하는 것은 오류.
-// 이것은 e2e에서 해야 한다.
-// controller도 함수명으로 한다.
 describe('UsersController', () => {
     let controller: UsersController
     let service: UsersService
-
-    const userId = 'uuid#1'
-    const email = 'user@mail.com'
-    const password = 'pass#001'
-
-    const user = { id: userId, email } as User
-
-    const users = [
-        { id: 'uuid#1', email: 'user1@test.com' },
-        { id: 'uuid#2', email: 'user2@test.com' }
-    ] as User[]
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
@@ -38,7 +24,18 @@ describe('UsersController', () => {
         expect(controller).toBeDefined()
     })
 
-    it('POST /users', async () => {
+    const userId = 'uuid#1'
+    const email = 'user@mail.com'
+    const password = 'pass#001'
+
+    const user = { id: userId, email } as User
+
+    const users = [
+        { id: 'uuid#1', email: 'user1@test.com' },
+        { id: 'uuid#2', email: 'user2@test.com' }
+    ] as User[]
+
+    it('create', async () => {
         const createDto = { email, password }
 
         fixture({
@@ -51,24 +48,27 @@ describe('UsersController', () => {
         const recv = await controller.create(createDto)
 
         expect(recv).toMatchObject(user)
+        expect(recv).toHaveProperty('url')
     })
 
-    it('GET /users', async () => {
+    it('findAll', async () => {
         const page = { offset: 0, limit: 10 }
+        const pagedUsers = { ...page, total: 2, items: users }
 
         fixture({
             object: service,
             method: 'findAll',
             args: [page],
-            return: { ...page, total: 2, items: users }
+            return: pagedUsers
         })
 
         const recv = await controller.findAll(page)
 
-        expect(recv.items).toMatchArray(users)
+        expect(recv.items).toMatchArray(pagedUsers.items)
+        expect(recv.items[0]).toHaveProperty('url')
     })
 
-    it('GET /users/:id', async () => {
+    it('findOne', async () => {
         fixture({
             object: service,
             method: 'get',
@@ -79,36 +79,37 @@ describe('UsersController', () => {
         const recv = await controller.findOne(userId)
 
         expect(recv).toMatchObject(user)
+        expect(recv).toHaveProperty('url')
     })
 
-    it('DELETE /users/:id', async () => {
-        const result = { id: userId, status: 'removed' }
+    it('remove', async () => {
+        const removeResult = { id: userId }
 
         fixture({
             object: service,
             method: 'remove',
             args: [userId],
-            return: result
+            return: removeResult
         })
 
         const recv = await controller.remove(userId)
 
-        expect(recv).toMatchObject(result)
+        expect(recv).toMatchObject(removeResult)
     })
 
-    it('PATCH /users/:id', async () => {
-        const id = 'uuid#1'
+    it('update', async () => {
         const updateDto = { password: 'newpass' }
+        const updatedUser = { ...user, email: 'new@mail.com' }
 
         fixture({
             object: service,
             method: 'update',
-            args: [id, updateDto],
-            return: user
+            args: [userId, updateDto],
+            return: updatedUser
         })
 
-        const recv = await controller.update(id, updateDto)
+        const recv = await controller.update(userId, updateDto)
 
-        expect(recv).toMatchObject(user)
+        expect(recv).toMatchObject(updatedUser)
     })
 })

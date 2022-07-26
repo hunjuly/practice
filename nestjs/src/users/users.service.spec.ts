@@ -9,9 +9,6 @@ import { fixture } from 'src/common'
 jest.mock('src/auth/auth.service')
 jest.mock('./users.repository')
 
-// TODO service는 다양한 조건을 검증하기 적당하다.
-// 단순 함수명이 아니라 서비스 내용을 언급한다.
-// 단순 함수명의 케이스도 있어야 한다.
 describe('UsersService', () => {
     let service: UsersService
     let repository: UsersRepository
@@ -31,91 +28,90 @@ describe('UsersService', () => {
         expect(service).toBeDefined()
     })
 
+    const userId = 'uuid#1'
+    const email = 'user@mail.com'
+    const password = 'pass#001'
+
+    const user = { id: userId, email } as User
+    const auth = { userId, email } as Authentication
+
+    const users = [
+        { id: 'uuid#1', email: 'user1@test.com' },
+        { id: 'uuid#2', email: 'user2@test.com' }
+    ] as User[]
+
     it('create a user', async () => {
-        const id = 'uuid#1'
-        const userId = id
-        const email = 'user@mail.com'
-        const password = 'pass#001'
+        const userCandidate = { id: undefined, email } as User
 
         fixture({
             object: repository,
             method: 'create',
-            args: [{ email }],
-            return: { id, email } as User
+            args: [userCandidate],
+            return: user
         })
+
+        const createAuthDto = { userId, email, password }
 
         fixture({
             object: authService,
             method: 'create',
-            args: [{ userId, email, password }],
-            return: { userId, email } as Authentication
+            args: [createAuthDto],
+            return: auth
         })
 
-        const recv = await service.create({ email, password })
+        const createUserDto = { email, password }
 
-        expect(recv).toMatchObject({ id, email })
+        const recv = await service.create(createUserDto)
+
+        expect(recv).toMatchObject(user)
     })
 
     it('find all users ', async () => {
-        const items = [
-            { id: 'uuid#1', email: 'user1@test.com' },
-            { id: 'uuid#2', email: 'user2@test.com' }
-        ] as User[]
-
-        const arg = { offset: 0, limit: 10 }
+        const page = { offset: 0, limit: 10 }
+        const pagedUsers = { ...page, total: 2, items: users }
 
         fixture({
             object: repository,
             method: 'findAll',
-            args: [arg],
-            return: { ...arg, total: 2, items }
+            args: [page],
+            return: pagedUsers
         })
 
-        const recv = await service.findAll(arg)
+        const recv = await service.findAll(page)
 
-        expect(recv.items).toMatchArray(items)
+        expect(recv.items).toMatchArray(pagedUsers.items)
     })
 
     it('find a user', async () => {
-        const id = 'uuid#1'
-        const email = 'user@mail.com'
-
-        const retval = { id, email } as User
-
         fixture({
             object: repository,
             method: 'get',
-            args: [id],
-            return: retval
+            args: [userId],
+            return: user
         })
 
-        const recv = await service.get(id)
+        const recv = await service.get(userId)
 
-        expect(recv).toMatchObject(retval)
+        expect(recv).toMatchObject(user)
     })
 
     it('remove the user', async () => {
-        const id = 'uuid#1'
-
-        const arg = id
-        const retval = { id } as User
-
         fixture({
             object: repository,
             method: 'get',
-            args: [arg],
-            return: retval
+            args: [userId],
+            return: user
         })
 
         fixture({
             object: repository,
             method: 'remove',
-            args: [arg],
+            args: [userId],
             return: true
         })
 
-        const recv = await service.remove(arg)
+        const recv = await service.remove(userId)
 
-        expect(recv).toMatchObject({ ...retval, status: 'removed' })
+        expect(recv).toMatchObject({ id: userId })
     })
 })

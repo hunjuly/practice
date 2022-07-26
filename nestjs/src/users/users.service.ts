@@ -62,7 +62,7 @@ export class UsersService {
 
         await this.authService.remove(userId)
 
-        return { id: userId, status: 'removed' }
+        return { id: userId }
     }
 
     async update(userId: string, dto: UpdateUserDto) {
