@@ -22,15 +22,15 @@ export class UsersService {
             password: dto.password
         }
 
-        await this.authService.add(authDto)
-
+        const auth = await this.authService.create(authDto)
+        // auth가 맞는지 여기서 확인해야 한다. 아니면 user 생성 실패로 해야 한다.
         return user
     }
 
     async get(userId: string) {
         const user = await this.repository.get(userId)
 
-        if (user === null) {
+        if (!user) {
             throw new NotFoundException()
         }
 
@@ -40,7 +40,7 @@ export class UsersService {
     async findOne(query: UserQuery) {
         const user = await this.repository.findOne(query)
 
-        if (user === null) {
+        if (!user) {
             throw new NotFoundException()
         }
 

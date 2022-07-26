@@ -60,7 +60,7 @@ export default function Register() {
                     <label htmlFor="password">password</label>
                     <input type="password" id="password" name="password" value="\" required />
                 </div>
-                <div hidden={errorMsg === undefined}>Error: {errorMsg}</div>
+                <div hidden={!errorMsg}>Error: {errorMsg}</div>
                 <input type="submit" value="Submit" />
             </form>
             <div>

@@ -9,7 +9,7 @@ import { CreateAuthDto } from './dto/create-auth.dto'
 export class AuthService {
     constructor(private repository: AuthRepository) {}
 
-    async add(dto: CreateAuthDto) {
+    async create(dto: CreateAuthDto) {
         const service = new AuthCreatingService(this.repository)
 
         const auth = await service.create(dto)
@@ -24,10 +24,10 @@ export class AuthService {
         }
     }
 
-    async validate(email: string, password: string) {
-        const auth = await this.repository.findOne({ email })
+    async validate(userId: string, password: string) {
+        const auth = await this.repository.findOne({ userId })
 
-        if (auth === undefined) {
+        if (!auth) {
             throw new NotFoundException({ message: 'user not found' }, 'description')
         }
 
@@ -37,7 +37,7 @@ export class AuthService {
     async findOne(query: AuthQuery) {
         const user = await this.repository.findOne(query)
 
-        if (user === null) {
+        if (!user) {
             throw new NotFoundException()
         }
 

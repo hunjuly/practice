@@ -42,7 +42,7 @@ export default function Login() {
                 Password:
                 <input type="text" value={password} onChange={handlePasswordChange} />
             </div>
-            <div hidden={errorMsg === undefined}>Error: {errorMsg}</div>
+            <div hidden={!errorMsg}>Error: {errorMsg}</div>
             <input type="button" value={'Submit'} onClick={handleSubmit} />
             <div>
                 <Link href="/register">

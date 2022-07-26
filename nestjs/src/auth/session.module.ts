@@ -10,8 +10,9 @@ function createOption(config: ConfigService, redisService: RedisService) {
     type SessionType = 'memory' | 'redis' | undefined
 
     const type = config.get<SessionType>('SESSION_TYPE')
-    const maxAge = config.get<number>('SESSION_MAXAGE_SEC')
-    const cookie = { sameSite: true, httpOnly: false, maxAge }
+    // 이거 숫자는 못 읽나? number로 해도 실제로는 string이 온다.
+    const maxAge = config.get<string>('SESSION_MAXAGE_SEC')
+    const cookie = { sameSite: true, httpOnly: false, maxAge: parseInt(maxAge) }
 
     const common = {
         saveUninitialized: false,

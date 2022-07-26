@@ -3,9 +3,9 @@ import 'dotenv/config'
 import 'reflect-metadata'
 import { DataSourceOptions, Logger } from 'typeorm'
 
-import { User } from 'src/users/entities/User'
-import { Authentication } from 'src/auth/entities/Authentication'
-import { File } from 'src/files/entities/File'
+import { User } from 'src/users/entities/user.entity'
+import { Authentication } from 'src/auth/entities/authentication.entity'
+import { File } from 'src/files/entities/file.entity'
 
 const entities = [User, Authentication, File]
 const subscribers = []
@@ -58,7 +58,7 @@ function checkProduction(synchronize: boolean, type: DatabaseType) {
 function getString(key: string): string {
     const value = process.env[key]
 
-    if (value === undefined) {
+    if (!value) {
         console.log(`${key} is undefined.`)
         exit(1)
     }

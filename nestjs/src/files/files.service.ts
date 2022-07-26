@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { UpdateFileDto } from './dto/update-file.dto'
 import { CreateFileDto } from './dto/create-file.dto'
-import { File } from './entities/File'
+import { File } from './entities/file.entity'
 
 @Injectable()
 export class FilesService {
@@ -44,7 +44,7 @@ export class FilesService {
     async findOne(id: string) {
         const file = await this.repository.findOneBy({ id })
 
-        if (file === undefined) throw new NotFoundException()
+        if (!file) throw new NotFoundException()
 
         return this.updateFile(file)
     }

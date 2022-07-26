@@ -6,18 +6,18 @@ export class utils {
         return randomBytes(16).toString('hex')
     }
 
-    public static env(key: string): string | undefined {
+    public static env(key: string): string | null {
         return process.env[key]
     }
 
-    public static envs(keys: string[]): Map<string, string> | undefined {
+    public static envs(keys: string[]): Map<string, string> | null {
         const map = new Map<string, string>()
 
         for (const key of keys) {
             const value = process.env[key]
 
-            if (value === undefined) {
-                return undefined
+            if (!value) {
+                return null
             } else {
                 map.set(key, value)
             }

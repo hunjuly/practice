@@ -2,10 +2,9 @@
 
 ## Todo
 
-1. session timeout env 추가
-1. logstash, elastic search, kibana 적용
 1. 테스트 상세하게
 1. README 정리
+1. logstash, elastic search, kibana 적용
 
 ## 설계
 

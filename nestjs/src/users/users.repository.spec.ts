@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
-import { User } from './domain/user.entity'
+import { User } from './entities/user.entity'
 import { DeleteResult, Repository } from 'typeorm'
 import { UsersRepository } from './users.repository'
 

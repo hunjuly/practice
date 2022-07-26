@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing'
 import * as bcrypt from 'bcrypt'
 import { AuthService } from './auth.service'
-import { User } from 'src/users/domain/user.entity'
+import { User } from 'src/users/entities/user.entity'
 import { AuthRepository } from './auth.repository'
 
 const oneAuth = { userId: 'uuid#1', password: '$2b$07$Br5.dao1K06fUHnltEtKr.boGyOrrulv3wBnn3J0alK/yZNGoy.PK' }

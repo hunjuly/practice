@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing'
-import { User } from './domain/user.entity'
+import { User } from './entities/user.entity'
 import { UsersController } from './users.controller'
 import { UsersService } from './users.service'
 

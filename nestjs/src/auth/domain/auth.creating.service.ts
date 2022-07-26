@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt'
 import { CreateAuthDto } from '../dto/create-auth.dto'
-import { Authentication } from '../entities/Authentication'
+import { Authentication } from '../entities/authentication.entity'
 import { IAuthRepository } from './interfaces'
 
 export class AuthCreatingService {

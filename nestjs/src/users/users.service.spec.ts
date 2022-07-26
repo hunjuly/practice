@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing'
-import { User } from './domain/user.entity'
+import { User } from './entities/user.entity'
 import { UsersService } from './users.service'
 import { AuthService } from 'src/auth/auth.service'
 import { UsersRepository } from './users.repository'

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Pagination } from 'src/common/pagination'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { User } from './entities/User'
+import { User } from './entities/user.entity'
 import { IUsersRepository, UserQuery } from './domain/interfaces'
 
 @Injectable()
