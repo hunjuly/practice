@@ -45,13 +45,12 @@ expect.extend({
 
 type FixtureDefine = { object: any; method: string; args: any[]; return: any }
 
+/**
+ * mock의 spy와 stub 기능 구현을 간단하게 표현함
+ */
 export function fixture(opt: FixtureDefine) {
     jest.spyOn(opt.object, opt.method).mockImplementation(async (...args) => {
-        // if (Array.isArray(args)) {
-        //     expect(args).toMatchArray(opt.args)
-        // } else {
         expect(args).toEqual(opt.args)
-        // }
 
         return opt.return
     })

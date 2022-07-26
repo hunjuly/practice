@@ -18,7 +18,7 @@ export class UsersRepository implements IUsersRepository {
     }
 
     async findOne(where: UserQuery) {
-        return this.typeorm.findOne({ where })
+        return this.typeorm.findOneBy(where)
     }
 
     async findAll(page: Pagination) {

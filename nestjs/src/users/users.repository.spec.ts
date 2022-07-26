@@ -16,10 +16,8 @@ describe('UsersRepository', () => {
                 {
                     provide: getRepositoryToken(User),
                     useValue: {
-                        findOne: jest.fn(),
                         findOneBy: jest.fn(),
                         findAndCount: jest.fn(),
-                        count: jest.fn(),
                         delete: jest.fn(),
                         save: jest.fn(),
                         update: jest.fn()
@@ -54,13 +52,6 @@ describe('UsersRepository', () => {
             method: 'save',
             args: [userCandidate],
             return: user
-        })
-
-        fixture({
-            object: typeorm,
-            method: 'findOne',
-            args: [],
-            return: null
         })
 
         const recv = await repository.create(userCandidate)
