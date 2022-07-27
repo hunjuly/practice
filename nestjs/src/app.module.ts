@@ -1,11 +1,14 @@
-import { APP_PIPE } from '@nestjs/core'
 import { Module, ValidationPipe } from '@nestjs/common'
+import { APP_PIPE } from '@nestjs/core'
+import { AuthModule } from 'src/services/auth/auth.module'
+import { FilesModule } from 'src/services/files/files.module'
+import { UsersModule } from 'src/services/users/users.module'
+
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { UsersModule } from './users/users.module'
-import { FilesModule } from './files/files.module'
-import { AuthModule } from './auth/auth.module'
-import { LoggerModule, createOrmModule, createConfigModule } from './common'
+import { createConfigModule } from './common'
+import { LoggerModule } from './logger'
+import { createOrmModule } from './typeorm'
 
 @Module({
     imports: [createOrmModule(), createConfigModule(), LoggerModule, UsersModule, FilesModule, AuthModule],

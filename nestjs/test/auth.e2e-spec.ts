@@ -1,7 +1,8 @@
+import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { AppModule } from 'src/app.module'
-import { INestApplication } from '@nestjs/common'
-import { post, get, del } from './common'
+
+import { del, get, post } from './common'
 
 let app: INestApplication
 

@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
-import { createApp, closeApp, get } from './common'
+
+import { closeApp, createApp, get } from './common'
 
 describe('File Upload(e2e)', () => {
     let app: INestApplication

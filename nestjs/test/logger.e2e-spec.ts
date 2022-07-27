@@ -1,8 +1,8 @@
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import * as request from 'supertest'
 import { AppModule } from 'src/app.module'
-import { AppLogger } from 'src/common'
+import { AppLogger } from 'src/logger'
+import * as request from 'supertest'
 
 async function createApp() {
     const moduleRef = await Test.createTestingModule({
