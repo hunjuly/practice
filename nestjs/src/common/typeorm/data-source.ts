@@ -3,7 +3,7 @@ import 'dotenv/config'
 import 'reflect-metadata'
 import { DataSourceOptions, Logger } from 'typeorm'
 
-import { User } from 'src/users/domain/user.entity'
+import { User } from 'src/users/domain/entities'
 import { Authentication } from 'src/auth/domain/authentication.entity'
 import { File } from 'src/files/entities/file.entity'
 
