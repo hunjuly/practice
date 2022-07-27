@@ -6,26 +6,6 @@ export class utils {
         return randomBytes(16).toString('hex')
     }
 
-    public static env(key: string): string | null {
-        return process.env[key]
-    }
-
-    public static envs(keys: string[]): Map<string, string> | null {
-        const map = new Map<string, string>()
-
-        for (const key of keys) {
-            const value = process.env[key]
-
-            if (!value) {
-                return null
-            } else {
-                map.set(key, value)
-            }
-        }
-
-        return map
-    }
-
     public static async sleep(timeout: number): Promise<void> {
         await new Promise((resolve) => setTimeout(resolve, timeout))
     }
