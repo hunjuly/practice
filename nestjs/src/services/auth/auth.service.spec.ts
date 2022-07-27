@@ -6,7 +6,7 @@ import { AuthService } from './auth.service'
 
 const oneAuth = { userId: 'uuid#1', password: '$2b$07$Br5.dao1K06fUHnltEtKr.boGyOrrulv3wBnn3J0alK/yZNGoy.PK' }
 
-describe('AuthService', () => {
+describe.skip('AuthService', () => {
     let service: AuthService
     let repository: AuthRepository
 

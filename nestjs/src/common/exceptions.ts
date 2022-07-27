@@ -14,6 +14,6 @@ export class Assert {
     }
 
     static empty(con: any, message: string) {
-        if (!con) throw new InternalError(message)
+        if (con) throw new InternalError(message)
     }
 }

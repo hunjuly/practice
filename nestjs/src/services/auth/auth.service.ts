@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
-import * as bcrypt from 'bcrypt'
+import { Injectable } from '@nestjs/common'
+import { Assert, Expect } from 'src/common'
 import { AuthRepository } from './auth.repository'
-import { AuthQuery, CreateAuthDto, CreateAuthService } from './domain'
+import { AuthQuery, CreateAuthDto, CreateAuthService, ValidateService } from './domain'
 
 @Injectable()
 export class AuthService {
@@ -11,33 +11,28 @@ export class AuthService {
         const service = new CreateAuthService(this.repository)
 
         const auth = await service.exec(dto)
+
         return auth
     }
 
     async remove(userId: string) {
-        const count = await this.repository.remove(userId)
+        const success = await this.repository.remove(userId)
 
-        if (count === 0) {
-            throw new NotFoundException()
-        }
+        Assert.truthy(success, `${userId} remove failed.`)
     }
 
     async validate(userId: string, password: string) {
-        const auth = await this.repository.findOne({ userId })
+        const service = new ValidateService(this.repository)
 
-        if (!auth) {
-            throw new NotFoundException({ message: 'user not found' }, 'description')
-        }
+        const success = await service.exec(userId, password)
 
-        return bcrypt.compare(password, auth.password)
+        return success
     }
 
     async findOne(query: AuthQuery) {
         const user = await this.repository.findOne(query)
 
-        if (!user) {
-            throw new NotFoundException()
-        }
+        Expect.found(user)
 
         return user
     }
