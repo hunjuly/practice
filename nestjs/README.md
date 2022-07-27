@@ -5,8 +5,6 @@
 1. 테스트 상세하게
     1. auth 테스트 작성해야 한다.
 1. auth/etc 정리 좀 하자
-1. src/common -> src/utils 로 바꿔야 하나?
-1. typeorm data-source nestjs factory로 만들 수 없나?
 1. README 정리
 1. logstash, elastic search, kibana 적용
 

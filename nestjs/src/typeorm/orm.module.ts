@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { TypeOrmModule, TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm'
 import 'dotenv/config'
 import { createLogger } from 'src/logger'
-import { createOptions } from './data-source'
+import { createOptions } from './create-options'
 import { OrmLogger } from './orm-logger'
 
 @Injectable()

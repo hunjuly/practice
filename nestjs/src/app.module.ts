@@ -5,7 +5,7 @@ import { FilesModule } from 'src/services/files/files.module'
 import { UsersModule } from 'src/services/users/users.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { createConfigModule } from './config.module'
+import { createConfigModule } from './create-config-module'
 import { LoggerModule } from './logger'
 import { createOrmModule } from './typeorm'
 

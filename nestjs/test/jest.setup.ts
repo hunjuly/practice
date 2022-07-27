@@ -1,4 +1,4 @@
-import 'src/common'
+import 'src/utils'
 
 declare global {
     // eslint-disable-next-line @typescript-eslint/no-namespace

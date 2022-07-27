@@ -13,7 +13,7 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiExtraModels, PickType } from '@nestjs/swagger'
 import { Express } from 'express'
 import { diskStorage } from 'multer'
-import { utils } from 'src/common'
+import { createUuid } from 'src/utils'
 import { CreateFileDto } from './dto/create-file.dto'
 import { UpdateFileDto } from './dto/update-file.dto'
 import { FilesService } from './files.service'
@@ -30,7 +30,7 @@ export class FilesController {
         FileInterceptor('marketfile', {
             storage: diskStorage({
                 destination: Path.tempdir(),
-                filename: (req, file, callback) => callback(null, `${utils.uuid()}.dat`)
+                filename: (req, file, callback) => callback(null, `${createUuid()}.dat`)
             })
         })
     )
