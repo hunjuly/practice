@@ -1,10 +1,11 @@
 import 'dotenv/config'
 import { exit } from 'process'
 import 'reflect-metadata'
+import { DataSourceOptions, Logger } from 'typeorm'
+
 import { Authentication } from 'src/services/auth/domain/authentication.entity'
 import { File } from 'src/services/files/entities/file.entity'
 import { User } from 'src/services/users/domain/entities'
-import { DataSourceOptions, Logger } from 'typeorm'
 
 const entities = [User, Authentication, File]
 const subscribers = []

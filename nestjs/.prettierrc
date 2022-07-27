@@ -4,7 +4,7 @@
     "tabWidth": 4,
     "semi": false,
     "singleQuote": true,
-    "importOrder": ["^@core/(.*)$", "^@server/(.*)$", "^@ui/(.*)$", "^[./]"],
+    "importOrder": ["^@core/(.*)$", "^@server/(.*)$", "^@ui/(.*)$", "^src/(.*)$", "^[./]"],
     "importOrderSeparation": true,
     "importOrderSortSpecifiers": true,
     "importOrderParserPlugins": ["typescript", "decorators-legacy"]

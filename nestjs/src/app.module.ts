@@ -1,5 +1,6 @@
 import { Module, ValidationPipe } from '@nestjs/common'
 import { APP_PIPE } from '@nestjs/core'
+
 import { AuthenticationModule } from 'src/authentication'
 import { AuthModule } from 'src/services/auth/auth.module'
 import { FilesModule } from 'src/services/files/files.module'

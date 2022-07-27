@@ -1,6 +1,7 @@
-import { Path } from 'src/common'
 import * as winston from 'winston'
 import * as DailyRotateFile from 'winston-daily-rotate-file'
+
+import { Path } from 'src/common'
 
 const format = winston.format
 
