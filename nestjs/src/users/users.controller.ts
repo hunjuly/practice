@@ -1,12 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger'
-import { ApiPaginatedResponse, Pagination, PageQuery } from 'src/common'
+import { entityToDto, ApiPaginatedResponse, Pagination, PageQuery } from 'src/common'
 import { Public } from 'src/auth'
 import { UsersService } from './users.service'
-import { CreateUserDto } from './domain/dto/create-user.dto'
-import { UpdateUserDto } from './domain/dto/update-user.dto'
+import { UpdateUserDto, CreateUserDto } from './domain'
 import { ResponseUserDto } from './dto/response-user.dto'
-import { entityToDto } from 'src/common'
 
 @Controller('users')
 export class UsersController {

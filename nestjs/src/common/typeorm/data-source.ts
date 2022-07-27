@@ -3,8 +3,8 @@ import 'dotenv/config'
 import 'reflect-metadata'
 import { DataSourceOptions, Logger } from 'typeorm'
 
-import { User } from 'src/users/entities/user.entity'
-import { Authentication } from 'src/auth/entities/authentication.entity'
+import { User } from 'src/users/domain/user.entity'
+import { Authentication } from 'src/auth/domain/authentication.entity'
 import { File } from 'src/files/entities/file.entity'
 
 const entities = [User, Authentication, File]

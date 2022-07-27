@@ -1,4 +1,4 @@
-import { Authentication } from '../entities/authentication.entity'
+import { Authentication } from './authentication.entity'
 
 export type AuthQuery = {
     email?: string

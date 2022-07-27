@@ -1,5 +1,5 @@
 import { ApiProperty, PickType } from '@nestjs/swagger'
-import { User } from '../entities/user.entity'
+import { User } from '../domain'
 
 const keys = ['id', 'email', 'isActive', 'role', 'createDate', 'updateDate', 'version'] as (keyof User)[]
 

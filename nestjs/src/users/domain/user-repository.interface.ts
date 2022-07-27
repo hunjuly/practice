@@ -1,5 +1,5 @@
-import { User } from '../entities/user.entity'
-import { UpdateUserDto } from './dto/update-user.dto'
+import { User } from './user.entity'
+import { UpdateUserDto } from './update-user.service'
 
 export type UserQuery = {
     email?: string

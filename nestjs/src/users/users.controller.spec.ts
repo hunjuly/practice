@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { fixture } from 'src/common'
-import { User } from './entities/user.entity'
+import { User } from './domain'
 import { UsersController } from './users.controller'
 import { UsersService } from './users.service'
 

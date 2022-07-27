@@ -1,8 +1,11 @@
-import { UpdateUserDto } from './dto/update-user.dto'
+import { IUsersRepository } from './user-repository.interface'
+import { PartialType } from '@nestjs/mapped-types'
 import { Assert, Expect } from 'src/common'
-import { IUsersRepository } from './interfaces'
+import { CreateUserDto } from './create-user.service'
 
-export class UserUpdatingService {
+export class UpdateUserDto extends PartialType(CreateUserDto) {}
+
+export class UpdateUserService {
     constructor(private readonly repository: IUsersRepository) {}
 
     async exec(userId: string, dto: UpdateUserDto) {

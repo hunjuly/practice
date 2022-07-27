@@ -1,9 +1,25 @@
-import { CreateUserDto } from './dto/create-user.dto'
-import { User } from '../entities/user.entity'
+import { User } from './user.entity'
 import { AlreadyExistsException } from './exceptions'
-import { IUsersRepository } from './interfaces'
+import { IUsersRepository } from './user-repository.interface'
 
-export class UserCreatingService {
+import { IsEmail, IsNotEmpty } from 'class-validator'
+
+export class CreateUserDto {
+    /**
+     * email 형식을 지켜야 한다.
+     * @example user@mail.com
+     */
+    @IsEmail()
+    email: string
+
+    /**
+     * 빈 문자열은 허용하지 않는다.
+     */
+    @IsNotEmpty()
+    password: string
+}
+
+export class CreateUserService {
     constructor(private readonly repository: IUsersRepository) {}
 
     async exec(dto: CreateUserDto) {

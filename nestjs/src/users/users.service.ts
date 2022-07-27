@@ -1,21 +1,22 @@
 import { Injectable } from '@nestjs/common'
-import { CreateUserDto } from './domain/dto/create-user.dto'
-import { UpdateUserDto } from './domain/dto/update-user.dto'
 import { AuthService } from 'src/auth/auth.service'
-import { Pagination } from 'src/common/pagination'
 import { UsersRepository } from './users.repository'
-import { UserQuery } from './domain/interfaces'
-import { Assert, Expect } from 'src/common'
-import { UserUpdatingService } from './domain/user-updating.service'
-import { UserRemovingService } from './domain/user-removing.service'
-import { UserCreatingService } from './domain/user-creating.service'
+import { Pagination, Assert, Expect } from 'src/common'
+import {
+    UpdateUserService,
+    UpdateUserDto,
+    UserQuery,
+    RemoveUserService,
+    CreateUserService,
+    CreateUserDto
+} from './domain'
 
 @Injectable()
 export class UsersService {
     constructor(private readonly repository: UsersRepository, private readonly authService: AuthService) {}
 
     async create(dto: CreateUserDto) {
-        const service = new UserCreatingService(this.repository)
+        const service = new CreateUserService(this.repository)
 
         const user = await service.exec(dto)
 
@@ -53,7 +54,7 @@ export class UsersService {
     }
 
     async remove(userId: string) {
-        const service = new UserRemovingService(this.repository)
+        const service = new RemoveUserService(this.repository)
 
         await service.exec(userId)
 
@@ -63,7 +64,7 @@ export class UsersService {
     }
 
     async update(userId: string, dto: UpdateUserDto) {
-        const service = new UserUpdatingService(this.repository)
+        const service = new UpdateUserService(this.repository)
 
         const user = await service.exec(userId, dto)
 
