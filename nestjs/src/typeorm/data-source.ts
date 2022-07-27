@@ -2,7 +2,7 @@ import 'dotenv/config'
 import { exit } from 'process'
 import 'reflect-metadata'
 import { DataSourceOptions, Logger } from 'typeorm'
-import { Authentication } from 'src/services/auth/domain/authentication.entity'
+import { Authentication } from 'src/services/auth/domain'
 import { File } from 'src/services/files/entities/file.entity'
 import { User } from 'src/services/users/domain/entities'
 
@@ -18,8 +18,6 @@ export function createOptions(logger?: Logger): DataSourceOptions {
     const common = { type, synchronize, logger, entities, subscribers }
 
     if (common.type === 'sqlite') {
-        console.log('using MEMORY DB.')
-
         const database = ':memory:'
 
         return { ...common, database }

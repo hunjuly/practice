@@ -1,7 +1,7 @@
 import { Module, ValidationPipe } from '@nestjs/common'
 import { APP_PIPE } from '@nestjs/core'
 import { AuthenticationModule } from 'src/authentication'
-import { AuthModule } from 'src/services/auth/auth.module'
+import { AuthModule as AuthServiceModule } from 'src/services/auth/auth.module'
 import { FilesModule } from 'src/services/files/files.module'
 import { UsersModule } from 'src/services/users/users.module'
 import { AppController } from './app.controller'
@@ -17,7 +17,7 @@ import { createOrmModule } from './typeorm'
         LoggerModule,
         UsersModule,
         FilesModule,
-        AuthModule,
+        AuthServiceModule,
         AuthenticationModule
     ],
     controllers: [AppController],

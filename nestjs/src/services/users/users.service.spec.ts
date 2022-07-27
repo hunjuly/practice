@@ -1,11 +1,11 @@
 import { Test } from '@nestjs/testing'
+import { Authentication } from 'src/services/auth'
 import { AuthService } from 'src/services/auth/auth.service'
-import { Authentication } from 'src/services/auth/domain/authentication.entity'
 import { User } from './domain'
 import { UsersRepository } from './users.repository'
 import { UsersService } from './users.service'
 
-jest.mock('src/auth/auth.service')
+jest.mock('src/services/auth/auth.service')
 jest.mock('./users.repository')
 
 describe('UsersService', () => {

@@ -18,7 +18,8 @@ describe('AuthService', () => {
                     provide: AuthRepository,
                     useValue: {
                         get: jest.fn().mockResolvedValue(oneAuth),
-                        add: jest.fn().mockResolvedValue(oneAuth)
+                        add: jest.fn().mockResolvedValue(oneAuth),
+                        findOne: jest.fn().mockResolvedValue(oneAuth)
                     }
                 }
             ]

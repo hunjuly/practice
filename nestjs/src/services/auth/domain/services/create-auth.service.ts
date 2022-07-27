@@ -1,7 +1,18 @@
 import * as bcrypt from 'bcrypt'
-import { Authentication } from '../domain/authentication.entity'
-import { CreateAuthDto } from '../dto/create-auth.dto'
-import { IAuthRepository } from './interfaces'
+import { IsEmail, IsNotEmpty } from 'class-validator'
+import { Authentication } from '../entities'
+import { IAuthRepository } from '../interfaces'
+
+export class CreateAuthDto {
+    @IsNotEmpty()
+    userId: string
+
+    @IsEmail()
+    email: string
+
+    @IsNotEmpty()
+    password: string
+}
 
 export class AuthCreatingService {
     constructor(private readonly repo: IAuthRepository) {}

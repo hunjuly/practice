@@ -34,7 +34,7 @@ function createOption(config: ConfigService, redisService: RedisService) {
             logErrors: true
         })
 
-        Logger.log('using redis session.')
+        Logger.verbose('using redis session.')
 
         return { ...common, store }
     } else if (type === 'memory') {
@@ -46,7 +46,7 @@ function createOption(config: ConfigService, redisService: RedisService) {
             exit(1)
         }
 
-        Logger.warn('using memory session.')
+        Logger.verbose('using memory session.')
 
         return common
     }
