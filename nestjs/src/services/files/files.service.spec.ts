@@ -1,19 +1,16 @@
 import { Test } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
 import { CreateFileDto } from './dto/create-file.dto'
 import { File } from './entities/file.entity'
 import { FilesService } from './files.service'
 
 describe('FilesService', () => {
     let service: FilesService
-    let repository: Repository<File>
 
     beforeEach(async () => {
         const module = await createTestingModule()
 
         service = module.get(FilesService)
-        repository = module.get(getRepositoryToken(File))
     })
 
     it('should be defined', () => {

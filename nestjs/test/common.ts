@@ -5,7 +5,7 @@ import { AppModule } from 'src/app.module'
 import { UserGuard } from 'src/services/auth'
 
 class MockAuthGuard implements CanActivate {
-    canActivate(context: ExecutionContext) {
+    canActivate(_context: ExecutionContext) {
         return true
     }
 }

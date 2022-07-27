@@ -49,7 +49,7 @@ export class FilesService {
         return this.updateFile(file)
     }
 
-    async update(id: string, updateFileDto: UpdateFileDto) {
+    async update(id: string, _updateFileDto: UpdateFileDto) {
         return `This action updates a #${id} file`
     }
 
