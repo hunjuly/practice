@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import * as bcrypt from 'bcrypt'
 import { AuthRepository } from './auth.repository'
-import { AuthCreatingService, AuthQuery, CreateAuthDto } from './domain'
+import { AuthQuery, CreateAuthDto, CreateAuthService } from './domain'
 
 @Injectable()
 export class AuthService {
     constructor(private repository: AuthRepository) {}
 
     async create(dto: CreateAuthDto) {
-        const service = new AuthCreatingService(this.repository)
+        const service = new CreateAuthService(this.repository)
 
-        const auth = await service.create(dto)
+        const auth = await service.exec(dto)
         return auth
     }
 
