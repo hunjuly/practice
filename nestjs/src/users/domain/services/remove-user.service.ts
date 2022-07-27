@@ -1,5 +1,5 @@
 import { Assert, Expect } from 'src/common'
-import { IUsersRepository } from './user-repository.interface'
+import { IUsersRepository } from '../interfaces'
 
 export class RemoveUserService {
     constructor(private readonly repository: IUsersRepository) {}
