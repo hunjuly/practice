@@ -1,8 +1,7 @@
+import { IsEmail, IsNotEmpty } from 'class-validator'
 import { User } from './user.entity'
 import { AlreadyExistsException } from './exceptions'
 import { IUsersRepository } from './user-repository.interface'
-
-import { IsEmail, IsNotEmpty } from 'class-validator'
 
 export class CreateUserDto {
     /**
