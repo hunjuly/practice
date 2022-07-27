@@ -4,7 +4,6 @@ import { UsersService } from './users.service'
 import { AuthService } from 'src/auth/auth.service'
 import { UsersRepository } from './users.repository'
 import { Authentication } from 'src/auth/domain/authentication.entity'
-import { fixture } from 'src/common'
 
 jest.mock('src/auth/auth.service')
 jest.mock('./users.repository')

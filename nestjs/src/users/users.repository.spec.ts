@@ -3,7 +3,6 @@ import { getRepositoryToken } from '@nestjs/typeorm'
 import { User } from './domain'
 import { Repository } from 'typeorm'
 import { UsersRepository } from './users.repository'
-import { fixture } from 'src/common'
 
 describe('UsersRepository', () => {
     let repository: UsersRepository

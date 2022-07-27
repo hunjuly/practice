@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger'
-import { entityToDto, ApiPaginatedResponse, Pagination, PageQuery } from 'src/common'
+import { ApiPaginatedResponse, Pagination, PageQuery } from 'src/common'
 import { Public } from 'src/auth'
 import { UsersService } from './users.service'
 import { UpdateUserDto, CreateUserDto } from './domain'
@@ -19,7 +19,7 @@ export class UsersController {
     async create(@Body() dto: CreateUserDto) {
         const user = await this.service.create(dto)
 
-        return ResponseUserDto.create(user)
+        return new ResponseUserDto(user)
     }
 
     @Get()
@@ -27,7 +27,7 @@ export class UsersController {
     async findAll(@PageQuery() page: Pagination) {
         const found = await this.service.findAll(page)
 
-        const items = entityToDto(found.items, ResponseUserDto.create)
+        const items = found.items.map((item) => new ResponseUserDto(item))
 
         return { ...found, items }
     }
@@ -37,7 +37,7 @@ export class UsersController {
     async findOne(@Param('id', ParseUUIDPipe) id: string) {
         const user = await this.service.get(id)
 
-        return ResponseUserDto.create(user)
+        return new ResponseUserDto(user)
     }
 
     @Patch(':id')

@@ -37,17 +37,17 @@ export class utils {
     }
 }
 
-export function entityToDto<S, O>(items: S[], create: (s: S) => O) {
-    const dtos: O[] = []
+// export function entityToDto<S, O>(items: S[], create: (s: S) => O) {
+//     const dtos: O[] = []
 
-    items.map((item) => {
-        const dto = create(item)
+//     items.map((item) => {
+//         const dto = create(item)
 
-        dtos.push(dto)
-    })
+//         dtos.push(dto)
+//     })
 
-    return dtos
-}
+//     return dtos
+// }
 
 type PackageInfo = {
     name: string

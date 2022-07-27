@@ -7,15 +7,13 @@ export class ResponseUserDto extends PickType(User, keys) {
     @ApiProperty()
     url: string
 
-    static create(user: User) {
-        const url = `/users/${user.id}`
+    constructor(user: User) {
+        super()
 
-        const obj = { url }
+        this.url = `/users/${user.id}`
 
-        keys.map((key) => {
-            obj[key] = user[key]
+        keys.forEach((key: never) => {
+            this[key] = user[key]
         })
-
-        return obj as ResponseUserDto
     }
 }
