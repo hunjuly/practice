@@ -3,6 +3,10 @@
 ## Todo
 
 1. 테스트 상세하게
+    1. auth 테스트 작성해야 한다.
+1. auth/etc 정리 좀 하자
+1. src/common 정리하자.
+    1. global로 정의할 것은 없는가?
 1. README 정리
 1. logstash, elastic search, kibana 적용
 
