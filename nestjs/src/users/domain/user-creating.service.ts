@@ -1,20 +1,20 @@
-import { CreateUserDto } from '../dto/create-user.dto'
+import { CreateUserDto } from './dto/create-user.dto'
 import { User } from '../entities/user.entity'
 import { AlreadyExistsException } from './exceptions'
 import { IUsersRepository } from './interfaces'
 
 export class UserCreatingService {
-    constructor(private readonly repo: IUsersRepository) {}
+    constructor(private readonly repository: IUsersRepository) {}
 
-    async create(dto: CreateUserDto) {
-        const user = await this.repo.findOne({ email: dto.email })
+    async exec(dto: CreateUserDto) {
+        const user = await this.repository.findOne({ email: dto.email })
 
         if (user) throw new AlreadyExistsException()
 
         const candidate = new User()
         candidate.email = dto.email
 
-        const newUser = await this.repo.create(candidate)
+        const newUser = await this.repository.create(candidate)
 
         return newUser
     }

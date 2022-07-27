@@ -3,9 +3,9 @@ import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger'
 import { ApiPaginatedResponse, Pagination, PageQuery } from 'src/common'
 import { Public } from 'src/auth'
 import { UsersService } from './users.service'
-import { CreateUserDto } from './dto/create-user.dto'
-import { UpdateUserDto } from './dto/update-user.dto'
-import { ResponseUserDto as UserDto } from './dto/user.dto'
+import { CreateUserDto } from './domain/dto/create-user.dto'
+import { UpdateUserDto } from './domain/dto/update-user.dto'
+import { ResponseUserDto } from './dto/response-user.dto'
 import { entityToDto } from 'src/common'
 
 @Controller('users')
@@ -17,29 +17,29 @@ export class UsersController {
      */
     @Post()
     @Public()
-    @ApiCreatedResponse({ type: UserDto })
+    @ApiCreatedResponse({ type: ResponseUserDto })
     async create(@Body() dto: CreateUserDto) {
         const user = await this.service.create(dto)
 
-        return UserDto.create(user)
+        return ResponseUserDto.create(user)
     }
 
     @Get()
-    @ApiPaginatedResponse(UserDto)
+    @ApiPaginatedResponse(ResponseUserDto)
     async findAll(@PageQuery() page: Pagination) {
         const found = await this.service.findAll(page)
 
-        const items = entityToDto(found.items, UserDto.create)
+        const items = entityToDto(found.items, ResponseUserDto.create)
 
         return { ...found, items }
     }
 
     @Get(':id')
-    @ApiOkResponse({ type: UserDto })
+    @ApiOkResponse({ type: ResponseUserDto })
     async findOne(@Param('id', ParseUUIDPipe) id: string) {
         const user = await this.service.get(id)
 
-        return UserDto.create(user)
+        return ResponseUserDto.create(user)
     }
 
     @Patch(':id')

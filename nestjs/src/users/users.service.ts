@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common'
-import { CreateUserDto } from './dto/create-user.dto'
-import { UpdateUserDto } from './dto/update-user.dto'
+import { CreateUserDto } from './domain/dto/create-user.dto'
+import { UpdateUserDto } from './domain/dto/update-user.dto'
 import { AuthService } from 'src/auth/auth.service'
 import { Pagination } from 'src/common/pagination'
 import { UsersRepository } from './users.repository'
-import { UserCreatingService } from './domain/user.creating.service'
 import { UserQuery } from './domain/interfaces'
 import { Assert, Expect } from 'src/common'
+import { UserUpdatingService } from './domain/user-updating.service'
+import { UserRemovingService } from './domain/user-removing.service'
+import { UserCreatingService } from './domain/user-creating.service'
 
 @Injectable()
 export class UsersService {
@@ -15,7 +17,7 @@ export class UsersService {
     async create(dto: CreateUserDto) {
         const service = new UserCreatingService(this.repository)
 
-        const user = await service.create(dto)
+        const user = await service.exec(dto)
 
         const authDto = {
             userId: user.id,
@@ -51,14 +53,9 @@ export class UsersService {
     }
 
     async remove(userId: string) {
-        // TODO 이것도 domain service로 분리
-        const user = await this.repository.get(userId)
+        const service = new UserRemovingService(this.repository)
 
-        Expect.found(user)
-
-        const success = await this.repository.remove(userId)
-
-        Assert.truthy(success, `${userId} remove failed.`)
+        await service.exec(userId)
 
         await this.authService.remove(userId)
 
@@ -66,13 +63,9 @@ export class UsersService {
     }
 
     async update(userId: string, dto: UpdateUserDto) {
-        const success = await this.repository.update(userId, dto)
+        const service = new UserUpdatingService(this.repository)
 
-        Expect.found(success)
-
-        const user = await this.repository.get(userId)
-
-        Assert.truthy(user, `${userId} get failed.`)
+        const user = await service.exec(userId, dto)
 
         return user
     }
