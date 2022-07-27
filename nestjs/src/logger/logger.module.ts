@@ -2,7 +2,6 @@ import { Module, RequestMethod } from '@nestjs/common'
 import { MiddlewareConsumer, NestModule } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
-
 import { AppLogger } from './app-logger'
 import { ExceptionLogger } from './exception-loggers'
 import { RequestLogger } from './request-logger'

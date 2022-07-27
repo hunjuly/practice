@@ -1,8 +1,6 @@
 import { Test } from '@nestjs/testing'
 import * as bcrypt from 'bcrypt'
-
 import { User } from 'src/services/users/domain'
-
 import { AuthRepository } from './auth.repository'
 import { AuthService } from './auth.service'
 

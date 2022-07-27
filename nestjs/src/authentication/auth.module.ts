@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common'
 import { APP_GUARD } from '@nestjs/core'
 import { PassportModule } from '@nestjs/passport'
-
 import { AuthModule } from 'src/services/auth/auth.module'
-
 import { AuthSerializer } from './auth-serializer'
 import { LocalStrategy } from './local.strategy'
 import { SessionModule } from './session.module'

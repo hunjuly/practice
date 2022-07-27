@@ -1,5 +1,4 @@
 import * as bcrypt from 'bcrypt'
-
 import { Authentication } from '../domain/authentication.entity'
 import { CreateAuthDto } from '../dto/create-auth.dto'
 import { IAuthRepository } from './interfaces'

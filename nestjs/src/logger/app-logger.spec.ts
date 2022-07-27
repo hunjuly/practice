@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import * as winston from 'winston'
-
 import { AppLogger } from './app-logger'
 
 @Injectable()

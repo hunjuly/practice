@@ -4,7 +4,6 @@ import * as RedisStore from 'connect-redis'
 import * as session from 'express-session'
 import * as passport from 'passport'
 import { exit } from 'process'
-
 import { RedisService } from 'src/common/redis.service'
 
 function createOption(config: ConfigService, redisService: RedisService) {

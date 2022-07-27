@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing'
-
 import { User } from './domain'
 import { UsersController } from './users.controller'
 import { UsersService } from './users.service'

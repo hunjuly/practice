@@ -1,6 +1,5 @@
 import { INestApplication } from '@nestjs/common'
 import * as request from 'supertest'
-
 import { closeApp, createApp } from './common'
 
 describe('AppController (e2e)', () => {

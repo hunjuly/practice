@@ -13,9 +13,7 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiConsumes, ApiExtraModels, PickType } from '@nestjs/swagger'
 import { Express } from 'express'
 import { diskStorage } from 'multer'
-
 import { Path, utils } from 'src/common'
-
 import { CreateFileDto } from './dto/create-file.dto'
 import { UpdateFileDto } from './dto/update-file.dto'
 import { FilesService } from './files.service'

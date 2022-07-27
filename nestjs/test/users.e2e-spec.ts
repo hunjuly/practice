@@ -1,5 +1,4 @@
 import { INestApplication } from '@nestjs/common'
-
 import { closeApp, createApp, del, get, patch, post } from './common'
 
 describe('UsersController (e2e)', () => {
