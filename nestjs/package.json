@@ -80,7 +80,7 @@
     },
     "jest": {
         "setupFilesAfterEnv": [
-            "<rootDir>/test/jest.setup.ts"
+            "<rootDir>/jest.setup.ts"
         ],
         "moduleFileExtensions": [
             "js",

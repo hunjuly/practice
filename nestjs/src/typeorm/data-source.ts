@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm'
-import { createOptions } from './createOptions'
+import { createOptions } from './create-options'
 // migrations
 import { mig1658604911087 } from './migrations/1658604911087-mig'
 
