@@ -5,7 +5,29 @@ import * as fs from 'fs'
 import { tmpdir } from 'os'
 import * as p from 'path'
 
-export class Path {
+declare global {
+    const Path: {
+        absolute(src: string): string
+        join(...paths: string[]): string
+        mkdir(path: string): void
+        rmdir(path: string): void
+        remkdir(path: string): void
+        isDir(path: string): boolean
+        copyDir(src: string, dest: string): void
+        copy(src: string, dest: string): void
+        exists(path: string): boolean
+        copyable(src: string, dest: string): boolean
+        tempdir(): string
+        getDirs(src: string): string[]
+        basename(path: string): string
+        dirname(path: string): string
+    }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const g = global as any
+
+class Path {
     public static absolute(src: string): string {
         return p.isAbsolute(src) ? src : p.resolve(src)
     }
@@ -115,3 +137,4 @@ export class Path {
         return fs.mkdtempSync(`${tmpdir()}${p.sep}`)
     }
 }
+g.Path = Path

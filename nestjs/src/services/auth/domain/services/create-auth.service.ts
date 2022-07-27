@@ -1,6 +1,5 @@
 import * as bcrypt from 'bcrypt'
 import { IsEmail, IsNotEmpty } from 'class-validator'
-import { Assert } from 'src/common'
 import { Authentication, IAuthRepository } from '..'
 
 export class CreateAuthDto {

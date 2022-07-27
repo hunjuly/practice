@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { Pagination } from 'src/common/pagination'
+import { Pagination } from 'src/components'
 import { IUsersRepository, UpdateUserDto, User, UserQuery } from './domain'
 
 @Injectable()

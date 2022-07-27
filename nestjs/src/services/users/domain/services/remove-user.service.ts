@@ -1,4 +1,3 @@
-import { Assert, Expect } from 'src/common'
 import { IUsersRepository } from '../interfaces'
 
 export class RemoveUserService {

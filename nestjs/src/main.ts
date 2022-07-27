@@ -1,7 +1,8 @@
 import { INestApplication } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
-import { PaginatedResponse, getPackageInfo } from 'src/common'
+import { getPackageInfo } from 'src/common'
+import { PaginatedResponse } from 'src/components'
 import { AppModule } from './app.module'
 import { AppLogger } from './logger'
 

@@ -1,13 +1,33 @@
-export * from './Path_'
-export * from './utils'
-export * from './pagination'
-export * from './File'
-export * from './exceptions'
+import { randomBytes } from 'crypto'
+import { File } from './File'
 
-declare global {
-    function notUsed(...args): void
+export * from './File'
+export * from './@global'
+
+export class utils {
+    public static uuid(): string {
+        return randomBytes(16).toString('hex')
+    }
+
+    public static async sleep(timeout: number): Promise<void> {
+        await new Promise((resolve) => setTimeout(resolve, timeout))
+    }
+
+    public static createChunk(size: number): string {
+        const chunk = Buffer.alloc(size, 'abcdefghijklmnopqrstuvwxyz1234567890')
+
+        return chunk.toString()
+    }
 }
 
-const g = global as any
+type PackageInfo = {
+    name: string
+    version: string
+    description: string
+}
 
-g.notUsed = (..._args) => {}
+export function getPackageInfo() {
+    const info = File.readJson<PackageInfo>('package.json')
+
+    return info
+}
