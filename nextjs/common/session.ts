@@ -22,6 +22,8 @@ export function getServerSideWithCookie<P extends PropsType>(handler: SsrHandler
             const host = 'http://localhost:4000'
             const url = host + '/users'
 
+            console.log('----------------- REQUEST NODE -> SERVER -------------------')
+
             const response = await fetch(url, option)
 
             const data = await response.json()

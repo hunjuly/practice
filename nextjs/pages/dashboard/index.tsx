@@ -6,6 +6,9 @@ type GetType = PaginatedResponse<User>
 type PropsType = { paginatedUsers: PaginatedResponse<User> }
 
 export const getServerSideProps = getServerSideWithCookie<PropsType>(async ({ get }) => {
+    console.log('REQUEST000')
+    fetch('http://localhost:4000/users')
+
     const data = await get('/users')
 
     const paginatedUsers = data as GetType
