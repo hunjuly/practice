@@ -1,9 +1,9 @@
 import { rest } from 'msw'
 
+const backendUrl = process.env.BACKEND_URL
+
 export const handlers = [
     rest.get('/api/login', (req, res, ctx) => {
-        console.log('--------------------------------------')
-
         return res(
             ctx.json({
                 title: 'Lord of the Rings',
@@ -12,14 +12,24 @@ export const handlers = [
             })
         )
     }),
-    rest.get('http://localhost:4000/users', (req, res, ctx) => {
-        console.log('-----------------------OKOK  CALL ------------')
-
+    rest.get(backendUrl + '/users', (req, res, ctx) => {
         return res(
             ctx.json({
-                title: 'Lord of the Rings',
-                imageUrl: '/book-cover.jpg',
-                description: 'The Lord of the Rings is an epic high-fantasy'
+                offset: 0,
+                limit: 100,
+                total: 1,
+                items: [
+                    {
+                        url: '/users/e2d66a31-dbee-475a-8253-b6440b5c8037',
+                        id: 'e2d66a31-dbee-475a-8253-b6440b5c8037',
+                        email: 'test@mail.com',
+                        isActive: true,
+                        role: 'user',
+                        createDate: '2022-07-30T16:25:04.000Z',
+                        updateDate: '2022-07-30T16:25:04.000Z',
+                        version: 1
+                    }
+                ]
             })
         )
     }),

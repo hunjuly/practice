@@ -4,13 +4,11 @@ import Router from 'next/router'
 import React from 'react'
 import type { ReactElement, ReactNode } from 'react'
 import { UserContext, useUserContext } from '../context/UserContext'
-// if (process.env.NEXT_PUBLIC_API_MOCKING === 'true') {
-// import '../mocks'
 import '../styles/globals.css'
 
-require('../mocks')
-
-// }
+if (process.env.NEXT_PUBLIC_API_MOCKING === 'true') {
+    require('../mocks')
+}
 
 type NextPageWithLayout = NextPage & {
     getLayout?: (page: ReactElement) => ReactNode

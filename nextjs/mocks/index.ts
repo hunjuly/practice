@@ -1,15 +1,14 @@
+import { setupWorker } from 'msw'
+import { setupServer } from 'msw/node'
+import { handlers } from './handlers'
+
 export async function initMocks() {
     if (typeof window === 'undefined') {
-        console.log('----------------- SERVER -------------------')
-        const { server } = await import('./server')
+        const server = setupServer(...handlers)
 
         server.listen()
-
-        console.log('REQUEST001')
-        fetch('http://localhost:4000/users')
     } else {
-        console.log('----------------- CLIENT -------------------')
-        const { worker } = await import('./browser')
+        const worker = setupWorker(...handlers)
 
         worker.start()
     }

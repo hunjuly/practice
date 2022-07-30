@@ -10,19 +10,17 @@ type SsrHandler<P> = (request: {
 }) => PropsResult<P> | Promise<PropsResult<P>>
 
 export function getServerSideWithCookie<P extends PropsType>(handler: SsrHandler<P>): Props {
+    const backendUrl = process.env.BACKEND_URL
+
+    if (!backendUrl) throw new Error('missing BACKEND_URL')
+
     return async (context: PropsContext) => {
         const get = async <T>(path: string): Promise<T> => {
             const headers = context.req.headers.cookie ? { cookie: context.req.headers.cookie } : undefined
 
-            const option = {
-                method: 'GET',
-                headers
-            }
+            const option = { method: 'GET', headers }
 
-            const host = 'http://localhost:4000'
-            const url = host + '/users'
-
-            console.log('----------------- REQUEST NODE -> SERVER -------------------')
+            const url = backendUrl + '/users'
 
             const response = await fetch(url, option)
 
