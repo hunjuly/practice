@@ -1,6 +1,6 @@
+import { getServerSideWithCookie } from 'common/session'
 import * as React from 'react'
 import { PaginatedResponse, User } from 'types'
-import { getServerSideWithCookie } from 'common/session'
 
 type GetType = PaginatedResponse<User>
 type PropsType = { paginatedUsers: PaginatedResponse<User> }

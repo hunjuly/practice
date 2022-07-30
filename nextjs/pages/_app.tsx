@@ -1,10 +1,10 @@
+import type { NextPage } from 'next'
+import type { AppProps } from 'next/app'
+import Router from 'next/router'
 import React from 'react'
 import type { ReactElement, ReactNode } from 'react'
-import type { NextPage } from 'next'
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
 import { UserContext, useUserContext } from '../context/UserContext'
-import Router from 'next/router'
+import '../styles/globals.css'
 
 type NextPageWithLayout = NextPage & {
     getLayout?: (page: ReactElement) => ReactNode

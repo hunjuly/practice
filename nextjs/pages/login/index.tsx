@@ -1,8 +1,8 @@
+import { useUser } from 'hooks/useUser'
+import Link from 'next/link'
 import * as React from 'react'
 import type { ReactElement } from 'react'
-import { useUser } from 'hooks/useUser'
 import { RequestError } from 'types'
-import Link from 'next/link'
 
 export default function Login() {
     const user = useUser({ redirectTo: { ifLoggedIn: '/dashboard' } })
